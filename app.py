@@ -30,9 +30,8 @@ env_vars = {
 # Add production-specific environment variables if not in development
 if env_vars['FLASK_ENV'] != 'development':
     env_vars.update({
-        'RENDER_POSTGRESQL_URL': os.environ.get('RENDER_POSTGRESQL_URL'),
-        'RENDER_REDIS_HOST': os.environ.get('RENDER_REDIS_HOST'),
-        'RENDER_REDIS_PORT': os.environ.get('RENDER_REDIS_PORT')
+        'DATABASE_URL': os.environ.get('DATABASE_URL'),
+        'REDIS_URL': os.environ.get('REDIS_URL'),
     })
 
 # Identify missing variables
@@ -48,9 +47,8 @@ FLASK_ENV = env_vars['FLASK_ENV']
 AMPLITUDE_API_KEY = env_vars['AMPLITUDE_API_KEY']
 
 if FLASK_ENV != 'development':
-    RENDER_POSTGRESQL_URL = env_vars['RENDER_POSTGRESQL_URL']
-    RENDER_REDIS_HOST = env_vars['RENDER_REDIS_HOST']
-    RENDER_REDIS_PORT = env_vars['RENDER_REDIS_PORT']
+    RENDER_POSTGRESQL_URL = env_vars['DATABASE_URL']
+    RENDER_REDIS_URL = env_vars['REDIS_URL']
 
 # Define the Flask application
 app = Flask(__name__)
@@ -82,8 +80,7 @@ if FLASK_ENV == 'development':
 else:
     cors_origins = ["https://TBD.com", "https://www.TBD.com"]
     db_uri = RENDER_POSTGRESQL_URL
-    redis_host = RENDER_REDIS_HOST
-    redis_port = RENDER_REDIS_PORT
+    redis_url = RENDER_REDIS_URL
 
     # Set up logging for production
     logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s: %(message)s')
@@ -91,8 +88,6 @@ else:
     # Create a file handler and set the level to warning
     file_handler = RotatingFileHandler('TBD_prod.log', maxBytes=1024 * 1024, backupCount=1)
     file_handler.setLevel(logging.WARNING)
-
-    redis_url = f'redis://{redis_host}:{redis_port}/0'
 
     # Enable rate limiting in production
     limiter = Limiter(
