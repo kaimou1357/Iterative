@@ -106,7 +106,6 @@ logging.getLogger().addHandler(file_handler)
 
 CORS(app, resources={r"/*": {"origins": cors_origins}}, supports_credentials=True)
 
-openai_client = OpenAI(api_key = OPENAI_API_KEY, organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
 
 # SQLAlchemy Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
@@ -504,6 +503,7 @@ def home():
 
 @app.route('/api/generate', methods=['POST'])
 def generate():
+    openai_client = OpenAI(api_key = os.environ.get('OPENAI_API_KEY'), organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
     project_id = request.json['project_id']
 
     if current_user.is_authenticated:
