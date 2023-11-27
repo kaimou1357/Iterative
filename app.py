@@ -47,7 +47,7 @@ FLASK_ENV = env_vars['FLASK_ENV']
 AMPLITUDE_API_KEY = env_vars['AMPLITUDE_API_KEY']
 
 if FLASK_ENV != 'development':
-    RENDER_POSTGRESQL_URL = env_vars['DATABASE_URL']
+    RENDER_POSTGRESQL_URL = env_vars['DATABASE_URL'][:8]+'ql' + env_vars['DATABASE_URL'][8:]
     RENDER_REDIS_URL = env_vars['REDIS_URL']
 
 # Define the Flask application
