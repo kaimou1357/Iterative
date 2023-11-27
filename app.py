@@ -116,7 +116,7 @@ app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)  # Make session data persist for 30 days
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_KEY_PREFIX'] = 'TBD:'
-app.config['SESSION_REDIS'] = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
+app.config['SESSION_REDIS'] = redis.from_url(redis_url)
 
 if FLASK_ENV != 'development':
     app.config['SESSION_COOKIE_DOMAIN'] = '.TBD.com'  # Use the common parent domain
