@@ -634,6 +634,7 @@ def generate():
           presence_penalty=0
       )
     except Exception as e:
+      print(f"OpenAI API request failed: {e}")
       logging.debug(f"OpenAI API request failed: {e}")
       pass
 
