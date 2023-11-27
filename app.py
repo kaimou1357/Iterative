@@ -622,7 +622,7 @@ def generate():
 
     tokens_remaining = max_tokens_allowed - current_num_tokens
 
-    response = openai_client.ChatCompletion.create(
+    response = openai_client.chat.completions.create(
         model=model_name,
         messages=messages,
         temperature=0.1,
@@ -1065,7 +1065,7 @@ def transcribe_audio():
     with open(audio_file_path, "rb") as f:
         try:
             # Using .translate instead of .transcribe works seamlessly, translates from any supported language into English
-            transcript = openai_client.Audio.translate(model = "whisper-1", file = f)
+            transcript = openai_client.audio.translations.create(model = "whisper-1", file = f)
             transcript_text = transcript['text']
 
             event = BaseEvent(
