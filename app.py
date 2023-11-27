@@ -9,7 +9,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import redis
 import re
-import openai
+from openai import OpenAI
 import os
 import tiktoken
 import logging
@@ -106,7 +106,7 @@ logging.getLogger().addHandler(file_handler)
 
 CORS(app, resources={r"/*": {"origins": cors_origins}}, supports_credentials=True)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai_client = OpenAI(api_key = OPENAI_API_KEY, organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
 
 # SQLAlchemy Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
@@ -622,7 +622,7 @@ def generate():
 
     tokens_remaining = max_tokens_allowed - current_num_tokens
 
-    response = openai.ChatCompletion.create(
+    response = openai_client.ChatCompletion.create(
         model=model_name,
         messages=messages,
         temperature=0.1,
@@ -1065,7 +1065,7 @@ def transcribe_audio():
     with open(audio_file_path, "rb") as f:
         try:
             # Using .translate instead of .transcribe works seamlessly, translates from any supported language into English
-            transcript = openai.Audio.translate(model = "whisper-1", file = f)
+            transcript = openai_client.Audio.translate(model = "whisper-1", file = f)
             transcript_text = transcript['text']
 
             event = BaseEvent(
