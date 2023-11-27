@@ -10,7 +10,7 @@ from flask_limiter.util import get_remote_address
 import redis
 import re
 from openai import OpenAI
-from openai import error as open_ai_error
+import openai
 import os
 import tiktoken
 import logging
@@ -633,31 +633,31 @@ def generate():
           frequency_penalty=0,
           presence_penalty=0
       )
-    except open_ai_error.Timeout as e:
+    except openai.error.Timeout as e:
       #Handle timeout error, e.g. retry or log
       logging.debug(f"OpenAI API request timed out: {e}")
       pass
-    except open_ai_error.APIError as e:
+    except openai.error.APIError as e:
       #Handle API error, e.g. retry or log
       logging.debug(f"OpenAI API returned an API Error: {e}")
       pass
-    except open_ai_error.APIConnectionError as e:
+    except openai.error.APIConnectionError as e:
       #Handle connection error, e.g. check network or log
       logging.debug(f"OpenAI API request failed to connect: {e}")
       pass
-    except open_ai_error.InvalidRequestError as e:
+    except openai.error.InvalidRequestError as e:
       #Handle invalid request error, e.g. validate parameters or log
       logging.debug(f"OpenAI API request was invalid: {e}")
       pass
-    except open_ai_error.AuthenticationError as e:
+    except openai.error.AuthenticationError as e:
       #Handle authentication error, e.g. check credentials or log
       logging.debug(f"OpenAI API request was not authorized: {e}")
       pass
-    except open_ai_error.PermissionError as e:
+    except openai.error.PermissionError as e:
       #Handle permission error, e.g. check scope or log
       logging.debug(f"OpenAI API request was not permitted: {e}")
       pass
-    except open_ai_error.RateLimitError as e:
+    except openai.error.RateLimitError as e:
       #Handle rate limit error, e.g. wait or log
       logging.debug(f"OpenAI API request exceeded rate limit: {e}")
       pass
