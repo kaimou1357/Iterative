@@ -632,7 +632,7 @@ def generate():
         presence_penalty=0
     )
 
-    response_text = response.choices[0].message['content']
+    response_text = response.choices[0].message.content
 
     logging.debug(f"response_text: {response_text}")
 
