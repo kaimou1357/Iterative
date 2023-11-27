@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, AnonymousUserMixin, login_required
@@ -51,7 +51,7 @@ if FLASK_ENV != 'development':
     RENDER_REDIS_URL = env_vars['REDIS_URL']
 
 # Define the Flask application
-app = Flask(__name__)
+app = Flask(__name__, static_folder = "react_app/build")
 app.secret_key = SECRET_KEY
 
 # Initialize environment-specific variables and logging
@@ -1088,6 +1088,15 @@ def transcribe_audio():
 @limiter.exempt
 def health_check():
     return jsonify(status="OK"), 200
+
+# React FE code served here temporarily.
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 def pad_user_id(user_id, min_length=5, padding_char='0'):
     """Pad the user ID to meet a minimum length."""
