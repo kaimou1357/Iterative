@@ -18,14 +18,12 @@ from logging.handlers import RotatingFileHandler
 import uuid
 from datetime import timedelta
 from enum import Enum
-from amplitude import Amplitude, BaseEvent
 
 # Initialize environment variables dictionary
 env_vars = {
     'SECRET_KEY': os.environ.get('SECRET_KEY'),
     'OPENAI_API_KEY': os.environ.get('OPENAI_API_KEY'),
     'FLASK_ENV': os.environ.get('FLASK_ENV'),
-    'AMPLITUDE_API_KEY': os.environ.get('AMPLITUDE_API_KEY')
 }
 
 # Add production-specific environment variables if not in development
@@ -45,7 +43,6 @@ if missing_vars:
 SECRET_KEY = env_vars['SECRET_KEY']
 OPENAI_API_KEY = env_vars['OPENAI_API_KEY']
 FLASK_ENV = env_vars['FLASK_ENV']
-AMPLITUDE_API_KEY = env_vars['AMPLITUDE_API_KEY']
 
 if FLASK_ENV != 'development':
     RENDER_POSTGRESQL_URL = env_vars['DATABASE_URL'][:8]+'ql' + env_vars['DATABASE_URL'][8:]
@@ -58,7 +55,7 @@ app.secret_key = SECRET_KEY
 # Initialize environment-specific variables and logging
 if FLASK_ENV == 'development':
     cors_origins = ["http://localhost:3000"]
-    db_uri = 'postgresql://localhost/TBD_dev'
+    db_uri = 'postgresql://localhost:5432'
     redis_host = 'localhost'
     redis_port = 6379
 
@@ -69,7 +66,7 @@ if FLASK_ENV == 'development':
     file_handler = RotatingFileHandler('TBD_dev.log', maxBytes=1024 * 1024, backupCount=1)
     file_handler.setLevel(logging.ERROR)
 
-    redis_url = f'redis://{redis_host}:{redis_port}/0'
+    redis_url = f'redis://{redis_host}:{redis_port}'
     
     # Disable rate limiting in development
     limiter = Limiter(
@@ -133,7 +130,6 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
 
-amplitude = Amplitude(AMPLITUDE_API_KEY)
 
 # GuestUser
 class GuestUser(AnonymousUserMixin):
@@ -546,18 +542,6 @@ def generate():
     # Add the new chat message to the list
     chat_messages_content.append({"role": "user", "content": description, 'created_at': None})
 
-    event = BaseEvent(
-        event_type="Generate Code",
-        user_id=pad_user_id(current_user.id),
-        event_properties={
-            "user_message": description,
-            "project_name": project.name,
-            "project_id": project.id,
-            "model_name": model_name
-        }
-    )
-    amplitude.track(event)
-
     logging.debug(f"chat_messages: {chat_messages_content}")
 
     user_messages_content = [
@@ -736,17 +720,6 @@ def reset():
         project = current_user.get_project(project_id)
         current_user.reset_project(project_id)
         model_name = AssistantModel.GPT_3_5_TURBO.value
-
-    event = BaseEvent(
-        event_type="Reset Project",
-        user_id=pad_user_id(current_user.id),
-        event_properties={
-            "project_name": project.name,
-            "project_id": project_id,
-            "model_name": model_name
-        }
-    )
-    amplitude.track(event)
     
     return jsonify({'status': 'State has been reset'})
 
@@ -799,16 +772,6 @@ def sign_up():
 
     migrate_guest_projects_to_db(user)
 
-    event = BaseEvent(
-        event_type="Sign Up",
-        user_id=pad_user_id(user.id),
-        event_properties={
-            "email": email,
-            "is_guest_sign_up": is_guest_sign_up
-        }
-    )
-    amplitude.track(event)
-
     response = jsonify({'status': 'success'})
     return response
 
@@ -839,13 +802,6 @@ def sign_in():
 
         migrate_guest_projects_to_db(user)
 
-        event = BaseEvent(
-            event_type="Sign In",
-            user_id=pad_user_id(current_user.id),
-            event_properties={
-            }
-        )
-        amplitude.track(event)
 
         response = jsonify({'status': 'success'})
         return response
@@ -920,16 +876,6 @@ def create_project():
         project.css_framework = CSSFramework.BOOTSTRAP
         current_user.add_project(project)
 
-    event = BaseEvent(
-        event_type="Create Project",
-        user_id=pad_user_id(current_user.id),
-        event_properties={
-            "project_name": project.name,
-            "project_id": project.id
-        }
-    )
-    amplitude.track(event)
-
     # Return a success response
     return jsonify({'status': 'success', 'project': project.to_dict()})
 
@@ -947,16 +893,7 @@ def delete_project():
     # Check if the project exists
     if project is None:
         return jsonify({'status': 'error', 'message': 'Project not found'}), 404
-    
-    event = BaseEvent(
-        event_type="Delete Project",
-        user_id=pad_user_id(current_user.id),
-        event_properties={
-            "project_name": project.name,
-            "project_id": project_id
-        }
-    )
-    amplitude.track(event)
+  
     
     if current_user.is_authenticated:
         # Check if the current user is associated with the project
@@ -1026,15 +963,6 @@ def update_user_settings():
     current_user.settings.css_framework = settings['css_framework']
     db.session.commit()
 
-    event = BaseEvent(
-        event_type="Update User Settings",
-        user_id=pad_user_id(current_user.id),
-        event_properties={
-            "user_settings": settings
-        }
-    )
-    amplitude.track(event)
-
     return jsonify({"success": True})
 
 @app.route('/api/transcribe', methods=['POST'])
@@ -1046,15 +974,6 @@ def transcribe_audio():
     audio_file = request.files['audio']
 
     logging.debug(f"audio_file: {audio_file}")
-
-    event = BaseEvent(
-        event_type="Transcribe Begin",
-        user_id=pad_user_id(current_user.id),
-        event_properties={
-            "model_name": "whisper-1"
-        }
-    )
-    amplitude.track(event)
 
     # Validate the file size (25 MB)
     audio_file.seek(0, os.SEEK_END)
@@ -1074,15 +993,6 @@ def transcribe_audio():
             transcript = openai_client.audio.translations.create(model = "whisper-1", file = f)
             transcript_text = transcript['text']
 
-            event = BaseEvent(
-                event_type="Transcribe Success",
-                user_id=pad_user_id(current_user.id),
-                event_properties={
-                    "transcript_text": transcript_text,
-                    "model_name": "whisper-1"
-                }
-            )
-            amplitude.track(event)
         except Exception as e:
             return jsonify({'error': str(e)}), 500
         finally:
