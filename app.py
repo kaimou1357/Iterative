@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
+from celery import Celery, Task
+from sqlalchemy.dialects.postgresql import UUID
+from celery.result import AsyncResult
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, AnonymousUserMixin, login_required
 from flask_bcrypt import Bcrypt
@@ -10,8 +13,8 @@ from flask_limiter.util import get_remote_address
 import redis
 import re
 from openai import OpenAI
-import openai
 import os
+from tasks import stream_gpt_response
 import tiktoken
 import logging
 from logging.handlers import RotatingFileHandler
@@ -21,9 +24,9 @@ from enum import Enum
 
 # Initialize environment variables dictionary
 env_vars = {
-    'SECRET_KEY': os.environ.get('SECRET_KEY'),
-    'OPENAI_API_KEY': os.environ.get('OPENAI_API_KEY'),
-    'FLASK_ENV': os.environ.get('FLASK_ENV'),
+    'SECRET_KEY': os.environ.get('SECRET_KEY', "test-secret-key"),
+    'OPENAI_API_KEY': os.environ.get('OPENAI_API_KEY', "test-open-ai-key"),
+    'FLASK_ENV': os.environ.get('FLASK_ENV', "development"),
 }
 
 # Add production-specific environment variables if not in development
@@ -129,6 +132,10 @@ migrate = Migrate(app, db)
 # Flask-Login Configuration
 login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
+
+celery = Celery(app.name, broker_url=os.environ.get('REDIS_URL'),
+        result_backend=os.environ.get('REDIS_URL'))
+celery.conf.update(app.config)
 
 
 # GuestUser
@@ -284,7 +291,7 @@ class ChatConversationStatus(Enum):
     COMPLETED = 2
 
 class ChatConversation(db.Model):
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     gpt_result = db.Column(db.Text)
     status = db.Column(db.Enum(ChatConversationStatus, default=ChatConversationStatus.NOT_STARTED, server_default=ChatConversationStatus.NOT_STARTED.name, nullable = False))
@@ -507,7 +514,6 @@ def messages_to_string(messages):
 
 @app.route('/api/generate', methods=['POST'])
 def generate():
-    openai_client = OpenAI(api_key = os.environ.get('OPENAI_API_KEY'), organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
     project_id = request.json['project_id']
 
     if current_user.is_authenticated:
@@ -594,8 +600,6 @@ def generate():
                         }}
                         \\`\\`\\`
                         """
-    
-    logging.debug(f"system_prompt: {system_prompt}")
 
     messages = [
         {
@@ -614,21 +618,19 @@ def generate():
 
     tokens_remaining = max_tokens_allowed - current_num_tokens
 
-    try:
-      response = openai_client.chat.completions.create(
-          model=model_name,
-          messages=messages,
-          temperature=0.1,
-          max_tokens=tokens_remaining,
-          top_p=1,
-          frequency_penalty=0,
-          presence_penalty=0
-      )
-    except Exception as e:
-      print(f"OpenAI API request failed: {e}")
-      logging.debug(f"OpenAI API request failed: {e}")
-      pass
+    # Enqueue Celery Job Here
+    task = stream_gpt_response.delay(model_name, messages, tokens_remaining)
 
+    if current_user.is_authenticated:    
+        user_id = current_user.id
+    else:
+        user_id  = uuid.uuid4().int
+
+    new_chat_conversation = ChatConversation(user_id = user_id, status=ChatConversationStatus.RUNNING)
+    db.session.add(new_chat_conversation)
+    db.session.flush()
+
+    return jsonify({"task_id": task.id})
     response_text = response.choices[0].message.content
 
     logging.debug(f"response_text: {response_text}")
@@ -781,6 +783,7 @@ def sign_up():
 
     response = jsonify({'status': 'success'})
     return response
+
 
 @app.route('/api/guest-auth', methods=['POST'])
 def guest_auth():
@@ -976,6 +979,15 @@ def update_user_settings():
 @limiter.exempt
 def health_check():
     return jsonify(status="OK"), 200
+  
+@app.get("/result/<id>")
+def task_result(id: str) -> dict[str, object]:
+    result = AsyncResult(id)
+    return {
+        "ready": result.ready(),
+        "successful": result.successful(),
+        "value": result.result if result.ready() else None,
+    }
 
 # React FE code served here temporarily.
 @app.route('/', defaults={'path': ''})
