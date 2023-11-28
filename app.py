@@ -621,15 +621,6 @@ def generate():
     # Enqueue Celery Job Here
     task = stream_gpt_response.delay(model_name, messages, tokens_remaining)
 
-    if current_user.is_authenticated:    
-        user_id = current_user.id
-    else:
-        user_id  = uuid.uuid4().int
-
-    new_chat_conversation = ChatConversation(user_id = user_id, status=ChatConversationStatus.RUNNING)
-    db.session.add(new_chat_conversation)
-    db.session.flush()
-
     return jsonify({"task_id": task.id})
     response_text = response.choices[0].message.content
 
@@ -980,7 +971,7 @@ def update_user_settings():
 def health_check():
     return jsonify(status="OK"), 200
   
-@app.get("/result/<id>")
+@app.get("/api/tasks/<id>")
 def task_result(id: str) -> dict[str, object]:
     result = AsyncResult(id)
     return {

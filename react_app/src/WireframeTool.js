@@ -325,8 +325,21 @@ const WireframeTool = () => {
 
     try {
       const response = await axios.post(`${API_BASE_URL}/generate`, { description, project_id: project.id });
+      const taskId = response.data.task_id;
 
-      loadProjectDetails(response.data.project);
+      async function verifyTask() {
+        const taskResponse = await axios.get(`${API_BASE_URL}/tasks/${taskId}`);
+        const { ready, successful, value } = taskResponse.data;
+        if (ready) {
+          clearTimeout();
+          setLoading(false);
+          refreshProject();
+        }
+        else {
+          setTimeout(verifyTask, 2000);
+        }
+      }
+      verifyTask();
 
       descriptionRef.current.value = ''; 
 
@@ -336,8 +349,6 @@ const WireframeTool = () => {
       const errorString = `An error occurred: ${error.message}`;
       console.error('An error occurred:', error);
       setErrorState(errorString);
-    } finally {
-      setLoading(false);
     }
   };
 

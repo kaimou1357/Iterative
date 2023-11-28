@@ -4,8 +4,8 @@ import os
 from openai import OpenAI
 
 celery = Celery('Iterative')
-celery.conf.broker_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
-celery.conf.result_backend = os.environ.get("REDIS_URL", "redis://localhost:6379")
+celery.conf.broker_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+celery.conf.result_backend = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
 @shared_task
 def stream_gpt_response(model_name, messages, tokens_remaining):
@@ -24,11 +24,11 @@ def stream_gpt_response(model_name, messages, tokens_remaining):
     collected_messages = []
     # iterate through the stream of events
     for chunk in response:
-        print(chunk)
         collected_chunks.append(chunk)  # save the event response
         chunk_message = chunk.choices[0].delta  # extract the message
         collected_messages.append(chunk_message)  # save the message
 
     # print the time delay and text received
     full_reply_content = ''.join(["" if m.content is None else m.content for m in collected_messages])
-    print(full_reply_content)
+    
+    return full_reply_content
