@@ -277,6 +277,17 @@ class CSSFramework(Enum):
             return "data-bs-theme='dark'"
         elif self == CSSFramework.DAISYUI:
             return "data-theme='dark'"
+        
+class ChatConversationStatus(Enum):
+    NOT_STARTED = 0
+    RUNNING = 1
+    COMPLETED = 2
+
+class ChatConversation(db.Model):
+    id = db.Column(db.String, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    gpt_result = db.Column(db.Text)
+    status = db.Column(db.Enum(ChatConversationStatus, default=ChatConversationStatus.NOT_STARTED, server_default=ChatConversationStatus.NOT_STARTED.name, nullable = False))
 
 class UserSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -493,10 +504,6 @@ def messages_to_string(messages):
         for key, value in message.items():
             result += f"{key}: {value}\n"
     return result
-
-@app.route('/api/')
-def home():
-    return 'Welcome to the TBD API!'
 
 @app.route('/api/generate', methods=['POST'])
 def generate():
@@ -964,41 +971,6 @@ def update_user_settings():
     db.session.commit()
 
     return jsonify({"success": True})
-
-@app.route('/api/transcribe', methods=['POST'])
-def transcribe_audio():
-    # Check if the request contains a file
-    if 'audio' not in request.files:
-        return jsonify({'error': 'No audio file provided'}), 400
-
-    audio_file = request.files['audio']
-
-    logging.debug(f"audio_file: {audio_file}")
-
-    # Validate the file size (25 MB)
-    audio_file.seek(0, os.SEEK_END)
-    file_size = audio_file.tell()
-    audio_file.seek(0)
-    if file_size > 25 * 1024 * 1024:
-        return jsonify({'error': 'File size exceeds 25MB'}), 400
-    
-    # Write the file to disk
-    audio_file_path = "temp_audio.wav"
-    audio_file.save(audio_file_path)
-
-    # Open the saved file for reading
-    with open(audio_file_path, "rb") as f:
-        try:
-            # Using .translate instead of .transcribe works seamlessly, translates from any supported language into English
-            transcript = openai_client.audio.translations.create(model = "whisper-1", file = f)
-            transcript_text = transcript['text']
-
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-        finally:
-            # Delete the temporary file
-            os.remove(audio_file_path)
-    return jsonify({'transcript': transcript_text})
 
 @app.route('/api/health', methods=['GET'])
 @limiter.exempt
