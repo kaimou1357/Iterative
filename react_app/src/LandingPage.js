@@ -17,7 +17,7 @@ const LandingPage = () => {
         <div className="d-flex flex-column vh-100 justify-content-between">
             <nav className="navbar navbar-expand-lg">
                 <div className="container">
-                    <a className="navbar-brand" href="#">TBD</a>
+                    <a className="navbar-brand" href="#">Iterative</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -41,7 +41,7 @@ const LandingPage = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-6">
-                            <h1 className="display-4 fw-bold mb-3">TBD</h1>
+                            <h1 className="display-4 fw-bold mb-3">Iterative</h1>
                             <p className="h2 mb-4">
                                 Build amazing applications without writing a single line of
                                 code.
@@ -141,7 +141,7 @@ const LandingPage = () => {
                 <div className="container text-center">
                     <div className="row">
                         <div className="col-lg-6">
-                            <p className="mb-0">&copy; 2023 TBD. All rights reserved.</p>
+                            <p className="mb-0">&copy; 2023 Iterative. All rights reserved.</p>
                         </div>
                         <div className="col-lg-6">
                             <a href="#" className="me-3">Privacy Policy</a>
