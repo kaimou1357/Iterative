@@ -622,54 +622,6 @@ def generate():
     task = stream_gpt_response.delay(model_name, messages, tokens_remaining)
 
     return jsonify({"task_id": task.id})
-    response_text = response.choices[0].message.content
-
-    logging.debug(f"response_text: {response_text}")
-
-    # Process the response
-    react_code, css_code = extract_code(response_text)
-    assistant_message = response_text
-
-    # Add the chat messages to the new project state
-    chat_messages_content.append({"role": "assistant", "content": assistant_message, 'created_at': None})
-
-    # if the model returns only React or CSS code for a given query, ensure that the state is created with the code so far instead of being empty
-    if not react_code:
-        react_code = persisted_react_code
-    
-    if not css_code:
-        css_code = persisted_css_code
-    
-    # Create a new ProjectState and associate the new chat message with it
-    new_project_state = ProjectState(react_code=react_code, css_code=css_code, project_id=project.id)
-
-    if current_user.is_authenticated:    
-        db.session.add(new_project_state)
-        db.session.flush() # Flush to get the new_project_state.id
-    else:
-        new_project_state.id = uuid.uuid4().int
-        current_user.add_project_state_to_project(project, new_project_state)
-
-    # Add the chat messages to the new project state
-    for message in chat_messages_content:
-        model_name_value = AssistantModel(model_name) if message['role'] == 'assistant' else None
-        chat_message = ChatMessage(content=message['content'], role=message['role'], created_at=message['created_at'], user_id=current_user.id, project_state_id=new_project_state.id, model_name=model_name_value)
-
-        if current_user.is_authenticated:
-            db.session.add(chat_message)
-        else:
-            chat_message.id = uuid.uuid4().int
-            current_user.add_chat_message_to_project_state(new_project_state, chat_message)
-    
-    if current_user.is_authenticated:
-        db.session.commit()
-    else:
-        project = current_user.get_project(project_id)
-
-    logging.debug(f"project: {project.to_dict()}")
-
-    # Create the response object with full project details
-    return jsonify({'status': 'success', 'project': project.to_dict()})
 
 def extract_code(response_text):
     # # Use a regular expression to find code blocks
@@ -690,13 +642,6 @@ def extract_code(response_text):
  
     return react_code, css_code
 
-def extract_assistant_message(response_text):
-    # Use regex to find and replace content within the code blocks while retaining the labels
-    pattern = r"(```(javascript|css)\n).*?(```)"
-    replacement = r"\1\3"
-    modified_response_text = re.sub(pattern, replacement, response_text, flags=re.DOTALL)
-    return modified_response_text
-
 @app.route('/api/reset', methods=['POST'])
 def reset():
     project_id = request.json['project_id']
@@ -704,7 +649,6 @@ def reset():
     
     if current_user.is_authenticated:
         project = Project.query.get(project_id)
-
         if project:
             model_name = None
             # Reset project states
@@ -722,6 +666,68 @@ def reset():
         model_name = AssistantModel.GPT_3_5_TURBO.value
     
     return jsonify({'status': 'State has been reset'})
+
+@app.route('/api/projects/update', methods=['POST'])
+def update_project():
+    project_id = request.json.get('project_id')
+    response_text = request.json.get('result')
+
+    project = Project.query.get(project_id)
+    
+    if project.project_states:
+        latest_project_state = project.project_states[-1]
+        logging.debug(f"latest_project_state: {latest_project_state}")
+        persisted_react_code = latest_project_state.react_code
+        persisted_css_code = latest_project_state.css_code
+        chat_messages_content = [{'role': msg.role, 'content': msg.content, 'created_at': msg.created_at} for msg in latest_project_state.chat_messages]
+    else:
+        latest_project_state = None
+        persisted_react_code = ""
+        persisted_css_code = ""
+        chat_messages_content = []
+    react_code, css_code = extract_code(response_text)
+
+    # Add the chat messages to the new project state
+    chat_messages_content.append({"role": "assistant", "content": response_text, 'created_at': None})
+
+    # if the model returns only React or CSS code for a given query, ensure that the state is created with the code so far instead of being empty
+    if not react_code:
+        react_code = persisted_react_code
+    
+    if not css_code:
+        css_code = persisted_css_code
+    
+    # Create a new ProjectState and associate the new chat message with it
+    new_project_state = ProjectState(react_code=react_code, css_code=css_code, project_id=project.id)
+
+    if current_user.is_authenticated:    
+        db.session.add(new_project_state)
+        db.session.flush() # Flush to get the new_project_state.id
+    else:
+        new_project_state.id = uuid.uuid4().int
+        current_user.add_project_state_to_project(project, new_project_state)
+
+    # Add the chat messages to the new project state
+    for message in chat_messages_content:
+        model_name_value = AssistantModel(AssistantModel.GPT_3_5_TURBO.value) if message['role'] == 'assistant' else None
+        chat_message = ChatMessage(content=message['content'], role=message['role'], created_at=message['created_at'], user_id=current_user.id, project_state_id=new_project_state.id, model_name=model_name_value)
+
+        if current_user.is_authenticated:
+            db.session.add(chat_message)
+        else:
+            chat_message.id = uuid.uuid4().int
+            current_user.add_chat_message_to_project_state(new_project_state, chat_message)
+    
+    if current_user.is_authenticated:
+        db.session.commit()
+    else:
+        project = Project.query.get(int(project_id))
+
+    logging.debug(f"project: {project.to_dict()}")
+
+    # Create the response object with full project details
+    return jsonify({'status': 'success', 'project': project.to_dict()})
+
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -3,6 +3,8 @@
 node_modules/
 .DS_Store
 *.tgz
+*.log
+__pycache__/
 my-app*
 template/src/__tests__/__snapshots__/
 lerna-debug.log

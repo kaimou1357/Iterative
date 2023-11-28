@@ -87,6 +87,22 @@ const WireframeTool = () => {
       });
   };
 
+  const updateProject = (projectId, response) => {
+    console.log('project to refresh:', project);
+
+    axios.post(`${API_BASE_URL}/projects/update`, {
+      project_id: projectId, 
+      result: response 
+    })
+      .then((response) => {
+        loadProjectDetails(response.data.project);
+      })
+      .catch((error) => {
+        console.error('Error refreshing project:', error);
+        // Handle error as needed
+      });
+  };
+
   const handleDeleteProject = (projectToDelete) => {
     console.log('Project to delete:', projectToDelete);
     console.log('Project:', project);
@@ -332,8 +348,8 @@ const WireframeTool = () => {
         const { ready, successful, value } = taskResponse.data;
         if (ready) {
           clearTimeout();
+          updateProject(project.id, value);
           setLoading(false);
-          refreshProject();
         }
         else {
           setTimeout(verifyTask, 2000);
