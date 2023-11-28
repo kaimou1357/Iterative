@@ -671,6 +671,7 @@ def reset():
 def update_project():
     project_id = request.json.get('project_id')
     response_text = request.json.get('result')
+    user_input = request.json.get("user_input")
 
     project = Project.query.get(project_id)
     
@@ -688,6 +689,7 @@ def update_project():
     react_code, css_code = extract_code(response_text)
 
     # Add the chat messages to the new project state
+    chat_messages_content.append({"role": "user", "content": user_input, 'created_at': None})
     chat_messages_content.append({"role": "assistant", "content": response_text, 'created_at': None})
 
     # if the model returns only React or CSS code for a given query, ensure that the state is created with the code so far instead of being empty

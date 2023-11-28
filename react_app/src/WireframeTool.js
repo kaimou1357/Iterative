@@ -87,12 +87,13 @@ const WireframeTool = () => {
       });
   };
 
-  const updateProject = (projectId, response) => {
+  const updateProject = (projectId, response, userDescription) => {
     console.log('project to refresh:', project);
 
     axios.post(`${API_BASE_URL}/projects/update`, {
       project_id: projectId, 
-      result: response 
+      result: response,
+      user_input: userDescription
     })
       .then((response) => {
         loadProjectDetails(response.data.project);
@@ -348,7 +349,7 @@ const WireframeTool = () => {
         const { ready, successful, value } = taskResponse.data;
         if (ready) {
           clearTimeout();
-          updateProject(project.id, value);
+          updateProject(project.id, value, description);
           setLoading(false);
         }
         else {
