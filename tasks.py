@@ -1,3 +1,4 @@
+import ssl
 from celery import Celery, shared_task
 import os
 
@@ -6,6 +7,8 @@ from openai import OpenAI
 celery = Celery('Iterative')
 celery.conf.broker_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 celery.conf.result_backend = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+celery.confg.broker_use_ssl = { "ssl_certs_reqs": ssl.CERT_NONE}
+celery.confg.redis_backend_use_ssl = { "ssl_certs_reqs": ssl.CERT_NONE}
 
 @shared_task
 def stream_gpt_response(model_name, messages, tokens_remaining):
