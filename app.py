@@ -134,14 +134,8 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
 
-celery = Celery(app.name, broker_url=os.environ.get('REDIS_URL'),
-        result_backend=os.environ.get('REDIS_URL'), 
-        broker_use_ssl= {
-            "ssl_certs_reqs": ssl.CERT_NONE
-        }, 
-        redis_backend_use_ssl = {
-        'ssl_cert_reqs': ssl.CERT_NONE
-     })
+celery = Celery(app.name, broker_url=os.environ.get('REDIS_URL') + "?ssl_cert_reqs=none",
+        result_backend=os.environ.get('REDIS_URL') + "?ssl_cert_reqs=none" )
 celery.conf.update(app.config)
 
 
