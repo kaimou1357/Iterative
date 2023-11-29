@@ -1,5 +1,5 @@
 {
-  "name": "TBD-app",
+  "name": "Iterative-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -15,6 +15,7 @@
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.9.1",
     "react-dom": "^18.2.0",
     "react-live": "^4.1.3",
     "react-markdown": "^8.0.7",

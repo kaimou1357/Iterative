@@ -10,6 +10,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { API_BASE_URL } from './config';
 import Settings from './Settings';
+import Spinner from 'react-bootstrap/Spinner';
 import { useSettings } from './SettingsContext';
 import ReactMarkdown from 'react-markdown';
 import { trackEvent } from './amplitudeUtils';
@@ -25,6 +26,7 @@ const WireframeTool = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [showGenerationSpinner, setGenerationSpinner] = useState(false);
   const { settings } = useSettings();
   const lastMessageRef = useRef(null);
 
@@ -339,6 +341,7 @@ const WireframeTool = () => {
     const description = descriptionRef.current ? descriptionRef.current.value : '';
     setLoading(true);
     setErrorState(null);
+    setGenerationSpinner(true);
 
     try {
       const response = await axios.post(`${API_BASE_URL}/generate`, { description, project_id: project.id });
@@ -351,14 +354,14 @@ const WireframeTool = () => {
           clearTimeout();
           updateProject(project.id, value, description);
           setLoading(false);
+          descriptionRef.current.value = '';
+          setGenerationSpinner(false); 
         }
         else {
           setTimeout(verifyTask, 2000);
         }
       }
       verifyTask();
-
-      descriptionRef.current.value = ''; 
 
       console.log('Received string:', response.data);
 
@@ -448,6 +451,13 @@ const WireframeTool = () => {
             placeholder="Write something like: 'Build me a contact form for my website'"
           />
           <RecordingComponent onTranscription={handleTranscription} isDisabled={project.id === null || loading || resetting} />
+        </div>
+        <div class="mb-3">
+         { showGenerationSpinner? 
+         <div class="d-flex flex-row">
+            <Spinner animation="border"/>
+            <h5 class="ml-3">Generating...This may take a while!</h5>
+          </div> : null}
         </div>
         <div className="d-flex flex-wrap gap-2">
           <button type="submit" className="btn btn-primary" disabled={project.id === null || isSubmitBtnDisabled}>
