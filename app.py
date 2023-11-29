@@ -34,7 +34,7 @@ env_vars = {
 if env_vars['FLASK_ENV'] != 'development':
     env_vars.update({
         'DATABASE_URL': os.environ.get('DATABASE_URL'),
-        'REDIS_URL': os.environ.get('REDIS_URL'),
+        'REDIS_URL': os.environ.get('REDISCLOUD_URL'),
     })
 
 # Identify missing variables
