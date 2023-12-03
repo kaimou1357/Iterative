@@ -1,4 +1,5 @@
 from app.extensions import db
+from app.models.chat_message import ChatMessage
 
 class ProjectState(db.Model):
     id = db.Column(db.Integer, primary_key=True)

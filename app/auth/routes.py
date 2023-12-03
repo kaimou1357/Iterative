@@ -1,4 +1,4 @@
-from app.main import bp
+from app.auth import bp
 from app.models.chat_message import ChatMessage
 from app.models.constants import CSSFramework
 from app.models.guest_user import GuestUser

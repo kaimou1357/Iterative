@@ -6,7 +6,7 @@ from app.models.project_state import ProjectState
 from flask import request, jsonify
 from flask_login import current_user
 import uuid
-from app.main import bp
+from app.projects import bp
 from app.extensions import db
 
 @bp.route('/api/create-project', methods=['POST'])

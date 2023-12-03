@@ -1,5 +1,5 @@
 from app.models.constants import AssistantModel, CSSFramework
-from app.main import bp
+from app.core import bp
 from app.models.project import Project
 from app.tasks import stream_gpt_response
 import tiktoken

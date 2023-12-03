@@ -1,4 +1,4 @@
-from app.main import bp
+from app.settings import bp
 from flask_login import login_required, current_user
 from flask import jsonify, request
 from app.extensions import db
