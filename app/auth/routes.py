@@ -8,7 +8,8 @@ from app.models.user import User
 from app.models.user_settings import UserSettings
 from flask import request, jsonify, session
 from flask_login import login_user, logout_user
-from app.extensions import db, bcrypt
+from app.extensions import db
+import bcrypt
 
 @bp.route('/api/sign-up', methods=['POST'])
 def sign_up():

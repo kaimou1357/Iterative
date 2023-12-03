@@ -1,14 +1,7 @@
-from app.extensions import db
+from app.extensions import db, user_project_table
 from app.models.constants import CSSFramework
 from app.models.project_state import ProjectState
 from app.models.user import User
-
-
-    
-user_project_table = db.Table('user_project', db.Model.metadata,
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
-)
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
