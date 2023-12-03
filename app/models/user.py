@@ -1,6 +1,12 @@
 from app.extensions import db
 from flask_login import UserMixin
 
+    
+user_project_table = db.Table('user_project', db.Model.metadata,
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
+)
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False) # Email Address (Primary)

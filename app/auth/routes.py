@@ -1,7 +1,14 @@
 from app.main import bp
-from app import app
-from flask import request, jsonify
+from app.models.chat_message import ChatMessage
+from app.models.constants import CSSFramework
+from app.models.guest_user import GuestUser
+from app.models.project import Project
+from app.models.project_state import ProjectState
+from app.models.user import User
+from app.models.user_settings import UserSettings
+from flask import request, jsonify, session
 from flask_login import login_user, logout_user
+from app.extensions import db, bcrypt
 
 @bp.route('/api/sign-up', methods=['POST'])
 def sign_up():
@@ -23,8 +30,6 @@ def sign_up():
     
     login_user(user, remember=True)
 
-    is_guest_sign_up = len(session.get('projects', [])) > 0
-
     migrate_guest_projects_to_db(user)
 
     response = jsonify({'status': 'success'})
@@ -33,11 +38,9 @@ def sign_up():
 
 @bp.route('/api/guest-auth', methods=['POST'])
 def guest_auth():
-    logging.debug(f"guest logging in")
     # Here, create an instance of the GuestUser with the UUID
     guest_user = GuestUser()
     guest_user.setup()
-    logging.debug(f"guest_user.id: {guest_user.id}")
 
     login_user(guest_user, remember=False)
 
@@ -65,3 +68,46 @@ def sign_out():
     logout_user()
     response = jsonify({'status': 'success'})
     return response
+
+
+def migrate_guest_projects_to_db(user):
+    # Retrieve projects from the session
+    projects_data = session.get('projects', [])
+
+    for project_data in projects_data:
+        # Migrate the project
+        new_project = Project(name=project_data['name'])
+        new_project.users.append(user)
+        new_project.css_framework = CSSFramework.BOOTSTRAP
+
+        db.session.add(new_project)
+        db.session.flush()  # flush so that we get the ID of the newly added project
+
+        # Migrate project states for the project
+        for state_data in project_data.get('projectStates', []):
+            new_state = ProjectState(
+                react_code=state_data['reactCode'],
+                css_code=state_data['cssCode'],
+                project_id=new_project.id,
+            )
+            db.session.add(new_state)
+            db.session.flush()  # flush so that we get the ID of the newly added project state
+
+            # Migrate chat messages for the project state
+            for message_data in state_data.get('messages', []):
+                new_message = ChatMessage(
+                    content=message_data['content'],
+                    role=message_data['role'],
+                    model_name=message_data['model_name'],
+                    project_state_id=new_state.id,
+                    user_id=user.id
+                )
+                db.session.add(new_message)
+
+    # Commit all changes
+    db.session.commit()
+
+    # Clear the projects from the session
+    session.pop('projects', None)
+    # Clear the guest_uuid from the session
+    session.pop('guest_uuid', None)

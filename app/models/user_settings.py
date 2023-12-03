@@ -1,4 +1,5 @@
 from app.extensions import db
+from app.models.constants import AssistantModel, CSSFramework, ColorScheme
 
 class UserSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)

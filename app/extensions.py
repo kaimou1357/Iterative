@@ -13,5 +13,5 @@ session = Session(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 celery = Celery(app.name, broker_url=Config.REDIS_URL,
-        result_backend=Config.REDIS_URL )
+        result_backend=Config.REDIS_URL)
 celery.conf.update(app.config)

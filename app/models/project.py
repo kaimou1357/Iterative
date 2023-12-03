@@ -1,4 +1,14 @@
 from app.extensions import db
+from app.models.constants import CSSFramework
+from app.models.project_state import ProjectState
+from app.models.user import User
+
+
+    
+user_project_table = db.Table('user_project', db.Model.metadata,
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('project_id', db.Integer, db.ForeignKey('project.id'))
+)
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,18 +48,14 @@ class Project(db.Model):
                 
         # Users
         user_data = data.get('users', [])
-        logging.debug(f"Creating user list from user_data: {user_data}")
         project.users = [User.from_dict(user) for user in user_data]
-        logging.debug(f"user list: {project.users}")
         
         # Project States
         state_data = data.get('projectStates', [])
-        logging.debug(f"Creating project state list from state_data: {state_data}")
         project.project_states = [ProjectState.from_dict(state) for state in state_data]
 
         # CSS Framework
         css_framework_data = data.get('cssFramework', )
-        logging.debug(f"Creating project css framework from css_framework_data: {css_framework_data}")
         project.css_framework = css_framework_data
         
         return project

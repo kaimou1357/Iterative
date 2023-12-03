@@ -1,3 +1,6 @@
+from enum import Enum
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 from app.extensions import db
 
 class ChatConversationStatus(Enum):
