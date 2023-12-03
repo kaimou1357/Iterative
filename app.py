@@ -1,14 +1,14 @@
 import ssl
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
-from celery import Celery, Task
+
 from sqlalchemy.dialects.postgresql import UUID
 from celery.result import AsyncResult
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, AnonymousUserMixin, login_required
-from flask_bcrypt import Bcrypt
+
 from flask_session import Session
-from flask_migrate import Migrate
+
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import redis
@@ -23,88 +23,36 @@ import uuid
 from datetime import timedelta
 from enum import Enum
 
-# Initialize environment variables dictionary
-env_vars = {
-    'SECRET_KEY': os.environ.get('SECRET_KEY', "test-secret-key"),
-    'OPENAI_API_KEY': os.environ.get('OPENAI_API_KEY', "test-open-ai-key"),
-    'FLASK_ENV': os.environ.get('FLASK_ENV', "development"),
-}
+# # Initialize environment variables dictionary
+# env_vars = {
+#     'SECRET_KEY': os.environ.get('SECRET_KEY', "test-secret-key"),
+#     'OPENAI_API_KEY': os.environ.get('OPENAI_API_KEY', "test-open-ai-key"),
+#     'FLASK_ENV': os.environ.get('FLASK_ENV', "development"),
+# }
 
-# Add production-specific environment variables if not in development
-if env_vars['FLASK_ENV'] != 'development':
-    env_vars.update({
-        'DATABASE_URL': os.environ.get('DATABASE_URL'),
-        'REDIS_URL': os.environ.get('REDISCLOUD_URL'),
-    })
+# # Add production-specific environment variables if not in development
+# if env_vars['FLASK_ENV'] != 'development':
+#     env_vars.update({
+#         'DATABASE_URL': os.environ.get('DATABASE_URL'),
+#         'REDIS_URL': os.environ.get('REDISCLOUD_URL'),
+#     })
 
-# Identify missing variables
-missing_vars = [key for key, value in env_vars.items() if value is None]
+# # Identify missing variables
+# missing_vars = [key for key, value in env_vars.items() if value is None]
 
-if missing_vars:
-    raise EnvironmentError(f"Required environment variables are missing: {', '.join(missing_vars)}")
+# if missing_vars:
+#     raise EnvironmentError(f"Required environment variables are missing: {', '.join(missing_vars)}")
 
-# Assign environment variables to Python variables
-SECRET_KEY = env_vars['SECRET_KEY']
-OPENAI_API_KEY = env_vars['OPENAI_API_KEY']
-FLASK_ENV = env_vars['FLASK_ENV']
+# # Assign environment variables to Python variables
+# SECRET_KEY = env_vars['SECRET_KEY']
+# OPENAI_API_KEY = env_vars['OPENAI_API_KEY']
+# FLASK_ENV = env_vars['FLASK_ENV']
 
-if FLASK_ENV != 'development':
-    RENDER_POSTGRESQL_URL = env_vars['DATABASE_URL'][:8]+'ql' + env_vars['DATABASE_URL'][8:]
-    RENDER_REDIS_URL = env_vars['REDIS_URL']
+# if FLASK_ENV != 'development':
+#     RENDER_POSTGRESQL_URL = env_vars['DATABASE_URL'][:8]+'ql' + env_vars['DATABASE_URL'][8:]
+#     RENDER_REDIS_URL = env_vars['REDIS_URL']
 
 # Define the Flask application
-app = Flask(__name__, static_folder = "react_app/build")
-app.secret_key = SECRET_KEY
-
-# Initialize environment-specific variables and logging
-if FLASK_ENV == 'development':
-    cors_origins = ["http://localhost:3000"]
-    db_uri = 'postgresql://localhost:5432'
-    redis_host = 'localhost'
-    redis_port = 6379
-
-    # Set up logging for development
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s: %(message)s')
-    
-    # Create a file handler and set the level to error
-    file_handler = RotatingFileHandler('TBD_dev.log', maxBytes=1024 * 1024, backupCount=1)
-    file_handler.setLevel(logging.ERROR)
-
-    redis_url = f'redis://{redis_host}:{redis_port}'
-    
-    # Disable rate limiting in development
-    limiter = Limiter(
-        app=app,
-        storage_uri=redis_url,
-        key_func=get_remote_address
-    )
-    logging.debug("Running in development")
-else:
-    cors_origins = ["https://TBD.com", "https://www.TBD.com"]
-    db_uri = RENDER_POSTGRESQL_URL
-    redis_url = RENDER_REDIS_URL
-
-    # Set up logging for production
-    logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s: %(message)s')
-
-    # Create a file handler and set the level to warning
-    file_handler = RotatingFileHandler('TBD_prod.log', maxBytes=1024 * 1024, backupCount=1)
-    file_handler.setLevel(logging.WARNING)
-
-    # Enable rate limiting in production
-    limiter = Limiter(
-        app=app,
-        storage_uri=redis_url,
-        key_func=get_remote_address,
-        default_limits=["200 per day", "50 per hour"]
-    )
-
-# Common logging setup
-formatter = logging.Formatter('%(asctime)s - %(levelname)s: %(message)s')
-file_handler.setFormatter(formatter)
-
-# Add the handlers to the logger
-logging.getLogger().addHandler(file_handler)
 
 CORS(app, resources={r"/*": {"origins": cors_origins}}, supports_credentials=True)
 
@@ -125,18 +73,6 @@ if FLASK_ENV != 'development':
 
 db = SQLAlchemy(app)
 
-Session(app)
-
-# Initialize Flask-Migrate
-migrate = Migrate(app, db)
-
-# Flask-Login Configuration
-login_manager = LoginManager(app)
-bcrypt = Bcrypt(app)
-
-celery = Celery(app.name, broker_url=os.environ.get('REDISCLOUD_URL'),
-        result_backend=os.environ.get('REDISCLOUD_URL') )
-celery.conf.update(app.config)
 
 
 # GuestUser
@@ -286,224 +222,6 @@ class CSSFramework(Enum):
         elif self == CSSFramework.DAISYUI:
             return "data-theme='dark'"
         
-class ChatConversationStatus(Enum):
-    NOT_STARTED = 0
-    RUNNING = 1
-    COMPLETED = 2
-
-class ChatConversation(db.Model):
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    gpt_result = db.Column(db.Text)
-    status = db.Column(db.Enum(ChatConversationStatus, default=ChatConversationStatus.NOT_STARTED, server_default=ChatConversationStatus.NOT_STARTED.name, nullable = False))
-
-class UserSettings(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)  # Ensure one-to-one relationship
-    
-    model_name = db.Column(db.Enum(AssistantModel), default=AssistantModel.GPT_3_5_TURBO, server_default=AssistantModel.GPT_3_5_TURBO.name, nullable=False)
-    color_scheme = db.Column(db.Enum(ColorScheme), default=ColorScheme.SYSTEM, server_default=ColorScheme.SYSTEM.name, nullable=False)
-    show_assistant_messages = db.Column(db.Boolean, default=False, server_default="false", nullable=False)
-    css_framework = db.Column(db.Enum(CSSFramework), default=CSSFramework.DAISYUI, server_default=CSSFramework.BOOTSTRAP.name, nullable=False)
-    
-    user = db.relationship('User', back_populates='settings', uselist=False)
-    
-    def __repr__(self):
-        return f"UserSettings(user_id={self.user_id}, color_scheme='{self.color_scheme.name}'), model_name='{self.model_name.name}', css_framework='{self.css_framework.name}')"
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'user_email': self.user.email,
-            'model_name': self.model_name.name,
-            'color_scheme': self.color_scheme.name,
-            'show_assistant_messages': self.show_assistant_messages,
-            'css_framework': self.css_framework.name
-        }
-
-# User model
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True, nullable=False) # Email Address (Primary)
-    password = db.Column(db.String(60), nullable=False)
-    first_name = db.Column(db.String(50), nullable=True)
-    last_name = db.Column(db.String(50), nullable=True)
-    username = db.Column(db.String(20), unique=True, nullable=True)
-    phone_number = db.Column(db.String(15), nullable=True)
-    bio = db.Column(db.Text, nullable=True)
-
-    projects = db.relationship('Project', secondary=user_project_table, back_populates='users')
-    chat_messages = db.relationship('ChatMessage', back_populates='user')
-    settings = db.relationship('UserSettings', back_populates='user', uselist=False, cascade="all, delete, delete-orphan")
-
-    def __repr__(self):
-        return f"User('{self.email}')"
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'email': self.email,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'username': self.username,
-            'phone_number': self.phone_number,
-            'bio': self.bio
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        user = cls()
-        user.id = data.get('id')
-        user.email = data.get('email')
-        user.first_name = data.get('first_name')
-        user.last_name = data.get('last_name')
-        user.username = data.get('username')
-        user.phone_number = data.get('phone_number')
-        user.bio = data.get('bio')
-        return user
-    
-    @property
-    def is_guest(self):
-        return False
-
-class ChatMessage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String, nullable=False)
-    role = db.Column(db.String, nullable=False)  # 'user' or 'assistant'
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    project_state_id = db.Column(db.Integer, db.ForeignKey('project_state.id'), nullable=False)
-    user = db.relationship('User', back_populates='chat_messages')
-    created_at = db.Column(db.DateTime, nullable=False, default=db.func.now())
-    model_name = db.Column(db.Enum(AssistantModel), default=AssistantModel.GPT_3_5_TURBO, nullable=True)
-    user_email = ""
-
-    def __repr__(self):
-        return f"ChatMessage(ID: {self.id}, User: {self.user_id}, Content: {self.content[:50]})"
-    
-    def to_dict(self):
-        email = self.user_email
-        if self.user:
-            email = self.user.email
-
-        time_str = ""
-        if self.created_at:
-            time_str = self.created_at.strftime('%Y-%m-%d %H:%M:%S')
-
-        model_name = ""
-        if self.model_name:
-            model_name = self.model_name.value
-
-        return {
-            'id': str(self.id),
-            'content': self.content,
-            'role': self.role,
-            'user_id': self.user_id,
-            'project_state_id': str(self.project_state_id),
-            'user_email': email,
-            'created_at': time_str,
-            'model_name': model_name
-        }
-    
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            id=int(data.get('id')),
-            content=data.get('content'),
-            role=data.get('role'),
-            user_id=data.get('user_id'),
-            user_email=data.get('user_email'),
-            project_state_id=int(data.get('project_state_id')),
-            model_name=AssistantModel(data.get('model_name'))
-        )
-
-class ProjectState(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    react_code = db.Column(db.Text, nullable=True)
-    css_code = db.Column(db.Text, nullable=True)
-    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.now())
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
-    chat_messages = db.relationship('ChatMessage', backref='project_state', cascade='all, delete-orphan', order_by=db.asc(ChatMessage.id))
-
-    def __repr__(self):
-        messages_summary = ", ".join([msg.content[:20] for msg in self.chat_messages]) # Truncate messages
-        react_code_summary = self.react_code[:50] if self.react_code else "None" # Truncate react code
-        css_code_summary = self.css_code[:50] if self.css_code else "None" # Truncate css code
-        return f"ProjectState(ID: {self.id}, Project: {self.project_id}, Messages: [{messages_summary}], React Code: {react_code_summary}, CSS Code: {css_code_summary})"
-    
-    def to_dict(self):
-        return {
-            'id': str(self.id),
-            'reactCode': self.react_code,
-            'cssCode': self.css_code,
-            'projectID': str(self.project_id),
-            'messages': [msg.to_dict() for msg in self.chat_messages]
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            id=int(data.get('id')),
-            react_code=data.get('reactCode'),
-            css_code=data.get('cssCode'),
-            project_id=int(data.get('projectID')),
-            chat_messages=[ChatMessage.from_dict(message) for message in data.get('messages', [])]
-        )
-
-
-class Project(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=db.func.now())
-    last_modified_at = db.Column(db.DateTime, nullable=False, default=db.func.now(), onupdate=db.func.now())
-    last_accessed_at = db.Column(db.DateTime)
-    css_framework = db.Column(db.Enum(CSSFramework), default=CSSFramework.DAISYUI, server_default=CSSFramework.BOOTSTRAP.name, nullable=False)
-    project_states = db.relationship('ProjectState', backref='project', cascade='all, delete-orphan', order_by=db.asc(ProjectState.id))
-    users = db.relationship('User', secondary=user_project_table, back_populates='projects')
-
-    def __repr__(self):
-        return f"Project('{self.name}')"
-    
-    def to_dict(self):
-        if isinstance(self.css_framework, CSSFramework):
-            css_framework = self.css_framework.name
-        else:
-            css_framework = self.css_framework
-        return {
-            'id': str(self.id),
-            'name': self.name,
-            'users': [{'email': user.email, 'id': user.id} for user in self.users],
-            'projectStates': [{
-                'reactCode': state.react_code,
-                'cssCode': state.css_code,
-                'messages': [msg.to_dict() for msg in state.chat_messages]
-            } for state in self.project_states],
-            'cssFramework': css_framework
-        }
-    
-    @classmethod
-    def from_dict(cls, data):
-        project = cls()
-        project.id = int(data.get('id'))
-        project.name = data.get('name')
-                
-        # Users
-        user_data = data.get('users', [])
-        logging.debug(f"Creating user list from user_data: {user_data}")
-        project.users = [User.from_dict(user) for user in user_data]
-        logging.debug(f"user list: {project.users}")
-        
-        # Project States
-        state_data = data.get('projectStates', [])
-        logging.debug(f"Creating project state list from state_data: {state_data}")
-        project.project_states = [ProjectState.from_dict(state) for state in state_data]
-
-        # CSS Framework
-        css_framework_data = data.get('cssFramework', )
-        logging.debug(f"Creating project css framework from css_framework_data: {css_framework_data}")
-        project.css_framework = css_framework_data
-        
-        return project
 
 # Define a function to convert the messages into a string, including the keys
 def messages_to_string(messages):
@@ -740,90 +458,6 @@ def load_user(user_id):
 def unauthorized():
     return jsonify({"error": "Unauthorized"}), 401
 
-@app.route('/api/auth-status', methods=['GET'])
-def auth_status():
-    # Print session data for debugging
-    logging.debug(f"session: {session}")
-    logging.debug(f"current_user: {current_user}")
-    logging.debug(f"current_user.id: {current_user.id}")
-    logging.debug(f"current_user.is_authenticated: {current_user.is_authenticated}")
-    logging.debug(f"current_user.is_guest: {current_user.is_guest}")
-    
-    response_data = {
-        'isAuthenticated': current_user.is_authenticated,
-        'isGuest': current_user.is_guest
-    }
-    
-    response = jsonify(response_data)
-    return response
-
-@app.route('/api/sign-up', methods=['POST'])
-def sign_up():
-    data = request.get_json()
-    email = data['email']
-    password = data['password']
-
-    # Check if the email already exists
-    existing_user = User.query.filter_by(email=email).first()
-    if existing_user:
-        return jsonify({'status': 'error', 'message': 'Email already exists. Please choose a different email.'}), 400
-
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    user = User(email=email, password=hashed_password)
-    user.settings = UserSettings()
-    
-    db.session.add(user)
-    db.session.commit()
-    
-    login_user(user, remember=True)
-
-    is_guest_sign_up = len(session.get('projects', [])) > 0
-
-    migrate_guest_projects_to_db(user)
-
-    response = jsonify({'status': 'success'})
-    return response
-
-
-@app.route('/api/guest-auth', methods=['POST'])
-def guest_auth():
-    logging.debug(f"guest logging in")
-    # Here, create an instance of the GuestUser with the UUID
-    guest_user = GuestUser()
-    guest_user.setup()
-    logging.debug(f"guest_user.id: {guest_user.id}")
-
-    login_user(guest_user, remember=False)
-
-    return jsonify({'status': 'success'})
-
-@app.route('/api/sign-in', methods=['POST'])
-def sign_in():
-    data = request.get_json()
-    email = data['email']
-    password = data['password']
-    user = User.query.filter_by(email=email).first()
-    if user and bcrypt.check_password_hash(user.password, password):
-        login_user(user, remember=True)
-         # Print session data for debugging
-        logging.debug(f"session: {session}")
-        logging.debug(f"current_user.is_authenticated: {current_user.is_authenticated}")
-        logging.debug(f"current_user: {current_user}")
-
-        migrate_guest_projects_to_db(user)
-
-
-        response = jsonify({'status': 'success'})
-        return response
-    else:
-        return jsonify({'status': 'failure', 'message': 'Sign In Unsuccessful. Please check email and password'})
-
-@app.route('/api/sign-out', methods=['POST'])
-def sign_out():
-    logout_user()
-    response = jsonify({'status': 'success'})
-    return response
-
 def migrate_guest_projects_to_db(user):
     # Retrieve projects from the session
     projects_data = session.get('projects', [])
@@ -989,14 +623,7 @@ def task_result(id: str) -> dict[str, object]:
         "value": result.result if result.ready() else None,
     }
 
-# React FE code served here temporarily.
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+    
 
 def pad_user_id(user_id, min_length=5, padding_char='0'):
     """Pad the user ID to meet a minimum length."""
