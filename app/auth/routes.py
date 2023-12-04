@@ -6,10 +6,10 @@ from app.models.project import Project
 from app.models.project_state import ProjectState
 from app.models.user import User
 from app.models.user_settings import UserSettings
-from flask import request, jsonify, session
+from flask import request, jsonify, session, current_app
 from flask_login import login_user, logout_user
 from app.extensions import db
-import bcrypt
+from flask_bcrypt import Bcrypt
 
 @bp.route('/api/sign-up', methods=['POST'])
 def sign_up():
@@ -22,6 +22,7 @@ def sign_up():
     if existing_user:
         return jsonify({'status': 'error', 'message': 'Email already exists. Please choose a different email.'}), 400
 
+    bcrypt = Bcrypt(current_app)
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     user = User(email=email, password=hashed_password)
     user.settings = UserSettings()
