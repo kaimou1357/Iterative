@@ -1,12 +1,11 @@
 from flask import Flask
 from flask_cors import CORS
-from flask_login import LoginManager
 from flask_session import Session
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from celery import Celery
 from config import Config
-from app.extensions import db
+from app.extensions import db, login_manager
 from config import Config
 
 def create_app(config_class=Config):
@@ -14,7 +13,6 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     # Initialize Flask extensions here
-    login_manager = LoginManager(app)
     session = Session(app)
     migrate = Migrate(app, db)
     bcrypt = Bcrypt(app)

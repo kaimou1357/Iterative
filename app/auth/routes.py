@@ -8,7 +8,7 @@ from app.models.user import User
 from app.models.user_settings import UserSettings
 from flask import request, jsonify, session, current_app
 from flask_login import login_user, logout_user
-from app.extensions import db
+from app.extensions import db, login_manager
 from flask_bcrypt import Bcrypt
 
 @bp.route('/api/sign-up', methods=['POST'])
@@ -54,6 +54,7 @@ def sign_in():
     email = data['email']
     password = data['password']
     user = User.query.filter_by(email=email).first()
+    bcrypt = Bcrypt(current_app)
     if user and bcrypt.check_password_hash(user.password, password):
         login_user(user, remember=True)
          # Print session data for debugging
@@ -113,3 +114,12 @@ def migrate_guest_projects_to_db(user):
     session.pop('projects', None)
     # Clear the guest_uuid from the session
     session.pop('guest_uuid', None)
+    
+# Login Manager Init
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return jsonify({"error": "Unauthorized"}), 401
