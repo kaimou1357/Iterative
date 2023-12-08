@@ -22,15 +22,6 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
     CORS(app)
-    
-    # Login Manager Init
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
-
-    @login_manager.unauthorized_handler
-    def unauthorized():
-        return jsonify({"error": "Unauthorized"}), 401
 
     # Register blueprints here
     from app.main import bp as main_bp
@@ -44,4 +35,29 @@ def create_app(config_class=Config):
     app.register_blueprint(settings_bp)
     app.register_blueprint(core_bp)
     return app
+  
+def make_celery(app=None):
+    """
+    Create a new Celery object and tie together the Celery config to the app's
+    config. Wrap all tasks in the context of the application.
+
+    :param app: Flask app
+    :return: Celery app
+    """
+    app = app or create_app()
+
+    celery = Celery(app.import_name)
+    celery.conf.broker_url = os.environ.get("REDISCLOUD_URL", "redis://localhost:6379/0")
+    celery.conf.result_backend = os.environ.get("REDISCLOUD_URL", "redis://localhost:6379/0")
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
   

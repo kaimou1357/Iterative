@@ -1,13 +1,9 @@
-from celery import Celery, shared_task
-import os
-
+from app import make_celery
 from openai import OpenAI
 
-celery = Celery('Iterative')
-celery.conf.broker_url = os.environ.get("REDISCLOUD_URL", "redis://localhost:6379/0")
-celery.conf.result_backend = os.environ.get("REDISCLOUD_URL", "redis://localhost:6379/0")
+celery = make_celery()
 
-@shared_task
+@celery.task
 def stream_gpt_response(model_name, messages, tokens_remaining):
     openai_client = OpenAI(api_key = os.environ.get('OPENAI_API_KEY'), organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
     response = openai_client.chat.completions.create(
