@@ -1,9 +1,9 @@
-from app import make_celery
+import os
+from app import create_app
 from openai import OpenAI
+from celery import shared_task
 
-celery = make_celery()
-
-@celery.task
+@shared_task
 def stream_gpt_response(model_name, messages, tokens_remaining):
     openai_client = OpenAI(api_key = os.environ.get('OPENAI_API_KEY'), organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
     response = openai_client.chat.completions.create(
