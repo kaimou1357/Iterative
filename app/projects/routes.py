@@ -24,10 +24,6 @@ def create_project():
         # Add and commit the new project to the database
         db.session.add(project)
         db.session.commit()
-    elif current_user.is_guest:
-        project.id = uuid.uuid4().int
-        project.css_framework = CSSFramework.BOOTSTRAP
-        current_user.add_project(project)
 
     # Return a success response
     return jsonify({'status': 'success', 'project': project.to_dict()})
@@ -40,8 +36,6 @@ def delete_project():
     if current_user.is_authenticated:
         # Retrieve the project by its ID
         project = Project.query.get(project_id)
-    elif current_user.is_guest:
-        project = current_user.get_project(project_id)
         
     # Check if the project exists
     if project is None:
@@ -56,8 +50,6 @@ def delete_project():
         # Delete the project from the database
         db.session.delete(project)
         db.session.commit()
-    elif current_user.is_guest:
-        current_user.delete_project(project)
 
     # Return a success response
     return jsonify({'status': 'success', 'message': 'Project deleted successfully'})

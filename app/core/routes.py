@@ -16,14 +16,6 @@ def generate():
         dark_mode_str = project.css_framework.dark_mode_str()
         model_name = current_user.settings.model_name.value
         model = current_user.settings.model_name
-    else:
-        # For non-logged-in users, use the session to store project state.
-        project = current_user.get_project(project_id)
-        css_framework_str = CSSFramework.BOOTSTRAP.to_str()
-        dark_mode_str = CSSFramework.BOOTSTRAP.dark_mode_str()
-        model_name = AssistantModel.GPT_3_5_TURBO.value
-        model = AssistantModel.GPT_3_5_TURBO
-
     
     if project is None:
         return jsonify({'error': 'Project not found'}), 404
