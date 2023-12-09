@@ -29,7 +29,7 @@ def create_app():
     bcrypt = Bcrypt(app)
     db.init_app(app)
     login_manager.init_app(app)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": app.config['CORS_ORIGINS']}}, supports_credentials=True)
   
     celery_init_app(app)
 

@@ -23,6 +23,7 @@ class DevelopmentConfig(Base):
     result_backend=REDIS_URL,
   )
   SESSION_REDIS = redis.from_url(REDIS_URL)
+  CORS_ORIGINS = ["http://localhost:3000"]
   
 class ProductionConfig(Base):
   DEBUG=False
@@ -35,3 +36,4 @@ class ProductionConfig(Base):
     result_backend=REDIS_URL,
   )
   SESSION_REDIS = redis.from_url(REDIS_URL)
+  CORS_ORIGINS = []
