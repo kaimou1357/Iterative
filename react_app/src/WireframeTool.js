@@ -13,7 +13,6 @@ import Settings from './Settings';
 import Spinner from 'react-bootstrap/Spinner';
 import { useSettings } from './SettingsContext';
 import ReactMarkdown from 'react-markdown';
-import { trackEvent } from './amplitudeUtils';
 
 const WireframeTool = () => {
   const [loading, setLoading] = useState(false);
@@ -321,7 +320,6 @@ const WireframeTool = () => {
     const eventProperties = {
       is_authenticated: isAuthenticated,
     };
-    trackEvent('Download Code', eventProperties); 
     
     if (!isAuthenticated) {
       alert('Please sign in or sign up to download code.');
