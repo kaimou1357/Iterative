@@ -55,7 +55,7 @@ def sign_out():
 def auth_status():
     response_data = {
         'isAuthenticated': current_user.is_authenticated,
-        'isGuest': current_user.is_guest
+        'isGuest': False
     }
     
     response = jsonify(response_data)

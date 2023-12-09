@@ -5,9 +5,7 @@ from flask_session import Session
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from celery import Celery, Task
-from config import Config
 from app.extensions import db, login_manager
-from config import Config
   
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
@@ -21,10 +19,10 @@ def celery_init_app(app: Flask) -> Celery:
     app.extensions["celery"] = celery_app
     return celery_app
   
-def create_app(config_class=Config):
+def create_app():
     app = Flask(__name__, static_folder = "../react_app/build")
-    app.config.from_object(config_class)
-
+    app.config.from_object(os.environ.get("APP_SETTINGS"))
+    
     # Initialize Flask extensions here
     session = Session(app)
     migrate = Migrate(app, db)
