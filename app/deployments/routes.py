@@ -13,9 +13,12 @@ def deployments_get():
 def deployments_post():
   data = request.json
   project_state_id = data.get("project_state_id")
-  deployment = Deployment(project_state_id=project_state_id, user_id=current_user.id, password="test")
+  deployment = Deployment(project_state_id=project_state_id, user_id=current_user.id, password="test", name="test deployment")
   db.session.add(deployment)
   db.session.commit()
-  return jsonify({"success": True})
+  return jsonify({"deployment": deployment.serialize()})
 
+@bp.get("/api/deployments/<deployment_id>")
+def deployment_get(deployment_id: int):
+  pass
 
