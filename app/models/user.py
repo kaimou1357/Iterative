@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     projects = db.relationship('Project', secondary=user_project_table, back_populates='users')
     chat_messages = db.relationship('ChatMessage', back_populates='user')
     settings = db.relationship('UserSettings', back_populates='user', uselist=False, cascade="all, delete, delete-orphan")
+    deployments = db.relationship('Deployment')
 
     def __repr__(self):
         return f"User('{self.email}')"

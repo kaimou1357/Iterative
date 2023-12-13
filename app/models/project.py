@@ -28,7 +28,8 @@ class Project(db.Model):
             'projectStates': [{
                 'reactCode': state.react_code,
                 'cssCode': state.css_code,
-                'messages': [msg.to_dict() for msg in state.chat_messages]
+                'messages': [msg.to_dict() for msg in state.chat_messages],
+                'projectStateId': state.id,
             } for state in self.project_states],
             'cssFramework': css_framework
         }

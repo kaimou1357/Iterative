@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect, useContext, useLayoutEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from './AuthContext';
 import LiveCodeEditor from './LiveCodeEditor';
 import ProjectsModal from './ProjectsModal';
-import RecordingComponent from './RecordingComponent';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-import { saveAs } from 'file-saver';
-import JSZip from 'jszip';
 import { API_BASE_URL } from './config';
 import Settings from './Settings';
 import Spinner from 'react-bootstrap/Spinner';
@@ -28,6 +26,8 @@ const WireframeTool = () => {
   const [showGenerationSpinner, setGenerationSpinner] = useState(false);
   const { settings } = useSettings();
   const lastMessageRef = useRef(null);
+
+  const navigate = useNavigate();
 
   const handleOpenSignInModal = () => {
     setIsSignInModalOpen(true);
@@ -128,7 +128,8 @@ const WireframeTool = () => {
       projectStates: project.projectStates.map((state) => ({
         reactCode: state.reactCode,
         cssCode: state.cssCode,
-        messages: state.messages
+        messages: state.messages,
+        projectStateId: state.projectStateId
       })),
       cssFramework: project.cssFramework
     };
@@ -305,34 +306,14 @@ const WireframeTool = () => {
     }
   };
 
-  const createZipAndDownload = async (files) => {
-    const zip = new JSZip();
-  
-    files.forEach(file => {
-      zip.file(file.name, file.content);
-    });
-  
-    const content = await zip.generateAsync({ type: "blob" });
-    saveAs(content, "code-files.zip");
-  }
-
-  const downloadFile = () => {
-    const eventProperties = {
-      is_authenticated: isAuthenticated,
-    };
-    
-    if (!isAuthenticated) {
-      alert('Please sign in or sign up to download code.');
-      return;
-    }
-
-    const files = [
-      { name: 'react-code.js', content: reactCode() },
-      { name: 'styles.css', content: cssCode() }
-    ];
-
-    createZipAndDownload(files);
+  const navigateToDeployments = () => {
+    navigate("/deployments")
   };
+
+  const createDeployment = async(projectStateId) => {
+    console.log(projectStateId);
+    const response = await axios.post(`${API_BASE_URL}/deployments`, { project_state_id:  projectStateId});
+  }
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -433,7 +414,10 @@ const WireframeTool = () => {
                   </strong> <span className="text-muted">{message.created_at}</span>
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                 </div>
-                {message.role === 'user' && <button className="btn btn-outline-primary btn-sm" onClick={() => loadProjectState(project.projectStates[index])}>Load</button>}
+                <div>
+                  {message.role === 'user' && <button className="btn btn-outline-success btn-sm" onClick={() => createDeployment(project.projectStates[index].projectStateId)} value={index}>Create Deployment</button>}
+                  {message.role === 'user' && <button className="btn btn-outline-primary btn-sm" onClick={() => loadProjectState(project.projectStates[index])}>Load</button>}
+                </div>
               </li>
             ))
           }
@@ -448,7 +432,6 @@ const WireframeTool = () => {
             rows="2"
             placeholder="Write something like: 'Build me a contact form for my website'"
           />
-          <RecordingComponent onTranscription={handleTranscription} isDisabled={project.id === null || loading || resetting} />
         </div>
         <div class="mb-3">
          { showGenerationSpinner? 
@@ -464,8 +447,8 @@ const WireframeTool = () => {
           <button type="button" className="btn btn-danger" onClick={handleReset} disabled={project.id === null || loading || resetting}>
             Reset
           </button>
-          <button type="button" className="btn btn-success" onClick={downloadFile} disabled={!reactCode()}>
-            Download Code
+          <button type="button" className="btn btn-success" onClick={navigateToDeployments}>
+            Deployments
           </button>
           <button type="button" className="btn btn-info" onClick={handleOpenProjectsModal} disabled={loading || resetting}>
             Projects

@@ -6,3 +6,10 @@ class Deployment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     password = db.Column(db.String(20), nullable = False)
     
+    def serialize(self):
+      return {
+        "id": self.id,
+        "project_state_id": self.project_state_id,
+        "user_id": self.user_id,
+      }
+    
