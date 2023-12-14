@@ -1,15 +1,17 @@
 from flask import jsonify, request
-from flask_login import current_user
+from flask_login import current_user, login_required
 from app.main import bp
 from app.models.deployment import Deployment
 from app.extensions import db
 
 @bp.get("/api/deployments")
+@login_required
 def deployments_get():
   deployments = current_user.deployments
   return jsonify({"deployments": [d.serialize() for d in deployments]})
 
 @bp.post("/api/deployments")
+@login_required
 def deployments_post():
   data = request.json
   project_state_id = data.get("project_state_id")
@@ -20,5 +22,6 @@ def deployments_post():
 
 @bp.get("/api/deployments/<deployment_id>")
 def deployment_get(deployment_id: int):
-  pass
+  deployment = Deployment.query.get(deployment_id)
+  return jsonify({"deployment": deployment.show()})
 

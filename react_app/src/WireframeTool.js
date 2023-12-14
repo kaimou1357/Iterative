@@ -62,8 +62,6 @@ const WireframeTool = () => {
   };
 
   useEffect(() => {
-    console.log("isAuthenticated:", isAuthenticated);
-    console.log("isGuest:", isGuest);
     if (isAuthenticated) {
       handleCloseSignUpModal();
       handleCloseSignInModal();

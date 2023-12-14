@@ -19,6 +19,9 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.email}')"
+      
+    def get_id(self):
+      return self.id
     
     def to_dict(self):
         return {

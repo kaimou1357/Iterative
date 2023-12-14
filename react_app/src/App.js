@@ -10,6 +10,7 @@ import LandingPage from './LandingPage';
 import { SettingsProvider, useSettings } from './SettingsContext'; // Import the SettingsProvider and useSettings
 import VersionBadge from './VersionBadge';
 import Deployments from './Deployments';
+import ShowDeployment from './ShowDeployment';
 
 function App() {
   const { settings } = useSettings(); // Use the centralized settings
@@ -50,7 +51,8 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/deployments" element={<Deployments />} />
+          <Route path="/deployments" element={<ProtectedRoute component={Deployments} />} />
+          <Route path="/deployments/:id" element={<ShowDeployment />} />
           <Route path="/wireframe-tool" element={<ProtectedRoute component={WireframeTool} />} />
         </Routes>
         <VersionBadge />

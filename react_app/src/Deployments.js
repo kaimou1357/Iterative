@@ -1,11 +1,10 @@
 import React from 'react';
+import DeploymentList from './DeploymentList';
 
 const Deployments = () => {
-    return (
-        <div className="d-flex flex-column align-items-center justify-content-center vh-100 gap-3">
-          Hello world
-        </div>
-    );
+  return (
+    <DeploymentList />
+  );
 };
 
 export default Deployments;
