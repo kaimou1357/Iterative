@@ -394,7 +394,7 @@ const WireframeTool = () => {
     <div className="container" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <h2 style={{ textAlign: 'center', marginTop: '15px' }}>{project.name || 'Welcome! Please click on \'Projects\' below and select a project.'}</h2>
       <div className="preview-container" style={{ flex: 1, overflow: 'auto', border: '2px solid', borderRadius: '10px' }}>
-        {reactCode() && <LiveCodeEditor code={reactCode()} css={cssCode()} cssFramework={project.cssFramework} />}
+        {reactCode() && <LiveCodeEditor code={reactCode()} css={cssCode()} cssFramework={project.cssFramework} fullScreen={false} />}
       </div>
       <div className="border rounded" style={{ overflowY: 'scroll', maxHeight: '100px', marginTop: '15px' }}>
         <ul className="list-group">

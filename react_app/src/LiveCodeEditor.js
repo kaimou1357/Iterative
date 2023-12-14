@@ -56,7 +56,7 @@ import * as esbuild from 'esbuild-wasm';
 //   }
 // `;
 
-const LiveCodeEditor = ({ code, css, cssFramework }) => {
+const LiveCodeEditor = ({ code, css, cssFramework, fullScreen }) => {
   const iframeRef = useRef(null);
 
   const updateIframeContent = async () => {
@@ -67,8 +67,6 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
 
     let cssHead = ``;
     let cssBody = ``;
-
-    console.log('cssFramework:', cssFramework);
 
     if (cssFramework === "DAISYUI") {
       cssHead = `

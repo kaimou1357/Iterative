@@ -23,6 +23,6 @@ class Deployment(db.Model):
       project_state = ProjectState.query.get(self.project_state_id)
       return {
         "id": self.id,
-        "javascript_code": project_state.react_code,
+        "react_code": project_state.react_code,
       }
     
