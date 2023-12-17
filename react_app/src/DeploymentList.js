@@ -31,8 +31,8 @@ const DeploymentList = () => {
           <thead className="thead-dark">
           <tr>
             <th scope="col">Deployment Name</th>
-            <th scope="col">Password</th>
-            <th scope="col">Link to Access</th>
+            <th scope="col">Passcode</th>
+            <th scope="col">Access</th>
           </tr>
           </thead>
           <tbody>
@@ -41,7 +41,7 @@ const DeploymentList = () => {
                 <tr key={idx}>
                   <th scope = "row">{deployment.name}</th>
                   <td>{deployment.password}</td>
-                  <td><Link to={`/deployments/${deployment.id}`} relative="path">Click to Access</Link></td>
+                  <td><Link to={`/deployments/${deployment.id}`} relative="path">Open</Link></td>
                 </tr>
               );
             })}

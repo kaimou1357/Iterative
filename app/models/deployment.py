@@ -5,10 +5,10 @@ from app.models.project_state import ProjectState
 
 class Deployment(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    name = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     project_state_id = db.Column(db.Integer, db.ForeignKey('project_state.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
-    password = db.Column(db.String(20), nullable = False)
+    password = db.Column(db.String(40), nullable = False)
     
     def serialize(self):
       return {

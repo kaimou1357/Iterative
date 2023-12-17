@@ -11,6 +11,7 @@ import Settings from './Settings';
 import Spinner from 'react-bootstrap/Spinner';
 import { useSettings } from './SettingsContext';
 import ReactMarkdown from 'react-markdown';
+import DeploymentModal from './DeploymentModal'
 
 const WireframeTool = () => {
   const [loading, setLoading] = useState(false);
@@ -20,6 +21,8 @@ const WireframeTool = () => {
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true); // State to track the submit button's disabled status
   const { isAuthenticated, isGuest, signOut } = useContext(AuthContext);
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
+  const [isDeploymentsModalOpen, setIsDeploymentsModalOpen] = useState(false);
+  const [projectStateId, setProjectStateId] = useState("");
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
@@ -52,6 +55,10 @@ const WireframeTool = () => {
   const handleCloseProjectsModal = () => {
     setIsProjectsModalOpen(false);
   };
+
+  const handleCloseDeploymentsModal = () => {
+    setIsDeploymentsModalOpen(false);
+  }
 
   const handleOpenSettingsModal = () => {
     setIsSettingsModalOpen(true);
@@ -308,9 +315,10 @@ const WireframeTool = () => {
     navigate("/deployments")
   };
 
-  const createDeployment = async(projectStateId) => {
-    console.log(projectStateId);
-    const response = await axios.post(`${API_BASE_URL}/deployments`, { project_state_id:  projectStateId});
+  const handleCreateDeployment = async(projectStateId) => {
+    setIsDeploymentsModalOpen(true);
+    setProjectStateId(projectStateId);
+    console.log("Opened Deployments Modal");
   }
   
   const handleSubmit = async (e) => {
@@ -413,7 +421,7 @@ const WireframeTool = () => {
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                 </div>
                 <div>
-                  {message.role === 'user' && <button className="btn btn-outline-success btn-sm" onClick={() => createDeployment(project.projectStates[index].projectStateId)} value={index}>Create Deployment</button>}
+                  {message.role === 'user' && <button className="btn btn-outline-success btn-sm" onClick={() => handleCreateDeployment(project.projectStates[index].projectStateId)} value={index}>Create Deployment</button>}
                   {message.role === 'user' && <button className="btn btn-outline-primary btn-sm" onClick={() => loadProjectState(project.projectStates[index])}>Load</button>}
                 </div>
               </li>
@@ -480,6 +488,7 @@ const WireframeTool = () => {
       )}
     </div>
     <ProjectsModal isOpen={isProjectsModalOpen} onClose={handleCloseProjectsModal} onSelectProject={loadProjectDetails} onDeleteProject={handleDeleteProject} />
+    <DeploymentModal isOpen={isDeploymentsModalOpen} onClose={handleCloseDeploymentsModal} projectStateId = {projectStateId} />
     <Settings isOpen={isSettingsModalOpen} onClose={handleCloseSettingsModal} />
     <div className={`modal fade ${isSignInModalOpen && !isAuthenticated ? 'show d-block' : 'd-none'}`} tabIndex="-1">
         <div className="modal-dialog">

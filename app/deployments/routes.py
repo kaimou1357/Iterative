@@ -15,7 +15,9 @@ def deployments_get():
 def deployments_post():
   data = request.json
   project_state_id = data.get("project_state_id")
-  deployment = Deployment(project_state_id=project_state_id, user_id=current_user.id, password="test", name="test deployment")
+  deployment_name = data.get("deployment_name")
+  passcode = data.get("passcode")
+  deployment = Deployment(project_state_id=project_state_id, user_id=current_user.id, password=passcode, name=deployment_name)
   db.session.add(deployment)
   db.session.commit()
   return jsonify({"deployment": deployment.serialize()})
