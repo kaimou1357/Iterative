@@ -1,18 +1,15 @@
 import React, { useState, useRef, useEffect, useContext, useLayoutEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from './AuthContext';
 import LiveCodeEditor from './LiveCodeEditor';
 import ProjectsModal from './ProjectsModal';
-import RecordingComponent from './RecordingComponent';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
-import { saveAs } from 'file-saver';
-import JSZip from 'jszip';
 import { API_BASE_URL } from './config';
 import Settings from './Settings';
 import Spinner from 'react-bootstrap/Spinner';
 import { useSettings } from './SettingsContext';
 import ReactMarkdown from 'react-markdown';
+import DeploymentModal from './DeploymentModal'
 
 const WireframeTool = () => {
   const [loading, setLoading] = useState(false);
@@ -22,28 +19,14 @@ const WireframeTool = () => {
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true); // State to track the submit button's disabled status
   const { isAuthenticated, isGuest, signOut } = useContext(AuthContext);
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
+  const [isDeploymentsModalOpen, setIsDeploymentsModalOpen] = useState(false);
+  const [projectStateId, setProjectStateId] = useState("");
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
-  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [showGenerationSpinner, setGenerationSpinner] = useState(false);
   const { settings } = useSettings();
   const lastMessageRef = useRef(null);
 
-  const handleOpenSignInModal = () => {
-    setIsSignInModalOpen(true);
-  };
-
-  const handleCloseSignInModal = () => {
-    setIsSignInModalOpen(false);
-  };
-
-  const handleOpenSignUpModal = () => {
-    setIsSignUpModalOpen(true);
-  };
-
-  const handleCloseSignUpModal = () => {
-    setIsSignUpModalOpen(false);
-  };
+  const navigate = useNavigate();
 
   const handleOpenProjectsModal = () => {
     setIsProjectsModalOpen(true);
@@ -52,6 +35,10 @@ const WireframeTool = () => {
   const handleCloseProjectsModal = () => {
     setIsProjectsModalOpen(false);
   };
+
+  const handleCloseDeploymentsModal = () => {
+    setIsDeploymentsModalOpen(false);
+  }
 
   const handleOpenSettingsModal = () => {
     setIsSettingsModalOpen(true);
@@ -62,12 +49,7 @@ const WireframeTool = () => {
   };
 
   useEffect(() => {
-    console.log("isAuthenticated:", isAuthenticated);
-    console.log("isGuest:", isGuest);
     if (isAuthenticated) {
-      handleCloseSignUpModal();
-      handleCloseSignInModal();
-
       refreshProject();
     }
   }, [isAuthenticated, isGuest]);
@@ -128,7 +110,8 @@ const WireframeTool = () => {
       projectStates: project.projectStates.map((state) => ({
         reactCode: state.reactCode,
         cssCode: state.cssCode,
-        messages: state.messages
+        messages: state.messages,
+        projectStateId: state.projectStateId
       })),
       cssFramework: project.cssFramework
     };
@@ -305,34 +288,15 @@ const WireframeTool = () => {
     }
   };
 
-  const createZipAndDownload = async (files) => {
-    const zip = new JSZip();
-  
-    files.forEach(file => {
-      zip.file(file.name, file.content);
-    });
-  
-    const content = await zip.generateAsync({ type: "blob" });
-    saveAs(content, "code-files.zip");
-  }
-
-  const downloadFile = () => {
-    const eventProperties = {
-      is_authenticated: isAuthenticated,
-    };
-    
-    if (!isAuthenticated) {
-      alert('Please sign in or sign up to download code.');
-      return;
-    }
-
-    const files = [
-      { name: 'react-code.js', content: reactCode() },
-      { name: 'styles.css', content: cssCode() }
-    ];
-
-    createZipAndDownload(files);
+  const navigateToDeployments = () => {
+    navigate("/deployments")
   };
+
+  const handleCreateDeployment = async(projectStateId) => {
+    setIsDeploymentsModalOpen(true);
+    setProjectStateId(projectStateId);
+    console.log("Opened Deployments Modal");
+  }
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -415,7 +379,7 @@ const WireframeTool = () => {
     <div className="container" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <h2 style={{ textAlign: 'center', marginTop: '15px' }}>{project.name || 'Welcome! Please click on \'Projects\' below and select a project.'}</h2>
       <div className="preview-container" style={{ flex: 1, overflow: 'auto', border: '2px solid', borderRadius: '10px' }}>
-        {reactCode() && <LiveCodeEditor code={reactCode()} css={cssCode()} cssFramework={project.cssFramework} />}
+        {reactCode() && <LiveCodeEditor code={reactCode()} css={cssCode()} cssFramework={project.cssFramework} fullScreen={false} />}
       </div>
       <div className="border rounded" style={{ overflowY: 'scroll', maxHeight: '100px', marginTop: '15px' }}>
         <ul className="list-group">
@@ -433,7 +397,10 @@ const WireframeTool = () => {
                   </strong> <span className="text-muted">{message.created_at}</span>
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                 </div>
-                {message.role === 'user' && <button className="btn btn-outline-primary btn-sm" onClick={() => loadProjectState(project.projectStates[index])}>Load</button>}
+                <div>
+                  {message.role === 'user' && <button className="btn btn-outline-success btn-sm" onClick={() => handleCreateDeployment(project.projectStates[index].projectStateId)} value={index}>Create Deployment</button>}
+                  {message.role === 'user' && <button className="btn btn-outline-primary btn-sm" onClick={() => loadProjectState(project.projectStates[index])}>Load</button>}
+                </div>
               </li>
             ))
           }
@@ -448,7 +415,6 @@ const WireframeTool = () => {
             rows="2"
             placeholder="Write something like: 'Build me a contact form for my website'"
           />
-          <RecordingComponent onTranscription={handleTranscription} isDisabled={project.id === null || loading || resetting} />
         </div>
         <div class="mb-3">
          { showGenerationSpinner? 
@@ -464,32 +430,19 @@ const WireframeTool = () => {
           <button type="button" className="btn btn-danger" onClick={handleReset} disabled={project.id === null || loading || resetting}>
             Reset
           </button>
-          <button type="button" className="btn btn-success" onClick={downloadFile} disabled={!reactCode()}>
-            Download Code
+          <button type="button" className="btn btn-success" onClick={navigateToDeployments}>
+            Deployments
           </button>
           <button type="button" className="btn btn-info" onClick={handleOpenProjectsModal} disabled={loading || resetting}>
             Projects
           </button>
-          {isAuthenticated ? (
-            <>
-              <button type="button" className="btn btn-secondary" onClick={handleOpenSettingsModal} disabled={loading || resetting}>
-                Settings
-              </button>
-              <button type="button" className="btn btn-warning" onClick={handleSignOut}>
-                Sign Out
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="button" className="btn btn-primary" onClick={handleOpenSignInModal}>
-                Sign In
-              </button>
-              <button type="button" className="btn btn-primary" onClick={handleOpenSignUpModal}>
-                Sign Up
-              </button>
-            </>
-          )}
-        </div>
+          <button type="button" className="btn btn-secondary" onClick={handleOpenSettingsModal} disabled={loading || resetting}>
+            Settings
+          </button>
+          <button type="button" className="btn btn-warning" onClick={handleSignOut}>
+            Sign Out
+          </button>
+      </div>
       </form>
       {errorState && (
         <div className="mt-4">
@@ -499,33 +452,8 @@ const WireframeTool = () => {
       )}
     </div>
     <ProjectsModal isOpen={isProjectsModalOpen} onClose={handleCloseProjectsModal} onSelectProject={loadProjectDetails} onDeleteProject={handleDeleteProject} />
+    <DeploymentModal isOpen={isDeploymentsModalOpen} onClose={handleCloseDeploymentsModal} projectStateId = {projectStateId} />
     <Settings isOpen={isSettingsModalOpen} onClose={handleCloseSettingsModal} />
-    <div className={`modal fade ${isSignInModalOpen && !isAuthenticated ? 'show d-block' : 'd-none'}`} tabIndex="-1">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Sign In</h5>
-              <button type="button" className="btn-close" onClick={handleCloseSignInModal}></button>
-            </div>
-            <div className="modal-body" style={{ width: '100%', height: '100%' }}>
-              {!isAuthenticated && <SignIn key={isAuthenticated ? 'authenticated' : 'unauthenticated'} />}
-            </div>
-          </div>
-        </div>
-    </div>
-    <div className={`modal fade ${isSignUpModalOpen && !isAuthenticated ? 'show d-block' : 'd-none'}`} tabIndex="-1">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Sign Up</h5>
-              <button type="button" className="btn-close" onClick={handleCloseSignUpModal}></button>
-            </div>
-            <div className="modal-body" style={{ width: '100%', height: '100%' }}>
-              {!isAuthenticated && <SignUp key={isAuthenticated ? 'authenticated' : 'unauthenticated'} />}
-            </div>
-          </div>
-        </div>
-    </div>
     </>
   );
 };
