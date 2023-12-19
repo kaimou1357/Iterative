@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AuthProvider from './AuthProvider';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
 import Auth from './Auth';
 import WireframeTool from './WireframeTool';
 import ProtectedRoute from './ProtectedRoute';
@@ -48,14 +46,11 @@ function App() {
       <>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/deployments" element={<ProtectedRoute component={Deployments} />} />
           <Route path="/deployments/:id" element={<ShowDeployment />} />
           <Route path="/wireframe-tool" element={<ProtectedRoute component={WireframeTool} />} />
         </Routes>
-        <VersionBadge />
       </>
   );
 }
