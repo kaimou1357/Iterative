@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import { API_BASE_URL } from './config';
 
 const DeploymentModal = ({ isOpen, onClose, projectStateId }) => {
   const [newDeploymentName, setNewDeploymentName] = useState('');
   const [newDeploymentPasscode, setNewDeploymentPasscode] = useState('');
+  const [deploymentCreated, setDeploymentCreated] = useState(false);
 
   const handleCreateDeployment = () => {
-    const response = axios.post(`${API_BASE_URL}/deployments`, { project_state_id:  projectStateId, deployment_name: newDeploymentName, passcode: newDeploymentPasscode}).then((_) => {
-      onClose();
+    axios.post(`${API_BASE_URL}/deployments`, { project_state_id:  projectStateId, deployment_name: newDeploymentName, passcode: newDeploymentPasscode}).then((_) => {
+      setDeploymentCreated(true);
+      setTimeout(() => {
+        resetState()
+        onClose();
+      }, 2000);
     });
   };
+
+  const resetState = () => {
+    setNewDeploymentName("");
+    setNewDeploymentPasscode("");
+    setDeploymentCreated(false);
+  }
 
   return (
     <div className={`modal fade ${isOpen ? 'show d-block' : 'd-none'}`} tabIndex="-1">
@@ -45,6 +57,7 @@ const DeploymentModal = ({ isOpen, onClose, projectStateId }) => {
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onClose}>Close</button>
             <button className="btn btn-primary" onClick={handleCreateDeployment}>Create Deployment</button>
+            {deploymentCreated ? <div>Deployment Created Successfully!</div> : null}
           </div>
         </div>
       </div>

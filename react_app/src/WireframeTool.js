@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import AuthContext from './AuthContext';
 import LiveCodeEditor from './LiveCodeEditor';
 import ProjectsModal from './ProjectsModal';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
 import { API_BASE_URL } from './config';
 import Settings from './Settings';
 import Spinner from 'react-bootstrap/Spinner';
@@ -24,29 +22,11 @@ const WireframeTool = () => {
   const [isDeploymentsModalOpen, setIsDeploymentsModalOpen] = useState(false);
   const [projectStateId, setProjectStateId] = useState("");
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
-  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [showGenerationSpinner, setGenerationSpinner] = useState(false);
   const { settings } = useSettings();
   const lastMessageRef = useRef(null);
 
   const navigate = useNavigate();
-
-  const handleOpenSignInModal = () => {
-    setIsSignInModalOpen(true);
-  };
-
-  const handleCloseSignInModal = () => {
-    setIsSignInModalOpen(false);
-  };
-
-  const handleOpenSignUpModal = () => {
-    setIsSignUpModalOpen(true);
-  };
-
-  const handleCloseSignUpModal = () => {
-    setIsSignUpModalOpen(false);
-  };
 
   const handleOpenProjectsModal = () => {
     setIsProjectsModalOpen(true);
@@ -70,9 +50,6 @@ const WireframeTool = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      handleCloseSignUpModal();
-      handleCloseSignInModal();
-
       refreshProject();
     }
   }, [isAuthenticated, isGuest]);
@@ -459,26 +436,13 @@ const WireframeTool = () => {
           <button type="button" className="btn btn-info" onClick={handleOpenProjectsModal} disabled={loading || resetting}>
             Projects
           </button>
-          {isAuthenticated ? (
-            <>
-              <button type="button" className="btn btn-secondary" onClick={handleOpenSettingsModal} disabled={loading || resetting}>
-                Settings
-              </button>
-              <button type="button" className="btn btn-warning" onClick={handleSignOut}>
-                Sign Out
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="button" className="btn btn-primary" onClick={handleOpenSignInModal}>
-                Sign In
-              </button>
-              <button type="button" className="btn btn-primary" onClick={handleOpenSignUpModal}>
-                Sign Up
-              </button>
-            </>
-          )}
-        </div>
+          <button type="button" className="btn btn-secondary" onClick={handleOpenSettingsModal} disabled={loading || resetting}>
+            Settings
+          </button>
+          <button type="button" className="btn btn-warning" onClick={handleSignOut}>
+            Sign Out
+          </button>
+      </div>
       </form>
       {errorState && (
         <div className="mt-4">
@@ -490,32 +454,6 @@ const WireframeTool = () => {
     <ProjectsModal isOpen={isProjectsModalOpen} onClose={handleCloseProjectsModal} onSelectProject={loadProjectDetails} onDeleteProject={handleDeleteProject} />
     <DeploymentModal isOpen={isDeploymentsModalOpen} onClose={handleCloseDeploymentsModal} projectStateId = {projectStateId} />
     <Settings isOpen={isSettingsModalOpen} onClose={handleCloseSettingsModal} />
-    <div className={`modal fade ${isSignInModalOpen && !isAuthenticated ? 'show d-block' : 'd-none'}`} tabIndex="-1">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Sign In</h5>
-              <button type="button" className="btn-close" onClick={handleCloseSignInModal}></button>
-            </div>
-            <div className="modal-body" style={{ width: '100%', height: '100%' }}>
-              {!isAuthenticated && <SignIn key={isAuthenticated ? 'authenticated' : 'unauthenticated'} />}
-            </div>
-          </div>
-        </div>
-    </div>
-    <div className={`modal fade ${isSignUpModalOpen && !isAuthenticated ? 'show d-block' : 'd-none'}`} tabIndex="-1">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Sign Up</h5>
-              <button type="button" className="btn-close" onClick={handleCloseSignUpModal}></button>
-            </div>
-            <div className="modal-body" style={{ width: '100%', height: '100%' }}>
-              {!isAuthenticated && <SignUp key={isAuthenticated ? 'authenticated' : 'unauthenticated'} />}
-            </div>
-          </div>
-        </div>
-    </div>
     </>
   );
 };
