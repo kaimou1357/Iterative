@@ -20,7 +20,15 @@ const GenKodeChat = () => {
     socket = io(SOCKET_IO_URL)
     socket.on('connect', () => {
       console.log("connected to socket IO");
-      appendSystemMessage("What would you like to build?");
+    })
+
+    socket.on('server_response', (response) => {
+      console.log("Received Server Response");
+      appendSystemMessage(response);
+    })
+
+    socket.on("server_code", (response) => {
+      console.log("Received server code response");
     })
   }
 
@@ -33,7 +41,7 @@ const GenKodeChat = () => {
   }
 
   const handleSend = (type: string, content: string) => {
-    socket.emit('user_message', content);
+    socket.emit('user_message', { description: content, messages});
     appendMsg({
       type: 'text',
       content: { text: content },
