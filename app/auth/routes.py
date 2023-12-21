@@ -2,7 +2,7 @@ from app.auth import bp
 from app.models.user import User
 from app.models.user_settings import UserSettings
 from flask import request, jsonify, session, current_app
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_required, login_user, logout_user, current_user
 from app.extensions import db, login_manager
 from flask_bcrypt import Bcrypt
 
@@ -46,6 +46,7 @@ def sign_in():
         return jsonify({'status': 'failure', 'message': 'Sign In Unsuccessful. Please check email and password'})
 
 @bp.route('/api/sign-out', methods=['POST'])
+@login_required
 def sign_out():
     logout_user()
     response = jsonify({'status': 'success'})
