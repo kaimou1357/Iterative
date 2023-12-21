@@ -1,9 +1,9 @@
 import React from 'react'
-import WireframeToolOff from "../components/wireframeToolOff"
+import Chat from "../components/chat"
 
 export default function Tool() {
   return (
     <div>
-     
+      <Chat />
     </div>  )
 }
