@@ -4,12 +4,13 @@ from app.models.constants import AssistantModel, CSSFramework
 from app.models.project import Project
 from app.models.project_state import ProjectState
 from flask import request, jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 import uuid
 from app.projects import bp
 from app.extensions import db
 
 @bp.route('/api/create-project', methods=['POST'])
+@login_required
 def create_project():
     # Retrieve project information from the request
     name = request.json['name']
@@ -29,6 +30,7 @@ def create_project():
     return jsonify({'status': 'success', 'project': project.to_dict()})
 
 @bp.route('/api/delete-project', methods=['DELETE'])
+@login_required
 def delete_project():
     # Retrieve the project_id from the request body
     project_id = request.json['project_id']
@@ -55,6 +57,7 @@ def delete_project():
     return jsonify({'status': 'success', 'message': 'Project deleted successfully'})
 
 @bp.route('/api/get-project', methods=['GET'])
+@login_required
 def get_project():
     # Retrieve the project_id and project_name from the request body
     project_id = request.args.get('project_id')
@@ -82,12 +85,14 @@ def get_project():
     return jsonify({'project': project_data})
 
 @bp.route('/api/get-projects', methods=['GET'])
+@login_required
 def get_projects():
     user_projects = current_user.projects  # Access the projects relationship directly
     projects_data = [project.to_dict() for project in user_projects]
     return jsonify({'projects': projects_data})
 
 @bp.route('/api/projects/update', methods=['POST'])
+@login_required
 def update_project():
     project_id = request.json.get('project_id')
     response_text = request.json.get('result')
@@ -148,6 +153,7 @@ def update_project():
     return jsonify({'status': 'success', 'project': project.to_dict()})
 
 @bp.route('/api/reset', methods=['POST'])
+@login_required
 def reset():
     project_id = request.json['project_id']
     project = None
