@@ -10,6 +10,8 @@ from app.extensions import db, login_manager
   
 socketio = SocketIO()
 
+from app.chat.events import *
+
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
         def __call__(self, *args: object, **kwargs: object) -> object:

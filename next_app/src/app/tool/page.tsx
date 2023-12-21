@@ -1,9 +1,9 @@
 import React from 'react'
-import Chat from "../components/chat"
+import GenKodeChat from '../components/chat'
 
 export default function Tool() {
   return (
     <div>
-      <Chat />
+      <GenKodeChat />
     </div>  )
 }
