@@ -12,6 +12,7 @@ let socket: Socket<DefaultEventsMap, DefaultEventsMap>
 export default function Tool() {
   const { messages, appendMsg, setTyping} = useMessages([]);
   const [reactCode, setReactCode] = useState("");
+  const [projectId, setProjectId] = useState("");
 
   useEffect(() => {
     socketInitializer();
@@ -28,8 +29,13 @@ export default function Tool() {
     })
 
     socket.on("server_code", (response) => {
-      console.log(response);
       setReactCode(response);
+      appendSystemMessage("There's your generated code. Let me think how we can make it better")
+      setTyping(true);
+    })
+
+    socket.on("project_id", (projectId) => {
+      setProjectId(projectId);
     })
   }
 
@@ -49,14 +55,19 @@ export default function Tool() {
     });
 
     setTyping(true);
-    socket.emit("user_message", {description: content});
+    socket.emit("user_message", {description: content, project_id: projectId});
   }
 
   return (
-    <div>
-      <div className="preview-container" style={{ flex: 1, overflow: 'auto', border: '2px solid', borderRadius: '10px' }}>
-      <LiveCodeEditor code={reactCode} css={undefined} cssFramework={"DAISYUI"} fullScreen={false}/>
+    <div className="flex">
+      <div className="preview-container w-2/3 mr-10 flex-col items-center">
+        <div>Iterative Canvas</div>
+        <div className="border-solid border-4 rounded-md h-screen">
+          <LiveCodeEditor code={reactCode} css={undefined} cssFramework={"DAISYUI"}/>
+        </div>
       </div>
-      <GenKodeChat onMessageSend={handleSend} messages={messages}/>
+      <div className="w-1/3 h-50">
+        <GenKodeChat onMessageSend={handleSend} messages={messages}/>
+      </div>
     </div>  )
 }

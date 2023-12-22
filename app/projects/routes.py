@@ -30,19 +30,6 @@ def create_project():
     # Return a success response
     return jsonify({'status': 'success', 'project': project.to_dict()})
 
-@bp.route('/api/create-anonymous-project', methods=['POST'])
-def create_anonymous_project():
-    # Retrieve project information from the request
-
-    # Create a new Project instance
-    project = Project(name="Anonymous Project")
-            
-    db.session.add(project)
-    db.session.commit()
-
-    # Return a success response
-    return jsonify({'status': 'success', 'project': project.to_dict()})
-
 @bp.route('/api/delete-project', methods=['DELETE'])
 @login_required
 def delete_project():
@@ -96,17 +83,6 @@ def get_project():
         return jsonify({'status': 'error', 'message': 'Project not found'}), 404
 
     project_data = retrieved_project.to_dict()
-    return jsonify({'project': project_data})
-
-@bp.route('/api/get-anonymous-project', methods=['GET'])
-def get_anonymous_project():
-    # Retrieve the project_id and project_name from the request body
-    project_id = request.args.get('project_id')
-    
-    project = Project.query.get(project_id)
-  
-
-    project_data = project.to_dict()
     return jsonify({'project': project_data})
 
 @bp.route('/api/get-projects', methods=['GET'])

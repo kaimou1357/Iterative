@@ -1,14 +1,21 @@
-import os
+import re
 from flask_socketio import send, emit
 from app import socketio
 from app.models.project import Project
+from app.models.project_state import ProjectState
+from app.extensions import db
+from app.openai.client import OpenAIClient
+from app.openai.utils import extract_code, messages_to_string
 import tiktoken
-from openai import OpenAI
 
-openai_client = OpenAI(api_key = os.environ.get('OPENAI_API_KEY'), organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
 
 @socketio.on('connect')
-def handle_connect(message):
+def handle_connect():
+  project = Project(name="Anonymous Project")
+            
+  db.session.add(project)
+  db.session.commit()
+  emit("project_id", project.id)
   emit("server_response", "What would you like to build?")
   
 
@@ -28,17 +35,8 @@ def on_code_generated(user_msg):
       "content": "You should help the user suggest possible UI improvements they can make given their domain"
     }
   ]
-  
-  openai_client = OpenAI(api_key = os.environ.get('OPENAI_API_KEY'), organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
-  response = openai_client.chat.completions.create(
-          model="gpt-3.5-turbo",
-          messages=messages,
-          temperature=0.1,
-          max_tokens=150,
-          top_p=1,
-          frequency_penalty=0,
-          presence_penalty=0,
-      )
+
+  response = OpenAIClient().chat_completion(messages, 300, False)
   content = response.choices[0].message.content
   emit("server_response", content)
   
@@ -46,7 +44,7 @@ def on_code_generated(user_msg):
 @socketio.on("user_message")
 def on_user_message(payload):
   user_msg = payload['description']
-  project_id = 55
+  project_id = payload['project_id']
   css_framework_str = "daisyUI"
   project = Project.query.get(project_id)
   
@@ -112,45 +110,24 @@ def on_user_message(payload):
       *user_messages_content
   ]
 
-  max_tokens_allowed = 3000
+  max_tokens_allowed = 4096
 
   encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
   messages_string = messages_to_string(messages)
   current_num_tokens = len(encoding.encode(messages_string))
 
   tokens_remaining = max_tokens_allowed - current_num_tokens
-
-  # Enqueue Celery Job Here
-  response = openai_client.chat.completions.create(
-          model="gpt-3.5-turbo",
-          messages=messages,
-          temperature=0.1,
-          max_tokens=tokens_remaining,
-          top_p=1,
-          frequency_penalty=0,
-          presence_penalty=0,
-          stream=True
-      )
   
-  collected_chunks = []
-  collected_messages = []
-  # iterate through the stream of events
-  for chunk in response:
-      collected_chunks.append(chunk)  # save the event response
-      chunk_message = chunk.choices[0].delta  # extract the message
-      collected_messages.append(chunk_message)  # save the message
-
-  # print the time delay and text received
-  full_reply_content = ''.join(["" if m.content is None else m.content for m in collected_messages])
-  
-  emit("server_code", full_reply_content)
+  response = OpenAIClient().chat_completion(messages, tokens_remaining, True)
+  react_code = extract_code_and_update_project(response, project_id)
+  emit("server_code", react_code)
   on_code_generated(user_msg)
 
-def messages_to_string(messages):
-    result = ""
-    for message in messages:
-        for key, value in message.items():
-            result += f"{key}: {value}\n"
-    return result
+def extract_code_and_update_project(full_reply_comment, project_id):
+  react_code, css_code = extract_code(full_reply_comment)
+  new_project_state = ProjectState(react_code=react_code, css_code=css_code, project_id=project_id)
+  db.session.add(new_project_state)
+  db.session.commit()
+  return react_code
   
 
