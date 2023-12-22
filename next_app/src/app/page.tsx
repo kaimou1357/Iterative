@@ -8,7 +8,7 @@ export default function Home() {
    
     <main className="">
       <Banner />
-      <div className=" flex flex-col items-center  md:flex-row justify-evenly gap-24 py-20 container w-2/3 mx-auto ">
+      <div className=" flex flex-col items-center  md:flex-row justify-center text-center gap-24 py-20 container w-2/3 mx-auto ">
         <div>
          
           <h2 className="text-5xl font-bold ">Iterative</h2>
@@ -20,10 +20,11 @@ export default function Home() {
           </Link>
         </div>
        
-        <Image width={450} height={450} alt="main" src={test}></Image>
+       
       </div>
-      <section id="features" className=" py-7">
-        <div className=" container flex flex-col md:flex-row w-2/3 mx-auto gap-10">
+      <section id="features" className="flex justify-center py-7">
+       
+        <div className="  grid grid-row md:grid-cols-3 gap-10 mx-10">
           <div className="  text-center mb-4">
             <div className="flex flex-row gap-3 justify-center">
 
@@ -104,6 +105,8 @@ export default function Home() {
             </p>
           </div>
         </div>
+      
+      
       </section>
       </main>
   );
