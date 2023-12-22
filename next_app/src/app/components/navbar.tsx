@@ -31,7 +31,11 @@ export default function Navbar() {
                 <div className="flex-shrink-0">
                   <Link
                     href={"/"}
+<<<<<<< HEAD
                     className="block h-auto w-auto lg:hidden mt-1 text-white"
+=======
+                    className="block h-10 w-auto lg:hidden mt-1 text-white"
+>>>>>>> 34ebc8a (fixed spacing indentation and footer)
                   >
                     Iterative
                   </Link>

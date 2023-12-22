@@ -37,11 +37,8 @@ export default function Home() {
             Sign Up
           </Link>
         </div>
-       
-       
       </div>
       <section id="features" className="flex justify-center py-7">
-       
         <div className="  grid grid-row md:grid-cols-3 gap-10 mx-10">
           <div className="  text-center mb-4">
             <div className="flex flex-row gap-3 justify-center">
@@ -121,8 +118,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-      
-      
       </section>
     </main>
   );
