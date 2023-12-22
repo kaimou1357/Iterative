@@ -74,12 +74,6 @@ export default function Navbar() {
                     >
                       Deployments
                     </Link>
-                    <Link
-                      href="/Contact"
-                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
-                    >
-                      Contact
-                    </Link>
                   </div>
                 </div>
               </div>
