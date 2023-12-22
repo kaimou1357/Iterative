@@ -46,7 +46,10 @@ export default function Navbar() {
             <div className="flex h-12 items-center justify-between ">
               <div className="flex items-center ">
                 <div className="flex-shrink-0">
-                  <Link href={"/"} className="block h-10 w-auto lg:hidden mt-1 text-white" >
+                  <Link
+                    href={"/"}
+                    className="block h-10 w-auto lg:hidden mt-1 text-white"
+                  >
                     Iterative
                   </Link>
                 </div>
@@ -85,14 +88,12 @@ export default function Navbar() {
                   {/* Profile dropdown */}
                   <div>
                     {bearerToken ? (
-                     
                       <Link
                         href="/signout"
                         className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
                       >
                         Sign Out
                       </Link>
-                    
                     ) : (
                       // If bearerToken is null, show the Log In button
                       <Link
@@ -122,46 +123,40 @@ export default function Navbar() {
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-             
 
-
-
-
-            
-                    <Disclosure.Button
-                     as="a"
-                      href="/projects"
-                      className="block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
-                    >
-                      Projects
-                    </Disclosure.Button>
-                    <Disclosure.Button
-                     as="a"
-                      href="/Deployments"
-                      className=" block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
-                    >
-                      Deployments
-                    </Disclosure.Button>
-                    <Disclosure.Button
-                     as="a"
-                      href="/Contact"
-                      className="block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
-                    >
-                      Contact
-                    </Disclosure.Button>
+              <Disclosure.Button
+                as="a"
+                href="/projects"
+                className="block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
+              >
+                Projects
+              </Disclosure.Button>
+              <Disclosure.Button
+                as="a"
+                href="/Deployments"
+                className=" block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
+              >
+                Deployments
+              </Disclosure.Button>
+              <Disclosure.Button
+                as="a"
+                href="/Contact"
+                className="block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
+              >
+                Contact
+              </Disclosure.Button>
             </div>
 
             {/* ////aqui */}
             <div>
               {bearerToken ? (
-                 <Disclosure.Button
-                 as="a"
-                 href="/signout"
-                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-               >
-                 Sign Out
-               </Disclosure.Button>
-                
+                <Disclosure.Button
+                  as="a"
+                  href="/signout"
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  Sign Out
+                </Disclosure.Button>
               ) : (
                 // If bearerToken is null, show the Log In button
                 <Disclosure.Button
