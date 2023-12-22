@@ -31,7 +31,7 @@ export default function Navbar() {
                 <div className="flex-shrink-0">
                   <Link
                     href={"/"}
-                    className="block h-10 w-auto lg:hidden mt-1 text-white"
+                    className="block h-auto w-auto lg:hidden mt-1 text-white"
                   >
                     Iterative
                   </Link>
@@ -45,6 +45,7 @@ export default function Navbar() {
                     >
                       Iterative
                     </Link>
+<<<<<<< HEAD
                     <div className="flex">
                       {user ? (
                         <>
@@ -63,6 +64,26 @@ export default function Navbar() {
                         </>
                       ) : null}
                     </div>
+=======
+                    <Link
+                      href="/projects"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Projects
+                    </Link>
+                    <Link
+                      href="/Deployments"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Deployments
+                    </Link>
+                    <Link
+                      href="/Contact"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Contact
+                    </Link>
+>>>>>>> 5609295 (Main Navbar merge)
                   </div>
                 </div>
               </div>
