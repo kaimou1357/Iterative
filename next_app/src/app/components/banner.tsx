@@ -17,10 +17,16 @@ export default function banner() {
                 code.
               </p>
               <Link
+                href="/tool"
+                className="bg-blue-500 text-white p-2 mr-4 rounded "
+              >
+                Try it out!
+              </Link>
+              <Link
                 href="/auth"
                 className="bg-blue-500 text-white p-2 rounded "
               >
-                Get Started!
+                Sign up
               </Link>
             </div>
             <Image width={450} height={450} alt="main" src={test}></Image>

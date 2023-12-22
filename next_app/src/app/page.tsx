@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import test from "../../public/TBD.png";
 import Banner from "./components/banner";
 
 export default function Home() {
@@ -13,8 +11,11 @@ export default function Home() {
           <p className="h2 my-5 text-lg ">
             Build amazing applications without writing a single line of code.
           </p>
+          <Link href="/tools" className="bg-blue-500 text-white p-2 mr-4 rounded ">
+            Try it out!
+          </Link>
           <Link href="/auth" className="bg-blue-500 text-white p-2 rounded ">
-            Get Started!
+            Sign Up
           </Link>
         </div>
       </div>
