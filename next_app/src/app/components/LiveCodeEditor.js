@@ -1,55 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-
-// const withDraggable = `
-//   function withDraggable(WrappedComponent) {
-//     return function (props) {
-//       const [dragging, setDragging] = React.useState(false);
-//       const [position, setPosition] = React.useState({ x: 0, y: 0 });
-//       const initialPositionRef = React.useRef({ x: 0, y: 0 });
-//       const ref = React.useRef(null);
-
-//       const handleMouseDown = (e) => {
-//         setDragging(true);
-//         const rect = ref.current.getBoundingClientRect();
-//         const offsetX = e.clientX - rect.left;
-//         const offsetY = e.clientY - rect.top;
-//         const initialOffset = { x: offsetX, y: offsetY };
-//         initialPositionRef.current = { x: rect.left, y: rect.top };
-//         handleMouseMove(e, initialOffset);
-//         e.target.setPointerCapture(e.pointerId);
-//       };
-
-//       const handleMouseMove = (e, initialOffset) => {
-//         if (!dragging) return;
-//         const offsetX = e.clientX - initialPositionRef.current.x - initialOffset.x;
-//         const offsetY = e.clientY - initialPositionRef.current.y - initialOffset.y;
-//         setPosition({ x: offsetX, y: offsetY });
-//       };
-
-//       const handleMouseUp = (e) => {
-//         setDragging(false);
-//         e.target.releasePointerCapture(e.pointerId);
-//       };
-
-//       return (
-//         <div
-//           ref={ref}
-//           onPointerDown={handleMouseDown}
-//           onPointerMove={(e) => handleMouseMove(e, { x: position.x, y: position.y })}
-//           onPointerUp={handleMouseUp}
-//           style={{
-//             position: 'absolute',
-//             left: \`\${position.x}px\`,
-//             top: \`\${position.y}px\`,
-//             cursor: dragging ? 'grabbing' : 'grab',
-//           }}
-//         >
-//           <WrappedComponent {...props} />
-//         </div>
-//       );
-//     };
-//   }
-// `;
+import esbuildInitializationPromise from './esbuildInitializer';
+import * as esbuild from 'esbuild-wasm';
 
 const LiveCodeEditor = ({ code, css, cssFramework, fullScreen }) => {
   const iframeRef = useRef(null);
