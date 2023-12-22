@@ -23,8 +23,9 @@ def create_project():
         project.users.append(current_user)
         project.css_framework = current_user.settings.css_framework
         # Add and commit the new project to the database
-        db.session.add(project)
-        db.session.commit()
+        
+    db.session.add(project)
+    db.session.commit()
 
     # Return a success response
     return jsonify({'status': 'success', 'project': project.to_dict()})

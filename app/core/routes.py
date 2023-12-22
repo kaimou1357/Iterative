@@ -1,6 +1,7 @@
 from app.models.constants import AssistantModel, CSSFramework
 from app.core import bp
 from app.models.project import Project
+from app.openai.utils import messages_to_string
 from app.tasks import stream_gpt_response
 import tiktoken
 from flask_login import current_user
@@ -101,10 +102,3 @@ def generate():
 
     return jsonify({"task_id": task.id})
 
-
-def messages_to_string(messages):
-    result = ""
-    for message in messages:
-        for key, value in message.items():
-            result += f"{key}: {value}\n"
-    return result

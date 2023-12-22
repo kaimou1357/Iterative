@@ -1,4 +1,5 @@
 import os
+from flask_socketio import SocketIO
 from flask import Flask
 from flask_cors import CORS
 from flask_session import Session
@@ -7,6 +8,10 @@ from flask_bcrypt import Bcrypt
 from celery import Celery, Task
 from app.extensions import db, login_manager
   
+socketio = SocketIO()
+
+from app.chat.events import *
+
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
         def __call__(self, *args: object, **kwargs: object) -> object:
@@ -46,5 +51,7 @@ def create_app():
     app.register_blueprint(settings_bp)
     app.register_blueprint(core_bp)
     app.register_blueprint(deployments_bp)
+
+    socketio.init_app(app, cors_allowed_origins="*")
     return app
   
