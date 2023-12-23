@@ -5,10 +5,8 @@ import io, { Socket } from 'socket.io-client'
 import { SOCKET_IO_URL } from '../../app/components/config'
 import LiveCodeEditor from '../components/LiveCodeEditor'
 import { useEffect } from 'react'
-import { useMessages } from '@chatui/core';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import PromptBox from '../components/userprompts'
-import Prompt from '../components/userprompts'
 import PromptInput from '../components/promptinput'
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>
 

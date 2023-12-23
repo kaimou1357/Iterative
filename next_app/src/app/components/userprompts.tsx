@@ -9,7 +9,6 @@ const UserPrompts = ({prompts}: UserPromptsProps) => {
   return (
     <>
     <div>
-    <div>
       Existing User Prompts
     </div>
     <ul className="h-lvh border-solid border-4 rounded-md">
@@ -24,7 +23,6 @@ const UserPrompts = ({prompts}: UserPromptsProps) => {
       </div>
       ))}
     </ul>
-    </div>
     </>
   );
 }
