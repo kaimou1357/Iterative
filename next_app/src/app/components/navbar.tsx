@@ -32,10 +32,14 @@ export default function Navbar() {
                   <Link
                     href={"/"}
 <<<<<<< HEAD
+<<<<<<< HEAD
                     className="block h-auto w-auto lg:hidden mt-1 text-white"
 =======
                     className="block h-10 w-auto lg:hidden mt-1 text-white"
 >>>>>>> 34ebc8a (fixed spacing indentation and footer)
+=======
+                    className="block h-auto w-auto lg:hidden mt-1 text-white"
+>>>>>>> f8335e6 (fixes and animation)
                   >
                     Iterative
                   </Link>
