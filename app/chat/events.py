@@ -16,7 +16,6 @@ def handle_connect():
   db.session.add(project)
   db.session.commit()
   emit("project_id", project.id)
-  emit("server_response", "What would you like to build?")
   
 
 def on_code_generated(user_msg):
