@@ -1,27 +1,38 @@
 "use client";
-import Chat, { Bubble, MessageProps } from '@chatui/core';
-import '@chatui/core/dist/index.css';
+import { Accordion } from 'flowbite-react';
 
 interface ChatProps {
-  onMessageSend: (type: string, content: string) => void;
-  messages: MessageProps[];
+  messages: string[];
 }
 
-const GenKodeChat = ({onMessageSend, messages}: ChatProps) => {
-  const renderMessageContent = (message: MessageProps) => {
-    const { content } = message;
-    return <Bubble content= { content.text } />
-  }
+const GenKodeChat = ({messages}: ChatProps) => {
   return (
-    <Chat
-      locale="en-US"
-      navbar={{ title: 'Iterative' }}
-      messages={messages}
-      placeholder='Tell us what you want to build!'
-      renderMessageContent={renderMessageContent}
-      onSend={onMessageSend}
-    />
-  )
+    <>
+    <div>
+    <div>
+      Iterative Recommendations for you
+    </div>
+    
+    <Accordion>
+      <Accordion.Panel>
+        {messages.map((p, idx) => (
+          <div>
+            <Accordion.Title>
+              Recommendation #{idx + 1}
+            </Accordion.Title>
+            <Accordion.Content>
+              <p className="mb-2 text-gray-500 dark:text-gray-400">
+                {p}
+              </p>
+            </Accordion.Content>
+          </div>
+        ))}
+        
+      </Accordion.Panel>
+    </Accordion>
+    </div>
+    </>
+  );
 }
 
 export default GenKodeChat;

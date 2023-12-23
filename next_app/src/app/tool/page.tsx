@@ -7,15 +7,17 @@ import LiveCodeEditor from '../components/LiveCodeEditor'
 import { useEffect } from 'react'
 import { useMessages } from '@chatui/core';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
-import PromptBox from '../components/promptbox'
-import Prompt from '../components/promptbox'
+import PromptBox from '../components/userprompts'
+import Prompt from '../components/userprompts'
+import PromptInput from '../components/promptinput'
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>
 
 export default function Tool() {
-  const { messages, appendMsg, setTyping} = useMessages([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const [reactCode, setReactCode] = useState("");
   const [projectId, setProjectId] = useState("");
   const [ prompts, setPrompts ] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     socketInitializer();
@@ -32,9 +34,8 @@ export default function Tool() {
     })
 
     socket.on("server_code", (response) => {
+      setLoading(false);
       setReactCode(response);
-      appendSystemMessage("There's your generated code. Let me think how we can make it better")
-      setTyping(true);
     })
 
     socket.on("project_id", (projectId) => {
@@ -43,41 +44,29 @@ export default function Tool() {
   }
 
   const appendSystemMessage = (content: string) => {
-    appendMsg({
-      type: 'text',
-      content: { text: content },
-      position: 'left'
-    });
+    setMessages(oldMessages => [...oldMessages, content]);
   }
 
-  const handleSend = (type: string, content: string) => {
-    appendMsg({
-      type: 'text',
-      content: { text: content },
-      position: 'right'
-    });
-
-    setPrompts(oldPrompts => [...oldPrompts, content]);
-
-    setTyping(true);
-    socket.emit("user_message", {description: content, project_id: projectId});
+  const handleSend = (prompt: string) => {
+    setLoading(true);
+    setPrompts(oldPrompts => [...oldPrompts, prompt]);
+    socket.emit("user_message", {description: prompt, project_id: projectId});
   }
 
   return (
     <div className="flex">
-       <div className="preview-container w-1/2 mr-10 flex-col items-center">
-        <div className="border-solid border-4 rounded-md h-screen">
-          <PromptBox prompts={prompts}/>
-        </div>
+       <div className="w-1/4 mr-10 flex-col items-center">
+        <PromptBox prompts={prompts}/>
       </div>
-      <div className="preview-container w-1/2 mr-10 flex-col items-center">
+      <div className="flex w-1/2 mr-10 flex-col">
         <div>Iterative Canvas</div>
-        <div className="border-solid border-4 rounded-md h-screen">
+        <div className="border-solid border-4 rounded-md">
           <LiveCodeEditor code={reactCode} css={undefined} cssFramework={"DAISYUI"}/>
         </div>
+        <PromptInput loading={loading} onPromptSubmit={handleSend} />
       </div>
-      <div className="w-1/4 h-50">
-        <GenKodeChat onMessageSend={handleSend} messages={messages}/>
+      <div className="w-1/4">
+        <GenKodeChat messages={messages}/>
       </div>
     </div>  )
 }
