@@ -39,13 +39,14 @@ const config: Config = {
         
           "0%": {
            
-            width: "0%",
+           
             height: "0%",
+           
             visibility: "hidden",
             delay: "7sec"
           },
           "100%": {
-            width: "100%",
+            
            height: "100%"
           }  
         },
@@ -62,22 +63,12 @@ const config: Config = {
           }  
         },
       
-      enter: {
-        "0%": {
-          opacity: "0%",
-          bgcolor: "white"
-        },
-        "100%": {
-          opacity: "100%",
-          bgcolor: "white"
-        },          
-       
-      }
+     
     },
 
       animation: {
         enter: "enter 1s 1s" ,
-        typing: "typing 1s  steps(20)  alternate, blink .7s infinite, enter " ,
+        typing: "typing 1s  steps(20)  alternate, blink .7s infinite " ,
         masking: "masking 3s 1s both  "
       },
       backgroundImage: {
