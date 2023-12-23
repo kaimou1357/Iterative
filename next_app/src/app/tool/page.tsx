@@ -7,12 +7,15 @@ import LiveCodeEditor from '../components/LiveCodeEditor'
 import { useEffect } from 'react'
 import { useMessages } from '@chatui/core';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
+import PromptBox from '../components/promptbox'
+import Prompt from '../components/promptbox'
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>
 
 export default function Tool() {
   const { messages, appendMsg, setTyping} = useMessages([]);
   const [reactCode, setReactCode] = useState("");
   const [projectId, setProjectId] = useState("");
+  const [ prompts, setPrompts ] = useState<string[]>([]);
 
   useEffect(() => {
     socketInitializer();
@@ -54,19 +57,26 @@ export default function Tool() {
       position: 'right'
     });
 
+    setPrompts(oldPrompts => [...oldPrompts, content]);
+
     setTyping(true);
     socket.emit("user_message", {description: content, project_id: projectId});
   }
 
   return (
     <div className="flex">
-      <div className="preview-container w-2/3 mr-10 flex-col items-center">
+       <div className="preview-container w-1/2 mr-10 flex-col items-center">
+        <div className="border-solid border-4 rounded-md h-screen">
+          <PromptBox prompts={prompts}/>
+        </div>
+      </div>
+      <div className="preview-container w-1/2 mr-10 flex-col items-center">
         <div>Iterative Canvas</div>
         <div className="border-solid border-4 rounded-md h-screen">
           <LiveCodeEditor code={reactCode} css={undefined} cssFramework={"DAISYUI"}/>
         </div>
       </div>
-      <div className="w-1/3 h-50">
+      <div className="w-1/4 h-50">
         <GenKodeChat onMessageSend={handleSend} messages={messages}/>
       </div>
     </div>  )
