@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React from 'react'
 import GenKodeChat from '../components/chat'
 import io, { Socket } from 'socket.io-client'
 import { SOCKET_IO_URL } from '../../app/components/config'
@@ -8,14 +8,11 @@ import { useEffect } from 'react'
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import PromptBox from '../components/userprompts'
 import PromptInput from '../components/promptinput'
+import { useToolStore } from './toolstate'
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>
 
 export default function Tool() {
-  const [messages, setMessages] = useState<string[]>([]);
-  const [reactCode, setReactCode] = useState("");
-  const [projectId, setProjectId] = useState("");
-  const [ prompts, setPrompts ] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const { loading, setLoading, prompts, addPrompt, projectId, setProjectId, reactCode, setReactCode, messages, addMessage} = useToolStore();
 
   useEffect(() => {
     socketInitializer();
@@ -28,7 +25,7 @@ export default function Tool() {
     socket = io(SOCKET_IO_URL)
 
     socket.on('server_response', (response) => {
-      appendSystemMessage(response);
+      addMessage(response);
     })
 
     socket.on("server_code", (response) => {
@@ -41,13 +38,10 @@ export default function Tool() {
     })
   }
 
-  const appendSystemMessage = (content: string) => {
-    setMessages(oldMessages => [...oldMessages, content]);
-  }
 
   const handleSend = (prompt: string) => {
     setLoading(true);
-    setPrompts(oldPrompts => [...oldPrompts, prompt]);
+    addPrompt(prompt);
     socket.emit("user_message", {description: prompt, project_id: projectId});
   }
 
