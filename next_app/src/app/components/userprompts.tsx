@@ -12,7 +12,7 @@ const UserPrompts = ({prompts}: UserPromptsProps) => {
       Existing User Prompts
     </div>
     <ul className="h-lvh border-solid border-4 rounded-md">
-      {prompts.map(p => (<div className="flex space-between">
+      {prompts.map((p, idx) => (<div key= {idx} className="flex space-between">
         <h5 className="text-1xl font-bold tracking-tight text-gray-900 dark:text-white">
           {p}
         </h5>

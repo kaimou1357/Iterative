@@ -69,7 +69,7 @@ export default function Home() {
               <h3 className="h4 fw-bold mb-2">No Coding Required</h3>
             </div>
             <p>
-              You don't need any coding skills to build powerful and functional
+              You don&apos;t need any coding skills to build powerful and functional
               applications with our AI-powered tool.
             </p>
           </div>

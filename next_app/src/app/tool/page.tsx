@@ -19,7 +19,7 @@ export default function Tool() {
     return () => {
       socket.disconnect();
     }
-  }, []);
+  });
 
   async function socketInitializer() {
     socket = io(SOCKET_IO_URL)

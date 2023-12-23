@@ -16,7 +16,7 @@ const GenKodeChat = ({messages}: ChatProps) => {
     <Accordion>
       <Accordion.Panel>
         {messages.map((p, idx) => (
-          <div>
+          <div key={idx}>
             <Accordion.Title>
               Recommendation #{idx + 1}
             </Accordion.Title>
