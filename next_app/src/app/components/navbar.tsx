@@ -31,7 +31,7 @@ export default function Navbar() {
                 <div className="flex-shrink-0">
                   <Link
                     href={"/"}
-                    className="block h-auto w-auto lg:hidden mt-1 text-white"
+                    className="block h-auto w-auto sm:hidden mt-1 text-white"
                   >
                     Iterative
                   </Link>
@@ -44,6 +44,12 @@ export default function Navbar() {
                       className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
                     >
                       Iterative
+                    </Link>
+                    <Link
+                      href="/tool"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Create
                     </Link>
                     <Link
                       href="/projects"
@@ -108,6 +114,13 @@ export default function Navbar() {
             <div className="space-y-1 px-2 pt-2 pb-3">
               {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
 
+              <Disclosure.Button
+                as="a"
+                href="/tool"
+                className="block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
+              >
+                Create
+              </Disclosure.Button>
               <Disclosure.Button
                 as="a"
                 href="/projects"
