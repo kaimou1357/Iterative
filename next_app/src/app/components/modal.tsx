@@ -2,13 +2,10 @@
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef } from "react";
 
-
-
 export default function Modal() {
-  
   return (
     <div className="flex text-white">
-      <div  className=" rounded-lg bg-black px-4 pt-5 pb-4 text-left">
+      <div className=" rounded-lg bg-black px-4 pb-4 pt-5 text-left">
         <div>
           <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
             <CheckIcon className="h-6 w-6 text-blue-600" aria-hidden="true" />

@@ -7,14 +7,15 @@ interface UserPromptsProps {
 
 const UserPrompts = ({ prompts }: UserPromptsProps) => {
   return (
-    <>
-      <div>Existing User Prompts</div>
-      <ul className="h-lvh border-solid border-4 rounded-md">
+    <div>
+      <div className="mb-3 ">Existing User Prompts</div>
+      <ul className=" h-screen  rounded-md ">
         {prompts.map((p, idx) => (
-          <div key={idx} className="flex space-between">
+          <div key={idx} className="space-between flex">
             <h5 className="text-1xl font-bold tracking-tight text-gray-900 dark:text-white">
               {p}
             </h5>
+
             <div className="flex flex-wrap gap-2">
               <Button pill>Load</Button>
               <Button pill color="blue">
@@ -24,7 +25,7 @@ const UserPrompts = ({ prompts }: UserPromptsProps) => {
           </div>
         ))}
       </ul>
-    </>
+    </div>
   );
 };
 
