@@ -30,7 +30,7 @@ export default function Home() {
           <Link href="/tools" className="bg-blue-500 text-white p-2 mr-4 rounded ">
             Try it out!
           </Link>
-          <Link href="/auth" className="bg-blue-500 text-white p-2 rounded ">
+          <Link href="/login" className="bg-blue-500 text-white p-2 rounded ">
             Sign Up
           </Link>
         </div>
