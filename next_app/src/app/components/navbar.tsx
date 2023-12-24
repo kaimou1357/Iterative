@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -11,32 +11,15 @@ import {
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
+import { useStytchUser, useStytch } from "@stytch/nextjs";
 
 export default function Navbar() {
-  const [bearerToken, setBearerToken] = useState(false); // Replace with your token logic
-  const router = useRouter();
+  const { user } = useStytchUser();
+  const stytchClient = useStytch();
 
-  useEffect(() => {
-    // Get the bearer token from localStorage
-    const token = localStorage.getItem("bearerToken");
-
-    // Update the state with the retrieved token
-    setBearerToken(token !== null);
-  }, []);
-
-  const handleSignOut = () => {
-    // Remove the token from local storage or cookies
-    localStorage.removeItem("bearerToken"); // if using local storage
-    // document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; // if using cookies
-
-    // Redirect to the sign-in or home page
-    router.push("/"); // replace with the appropriate route
-  };
+  const handleLogout = useCallback(() => {
+    stytchClient.session.revoke();
+  }, [stytchClient]);
 
   return (
     <Disclosure as="nav" className="bg-black">
@@ -62,18 +45,21 @@ export default function Navbar() {
                     >
                       Iterative
                     </Link>
-                    <Link
-                      href="/projects"
-                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
-                    >
-                      Projects
-                    </Link>
-                    <Link
-                      href="/Deployments"
-                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
-                    >
-                      Deployments
-                    </Link>
+                    <div className="flex">
+                    { user ? (
+                      <><Link
+                          href="/projects"
+                          className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                        >
+                          Projects
+                        </Link><Link
+                          href="/Deployments"
+                          className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                        >
+                            Deployments
+                          </Link></>
+                    ): null}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -81,10 +67,11 @@ export default function Navbar() {
                 <div className="flex items-center">
                   {/* Profile dropdown */}
                   <div>
-                    {bearerToken ? (
+                    {user ? (
                       <Link
-                        href="/signout"
+                        href="/"
                         className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                        onClick={handleLogout}
                       >
                         Sign Out
                       </Link>
@@ -143,7 +130,7 @@ export default function Navbar() {
 
             {/* ////aqui */}
             <div>
-              {bearerToken ? (
+              {user ? (
                 <Disclosure.Button
                   as="a"
                   href="/signout"

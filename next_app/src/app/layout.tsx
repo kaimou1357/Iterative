@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from './components/navbar'
 import Footer from './components/footer'
 import { ThemeModeScript } from 'flowbite-react';
+import StytchProvider from './components/StytchProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,12 +19,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    <StytchProvider>
     <html lang="en">
       <head>
         <ThemeModeScript />
       </head>
-      <body className={inter.className}>   <Navbar /> {children}</body> 
+        <body className={inter.className}>   <Navbar /> {children}</body> 
       <Footer />
     </html>
+    </StytchProvider>
   )
 }

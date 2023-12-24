@@ -9,17 +9,19 @@ import { DefaultEventsMap } from '@socket.io/component-emitter';
 import PromptBox from '../components/userprompts'
 import PromptInput from '../components/promptinput'
 import { useToolStore } from './toolstate'
+import { useStytchUser } from "@stytch/nextjs";
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>
 
 export default function Tool() {
   const { loading, setLoading, prompts, addPrompt, projectId, setProjectId, reactCode, setReactCode, messages, addMessage} = useToolStore();
-
+  const { user, isInitialized } = useStytchUser();
   useEffect(() => {
     socketInitializer();
     return () => {
       socket.disconnect();
     }
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isInitialized]);
 
   async function socketInitializer() {
     socket = io(SOCKET_IO_URL)

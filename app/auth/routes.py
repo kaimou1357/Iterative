@@ -52,6 +52,11 @@ def sign_out():
     response = jsonify({'status': 'success'})
     return response
 
+@bp.route('/api/authenticate', methods=['POST'])
+def stytch_authenticate():
+    print(request)
+    pass
+
 @bp.route('/api/auth-status', methods=['GET'])
 def auth_status():
     response_data = {

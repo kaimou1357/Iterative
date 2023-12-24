@@ -1,7 +1,23 @@
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useStytchUser } from "@stytch/nextjs";
 import Link from "next/link";
 import Banner from "./components/banner";
 
 export default function Home() {
+  const { user, isInitialized } = useStytchUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+    if (user) {
+      router.replace("/tool");
+    }
+  }, [user, isInitialized, router]);
+
   return (
     <main className="flex flex-col min-h-screen">
       <Banner />
