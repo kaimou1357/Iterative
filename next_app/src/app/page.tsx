@@ -1,7 +1,23 @@
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useStytchUser } from "@stytch/nextjs";
 import Link from "next/link";
 import Banner from "./components/banner";
 
 export default function Home() {
+  const { user, isInitialized } = useStytchUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+    if (user) {
+      router.replace("/tool");
+    }
+  }, [user, isInitialized, router]);
+
   return (
     <main className="flex flex-col min-h-screen">
       <Banner />
@@ -14,7 +30,7 @@ export default function Home() {
           <Link href="/tools" className="bg-blue-500 text-white p-2 mr-4 rounded ">
             Try it out!
           </Link>
-          <Link href="/auth" className="bg-blue-500 text-white p-2 rounded ">
+          <Link href="/login" className="bg-blue-500 text-white p-2 rounded ">
             Sign Up
           </Link>
         </div>
