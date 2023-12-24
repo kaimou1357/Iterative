@@ -16,9 +16,9 @@ export default function LoginPage() {
       router.replace("/tool");
     }
   }, [user, isInitialized, router]);
-  return(
+  return (
     <main className="flex min-h-screen items-center justify-center">
       <Login />
-    </main> 
-  )
+    </main>
+  );
 }

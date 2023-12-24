@@ -27,7 +27,10 @@ export default function Home() {
           <p className="h2 my-5 text-lg ">
             Build amazing applications without writing a single line of code.
           </p>
-          <Link href="/tools" className="bg-blue-500 text-white p-2 mr-4 rounded ">
+          <Link
+            href="/tools"
+            className="bg-blue-500 text-white p-2 mr-4 rounded "
+          >
             Try it out!
           </Link>
           <Link href="/login" className="bg-blue-500 text-white p-2 rounded ">
@@ -85,8 +88,8 @@ export default function Home() {
               <h3 className="h4 fw-bold mb-2">No Coding Required</h3>
             </div>
             <p>
-              You don&apos;t need any coding skills to build powerful and functional
-              applications with our AI-powered tool.
+              You don&apos;t need any coding skills to build powerful and
+              functional applications with our AI-powered tool.
             </p>
           </div>
           <div className=" text-center mb-4">

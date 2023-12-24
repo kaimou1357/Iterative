@@ -46,19 +46,22 @@ export default function Navbar() {
                       Iterative
                     </Link>
                     <div className="flex">
-                    { user ? (
-                      <><Link
-                          href="/projects"
-                          className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
-                        >
-                          Projects
-                        </Link><Link
-                          href="/Deployments"
-                          className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
-                        >
+                      {user ? (
+                        <>
+                          <Link
+                            href="/projects"
+                            className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                          >
+                            Projects
+                          </Link>
+                          <Link
+                            href="/Deployments"
+                            className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                          >
                             Deployments
-                          </Link></>
-                    ): null}
+                          </Link>
+                        </>
+                      ) : null}
                     </div>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 interface ToolState {
   loading: boolean;
@@ -20,21 +20,17 @@ export const useToolStore = create<ToolState>()((set) => ({
   prompts: [],
   projectId: "",
   reactCode: "",
-  setProjectId: (id) => set(() => ({ projectId: id})),
-  setReactCode: (code) => set(() => ({ reactCode: code})),
-  setLoading: (isLoading) => set(() => ({ loading: isLoading})),
-  addMessage: (message: string) => {set((state) => ({
-    messages: [
-      ...state.messages,
-      message
-    ]
-    }))
+  setProjectId: (id) => set(() => ({ projectId: id })),
+  setReactCode: (code) => set(() => ({ reactCode: code })),
+  setLoading: (isLoading) => set(() => ({ loading: isLoading })),
+  addMessage: (message: string) => {
+    set((state) => ({
+      messages: [...state.messages, message],
+    }));
   },
-  addPrompt: (prompt: string) => {set((state) => ({
-    prompts: [
-      ...state.prompts,
-      prompt
-    ]
-  }))
-}
+  addPrompt: (prompt: string) => {
+    set((state) => ({
+      prompts: [...state.prompts, prompt],
+    }));
+  },
 }));

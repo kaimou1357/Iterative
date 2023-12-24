@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react';
-import esbuildInitializationPromise from './esbuildInitializer';
-import * as esbuild from 'esbuild-wasm';
+import React, { useRef, useEffect } from "react";
+import esbuildInitializationPromise from "./esbuildInitializer";
+import * as esbuild from "esbuild-wasm";
 
 const LiveCodeEditor = ({ code, css, cssFramework }) => {
   const iframeRef = useRef(null);
@@ -9,13 +9,18 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
     if (!iframeRef.current || !iframeRef.current.contentDocument) return;
     await esbuildInitializationPromise; // Wait for esbuild initialization
     let result = null;
-    if (code !== '') {
-      result = await esbuild.transform(`export default ${code}`, { loader: 'jsx', target: 'es2015', format: 'iife', globalName: 'MyApp' });
+    if (code !== "") {
+      result = await esbuild.transform(`export default ${code}`, {
+        loader: "jsx",
+        target: "es2015",
+        format: "iife",
+        globalName: "MyApp",
+      });
     }
 
     if (result === null) {
       return (
-        <div style={{ height: '75vh' }}>
+        <div style={{ height: "75vh" }}>
           <iframe ref={iframeRef} width="100%" height="100%" />
         </div>
       );
@@ -53,8 +58,8 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
   }, [code, css, cssFramework]);
 
   return (
-    <div style={{ height: '75vh' }}>
-        <iframe ref={iframeRef} width="100%" height="100%" />
+    <div style={{ height: "75vh" }}>
+      <iframe ref={iframeRef} width="100%" height="100%" />
     </div>
   );
 };
