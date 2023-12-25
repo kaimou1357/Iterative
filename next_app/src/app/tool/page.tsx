@@ -37,7 +37,6 @@ export default function Tool() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isInitialized]);
-  
 
   async function socketInitializer() {
     socket = io(SOCKET_IO_URL);
@@ -62,11 +61,16 @@ export default function Tool() {
     socket.emit("user_message", { description: prompt, project_id: projectId });
   };
 
+  const exampleMessages = [
+    "Try our new feature for faster coding!",
+    "Explore advanced settings for personalized recommendations.",
+  ];
+
   return (
     <Flowbite>
-      <div className="  h-full bg-slate-300 dark:bg-slate-900 ">
+      <div className="  h-full bg-slate-200 dark:bg-slate-900 ">
         <div className=" container  mx-auto flex flex-row  gap-10  bg-white   dark:bg-slate-950 dark:text-white ">
-          <div className="w-1/4 flex-col items-center bg-slate-300 p-5 pt-10 dark:bg-slate-900 ">
+          <div className="w-1/4 shrink-0 flex-col items-center bg-slate-200 p-5 pt-10 dark:bg-slate-900 ">
             <PromptBox prompts={prompts} />
           </div>
 
@@ -84,8 +88,8 @@ export default function Tool() {
             </div>
           </div>
 
-          <div className="w-1/4  bg-slate-300  p-5 pt-10 dark:bg-slate-900 dark:text-white ">
-            <GenKodeChat messages={messages} />
+          <div className="w-1/4  bg-slate-200  p-5 pt-10 dark:bg-slate-900 dark:text-white  ">
+            <GenKodeChat messages={exampleMessages} />
           </div>
         </div>
       </div>

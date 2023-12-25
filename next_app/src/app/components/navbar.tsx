@@ -31,7 +31,7 @@ export default function Navbar() {
                 <div className="flex-shrink-0">
                   <Link
                     href={"/"}
-                    className="block h-auto w-auto sm:hidden mt-1 text-white"
+                    className="mt-1 block h-auto w-auto text-white sm:hidden"
                   >
                     Iterative
                   </Link>
@@ -111,7 +111,7 @@ export default function Navbar() {
           </div>
 
           <Disclosure.Panel className="sm:hidden">
-            <div className="space-y-1 px-2 pt-2 pb-3">
+            <div className="space-y-1 px-2 pb-3 pt-2">
               {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
 
               <Disclosure.Button
