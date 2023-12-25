@@ -31,7 +31,7 @@ export default function Navbar() {
                 <div className="flex-shrink-0">
                   <Link
                     href={"/"}
-                    className="block h-10 w-auto lg:hidden mt-1 text-white"
+                    className="mt-1 block h-auto w-auto text-white sm:hidden"
                   >
                     Iterative
                   </Link>
@@ -45,24 +45,30 @@ export default function Navbar() {
                     >
                       Iterative
                     </Link>
-                    <div className="flex">
-                      {user ? (
-                        <>
-                          <Link
-                            href="/projects"
-                            className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
-                          >
-                            Projects
-                          </Link>
-                          <Link
-                            href="/Deployments"
-                            className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
-                          >
-                            Deployments
-                          </Link>
-                        </>
-                      ) : null}
-                    </div>
+                    <Link
+                      href="/tool"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Create
+                    </Link>
+                    <Link
+                      href="/projects"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Projects
+                    </Link>
+                    <Link
+                      href="/Deployments"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Deployments
+                    </Link>
+                    <Link
+                      href="/Contact"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:text-white"
+                    >
+                      Contact
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -105,9 +111,16 @@ export default function Navbar() {
           </div>
 
           <Disclosure.Panel className="sm:hidden">
-            <div className="space-y-1 px-2 pt-2 pb-3">
+            <div className="space-y-1 px-2 pb-3 pt-2">
               {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
 
+              <Disclosure.Button
+                as="a"
+                href="/tool"
+                className="block rounded-md px-3 py-2 text-sm font-medium text-gray-300  hover:bg-gray-700 hover:text-white"
+              >
+                Create
+              </Disclosure.Button>
               <Disclosure.Button
                 as="a"
                 href="/projects"

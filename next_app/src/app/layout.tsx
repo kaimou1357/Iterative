@@ -1,12 +1,14 @@
+
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/navbar";
-import Footer from "./components/footer";
 import { ThemeModeScript } from "flowbite-react";
 import StytchProvider from "./components/StytchProvider";
+import { Work_Sans  } from 'next/font/google'
+import './globals.css'
+import Footers from './components/footer'
+const font  = Work_Sans({ subsets: ['latin'] })
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Iterative",
@@ -20,17 +22,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+
     <StytchProvider>
       <html lang="en">
         <head>
           <ThemeModeScript />
         </head>
-        <body className={inter.className}>
+        <body className={font.className}>
           {" "}
           <Navbar /> {children}
+           <Footers />
         </body>
-        <Footer />
+       
       </html>
     </StytchProvider>
   );
+  
+
+    
+   
+
 }

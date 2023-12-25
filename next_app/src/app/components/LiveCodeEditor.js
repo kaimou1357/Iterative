@@ -20,7 +20,7 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
 
     if (result === null) {
       return (
-        <div style={{ height: "75vh" }}>
+        <div className="grow">
           <iframe ref={iframeRef} width="100%" height="100%" />
         </div>
       );
@@ -58,7 +58,7 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
   }, [code, css, cssFramework]);
 
   return (
-    <div style={{ height: "75vh" }}>
+    <div className="grow">
       <iframe ref={iframeRef} width="100%" height="100%" />
     </div>
   );
