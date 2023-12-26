@@ -10,8 +10,7 @@ from app.projects import bp
 from app.extensions import db
 
 @bp.route('/api/create-project', methods=['POST'])
-@login_required
-def create_project():
+def create_project_dirty():
     # Retrieve project information from the request
     name = request.json['name']
 
@@ -22,6 +21,28 @@ def create_project():
         # Associate the current user with the project
         project.users.append(current_user)
         project.css_framework = current_user.settings.css_framework
+        # Add and commit the new project to the database
+        
+    db.session.add(project)
+    db.session.commit()
+
+    # Return a success response
+    return jsonify({'status': 'success', 'project': project.to_dict()})
+
+@bp.route('/api/projects', methods=['POST'])
+def create_project():
+    # Retrieve project information from the request
+    project_id = request.json['project_id']
+    if project_id:
+      project = Project.query.get(project_id)
+      return jsonify({'status': 'success', 'project': project.to_dict()})
+    else:
+      project = Project(name="My First Project")
+    # Create a new Project instance
+
+    if current_user.is_authenticated:
+        # Associate the current user with the project
+        project.users.append(current_user)
         # Add and commit the new project to the database
         
     db.session.add(project)
@@ -62,7 +83,6 @@ def delete_project():
 def get_project():
     # Retrieve the project_id and project_name from the request body
     project_id = request.args.get('project_id')
-    project_name = request.args.get('project_name')
     
     user_projects = current_user.projects  # Access the projects relationship directly
     retrieved_project = None
@@ -71,13 +91,6 @@ def get_project():
         if project.id == project_id:
             retrieved_project = project
             break
-
-    if retrieved_project is None:
-        # couldn't find by id, let's check by name for newly signed up, converted guest users
-        for project in user_projects:
-            if project.name == project_name:
-                retrieved_project = project
-                break
 
     if retrieved_project is None:
         return jsonify({'status': 'error', 'message': 'Project not found'}), 404

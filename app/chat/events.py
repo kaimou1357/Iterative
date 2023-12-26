@@ -1,22 +1,13 @@
 import re
 from flask_socketio import send, emit
 from app import socketio
+from app.models.chat_message import ChatMessage
 from app.models.project import Project
 from app.models.project_state import ProjectState
 from app.extensions import db
 from app.openai.client import OpenAIClient
 from app.openai.utils import extract_code, messages_to_string
-import tiktoken
-
-
-@socketio.on('connect')
-def handle_connect():
-  project = Project(name="Anonymous Project")
-            
-  db.session.add(project)
-  db.session.commit()
-  emit("project_id", project.id)
-  
+import tiktoken  
 
 def on_code_generated(user_msg):
   user_prompt = f"""
@@ -118,14 +109,17 @@ def on_user_message(payload):
   tokens_remaining = max_tokens_allowed - current_num_tokens
   
   response = OpenAIClient().chat_completion(messages, tokens_remaining, True)
-  react_code = extract_code_and_update_project(response, project_id)
+  react_code = extract_code_and_update_project(user_msg, response, project_id)
   emit("server_code", react_code)
   on_code_generated(user_msg)
 
-def extract_code_and_update_project(full_reply_comment, project_id):
+def extract_code_and_update_project(user_message, full_reply_comment, project_id):
   react_code, css_code = extract_code(full_reply_comment)
   new_project_state = ProjectState(react_code=react_code, css_code=css_code, project_id=project_id)
   db.session.add(new_project_state)
+  db.session.flush()
+  chat_message = ChatMessage(content=user_message, role="user", project_state_id=new_project_state.id)
+  db.session.add(chat_message)
   db.session.commit()
   return react_code
   
