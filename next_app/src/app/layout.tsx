@@ -1,14 +1,12 @@
-
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "./components/navbar";
 import { ThemeModeScript } from "flowbite-react";
 import StytchProvider from "./components/StytchProvider";
-import { Work_Sans  } from 'next/font/google'
-import './globals.css'
-import Footers from './components/footer'
-const font  = Work_Sans({ subsets: ['latin'] })
-
+import { Work_Sans } from "next/font/google";
+import "./globals.css";
+import Footers from "./components/footer";
+import AppNavbar from "./components/navbar";
+const font = Work_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Iterative",
@@ -22,7 +20,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-
     <StytchProvider>
       <html lang="en">
         <head>
@@ -30,16 +27,10 @@ export default function RootLayout({
         </head>
         <body className={font.className}>
           {" "}
-          <Navbar /> {children}
-           <Footers />
+          <AppNavbar /> {children}
+          <Footers />
         </body>
-       
       </html>
     </StytchProvider>
   );
-  
-
-    
-   
-
 }

@@ -1,21 +1,20 @@
 "use client";
-import { ChangeEvent, useRef, useState, forwardRef } from "react";
-import {
-  DarkThemeToggle,
-  Flowbite,
-  Label,
-  Textarea,
-  Progress,
-} from "flowbite-react";
-import { Button, Spinner } from "flowbite-react";
-import Link from "next/link";
+import { ChangeEvent, useState } from "react";
+import { Button, DarkThemeToggle, Flowbite, Label, Spinner, Textarea } from "flowbite-react";
 
 interface PromptInputProps {
   onPromptSubmit: (prompt: string) => void;
+  onProjectReset: () => void;
   loading: boolean;
+  isAuthenticated: boolean;
 }
 
-const PromptInput = ({ onPromptSubmit, loading }: PromptInputProps) => {
+const PromptInput = ({
+  onProjectReset,
+  onPromptSubmit,
+  loading,
+  isAuthenticated,
+}: PromptInputProps) => {
   const [prompt, setPrompt] = useState("");
 
   const onChange = (
@@ -41,36 +40,10 @@ const PromptInput = ({ onPromptSubmit, loading }: PromptInputProps) => {
         />
         {loading ? (
           <div>
-            <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-              <div
-                className="h-2.5 rounded-full bg-blue-600"
-                style={{ width: "45%" }}
-              ></div>
-            </div>
-
-            <button type="button" className=" flex flex-row" disabled>
-              {/* <svg
-                className="mr-3 h-5 w-5 animate-spin text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg> */}
-              Processing...
-            </button>
+            <Button className="bg-blue-500">
+              <Spinner aria-label="Spinner button example" size="sm" />
+              <span className="pl-3">Loading...</span>
+            </Button>
           </div>
         ) : (
           <div>
@@ -83,11 +56,19 @@ const PromptInput = ({ onPromptSubmit, loading }: PromptInputProps) => {
               </button>
 
               <button
-                onClick={() => onPromptSubmit(prompt)}
+                onClick={() => onProjectReset()}
                 className="my-auto flex flex-row gap-1 rounded-full bg-red-500 p-3 text-white"
               >
                 Reset
               </button>
+              {isAuthenticated ? (
+                <button
+                  onClick={() => onPromptSubmit(prompt)}
+                  className="my-auto flex flex-row gap-1 rounded-full bg-green-700 p-3 text-white"
+                >
+                  Save Project
+                </button>
+              ) : null}
               <DarkThemeToggle className="rounded-full border px-3 py-3 dark:border-white" />
             </div>
           </div>
