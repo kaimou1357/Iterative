@@ -1,6 +1,6 @@
 "use client";
 
-import { ProjectState } from "../tool/toolstate";
+import { ProjectState, useDeploymentStore } from "../tool/toolstate";
 
 interface UserPromptsProps {
   projectStates: ProjectState[];
@@ -13,6 +13,13 @@ const UserPrompts = ({
   authenticated,
   onLoadClick,
 }: UserPromptsProps) => {
+
+  const {setProjectStateId, setDeploymentModalOpen} = useDeploymentStore();
+
+  const onCreateDeploymentClick = (projectStateId: string) => {
+    setProjectStateId(projectStateId);
+    setDeploymentModalOpen(true);
+  }
   return (
     <div>
       <div className="mb-3 ">Existing User Prompts</div>
@@ -30,7 +37,7 @@ const UserPrompts = ({
                 Load
               </button>
               {authenticated ? (
-                <button className="my-auto rounded-full bg-purple-700 p-3 text-sm text-white dark:bg-cyan-500 ">
+                <button onClick={() => onCreateDeploymentClick(p.id)} className="my-auto rounded-full bg-purple-700 p-3 text-sm text-white dark:bg-cyan-500 ">
                   Create Deployment
                 </button>
               ) : null}
