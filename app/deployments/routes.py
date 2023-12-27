@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from flask_login import current_user, login_required
+from app.auth_middleware import token_required
 from app.main import bp
 from app.models.deployment import Deployment
 from app.extensions import db
@@ -11,8 +12,8 @@ def deployments_get():
   return jsonify({"deployments": [d.serialize() for d in deployments]})
 
 @bp.post("/api/deployments")
-@login_required
-def deployments_post():
+@token_required
+def deployments_post(current_user):
   data = request.json
   project_state_id = data.get("project_state_id")
   deployment_name = data.get("deployment_name")
