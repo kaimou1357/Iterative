@@ -13,6 +13,7 @@ interface ToolState {
   addMessage: (message: string) => void;
   setProjectStates: (projectStates: ProjectState[]) => void;
   setOpenDeploymentModal: (openModal: boolean) => void;
+  resetProject: () => void;
 }
 
 export interface ProjectState {
@@ -71,6 +72,7 @@ export const useToolStore = create<ToolState>()((set) => ({
   reactCode: "",
   openDeploymentModal: false,
 
+  resetProject: () => set(() => ({})),
   setOpenDeploymentModal: (openModal: boolean) =>
     set(() => ({ openDeploymentModal: openModal })),
   setReactCode: (code) => set(() => ({ reactCode: code })),

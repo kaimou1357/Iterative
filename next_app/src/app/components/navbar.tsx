@@ -39,8 +39,15 @@ export default function AppNavbar() {
       </div>
       <Navbar.Collapse>
         <Navbar.Link href="/tool">Create</Navbar.Link>
-        <Navbar.Link href="/projects">Projects</Navbar.Link>
-        <Navbar.Link href="/deployments">Deployments</Navbar.Link>
+        { isAuthenticated ? (
+          <>
+            <Navbar.Link href="/projects">Projects</Navbar.Link>
+            <Navbar.Link href="/deployments">Deployments</Navbar.Link>
+          </> 
+        ): <>
+          <Navbar.Link href="/login">Projects</Navbar.Link>
+          <Navbar.Link href="/login">Deployments</Navbar.Link>
+      </>}
       </Navbar.Collapse>
     </Navbar>
   );
