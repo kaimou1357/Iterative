@@ -16,6 +16,28 @@ interface ToolState {
   resetProject: () => void;
 }
 
+export const useToolStore = create<ToolState>()((set) => ({
+  loading: false,
+  messages: [],
+  prompts: [],
+  projectStates: [],
+  reactCode: "",
+  openDeploymentModal: false,
+
+  resetProject: () => set(() => ({prompts: [], projectStates: [], reactCode: "", messages: []})),
+  setOpenDeploymentModal: (openModal: boolean) =>
+    set(() => ({ openDeploymentModal: openModal })),
+  setReactCode: (code) => set(() => ({ reactCode: code })),
+  setLoading: (isLoading) => set(() => ({ loading: isLoading })),
+  setProjectStates: (projectStates: ProjectState[]) =>
+    set(() => ({ projectStates: projectStates })),
+  addMessage: (message: string) => {
+    set((state) => ({
+      messages: [...state.messages, message],
+    }));
+  },
+}));
+
 export interface ProjectState {
   reactCode: string | null;
   prompt: string;
@@ -64,24 +86,4 @@ export const useDeploymentStore = create<DeploymentState>()((set) => ({
   setDeploymentModalOpen: (isOpen) => set(() => ({ modalOpen: isOpen })),
 }));
 
-export const useToolStore = create<ToolState>()((set) => ({
-  loading: false,
-  messages: [],
-  prompts: [],
-  projectStates: [],
-  reactCode: "",
-  openDeploymentModal: false,
 
-  resetProject: () => set(() => ({})),
-  setOpenDeploymentModal: (openModal: boolean) =>
-    set(() => ({ openDeploymentModal: openModal })),
-  setReactCode: (code) => set(() => ({ reactCode: code })),
-  setLoading: (isLoading) => set(() => ({ loading: isLoading })),
-  setProjectStates: (projectStates: ProjectState[]) =>
-    set(() => ({ projectStates: projectStates })),
-  addMessage: (message: string) => {
-    set((state) => ({
-      messages: [...state.messages, message],
-    }));
-  },
-}));

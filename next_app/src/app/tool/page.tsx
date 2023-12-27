@@ -31,6 +31,7 @@ export default function Tool() {
     setReactCode,
     messages,
     addMessage,
+    resetProject
   } = useToolStore();
 
   const { projectId, setProjectId } = useProjectStore();
@@ -70,10 +71,6 @@ export default function Tool() {
     setProjectStates(projectStates);
   }
 
-  const resetProject = () => {
-    setProjectId(null);
-  };
-
   const onServerResponse = (response: any) => {
     addMessage(response);
   };
@@ -92,6 +89,15 @@ export default function Tool() {
       setReactCode(reactCode);
     }
   };
+
+  async function onResetProject() {
+    const response = await axios.post(
+      `${API_BASE_URL}/projects/reset`,
+      { project_id: projectId },
+      { headers: { "Content-Type": "application/json" } },
+    );
+    resetProject();
+  }
 
   const handleSend = (prompt: string) => {
     setLoading(true);
@@ -122,7 +128,7 @@ export default function Tool() {
             <div className="">
               <PromptInput
                 loading={loading}
-                onProjectReset={resetProject}
+                onProjectReset={onResetProject}
                 onPromptSubmit={handleSend}
                 isAuthenticated={user !== null}
               />
