@@ -20,7 +20,7 @@ def create_project(current_user):
       project = Project(name="My First Project")
     # Create a new Project instance
 
-    if current_user.is_authenticated:
+    if current_user:
         # Associate the current user with the project
         project.users.append(current_user)
         # Add and commit the new project to the database
@@ -37,7 +37,7 @@ def delete_project(current_user):
     # Retrieve the project_id from the request body
     project_id = request.json['project_id']
     
-    if current_user.is_authenticated:
+    if current_user:
         # Retrieve the project by its ID
         project = Project.query.get(project_id)
         
@@ -46,7 +46,7 @@ def delete_project(current_user):
         return jsonify({'status': 'error', 'message': 'Project not found'}), 404
   
     
-    if current_user.is_authenticated:
+    if current_user:
         # Check if the current user is associated with the project
         if current_user not in project.users:
             return jsonify({'status': 'error', 'message': 'Unauthorized'}), 403
