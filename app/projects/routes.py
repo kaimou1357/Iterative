@@ -1,4 +1,5 @@
 import re
+from app.auth_middleware import token_required
 from app.models.chat_message import ChatMessage
 from app.models.constants import AssistantModel, CSSFramework
 from app.models.project import Project
@@ -9,28 +10,9 @@ import uuid
 from app.projects import bp
 from app.extensions import db
 
-@bp.route('/api/create-project', methods=['POST'])
-def create_project_dirty():
-    # Retrieve project information from the request
-    name = request.json['name']
-
-    # Create a new Project instance
-    project = Project(name=name)
-
-    if current_user.is_authenticated:
-        # Associate the current user with the project
-        project.users.append(current_user)
-        project.css_framework = current_user.settings.css_framework
-        # Add and commit the new project to the database
-        
-    db.session.add(project)
-    db.session.commit()
-
-    # Return a success response
-    return jsonify({'status': 'success', 'project': project.to_dict()})
-
 @bp.route('/api/projects', methods=['POST'])
-def create_project():
+@token_required
+def create_project(current_user):
     # Retrieve project information from the request
     project_id = request.json['project_id']
     if project_id:
@@ -51,9 +33,9 @@ def create_project():
     # Return a success response
     return jsonify({'status': 'success', 'project': project.to_dict()})
 
-@bp.route('/api/delete-project', methods=['DELETE'])
-@login_required
-def delete_project():
+@bp.route('/api/projects', methods=['DELETE'])
+@token_required
+def delete_project(current_user):
     # Retrieve the project_id from the request body
     project_id = request.json['project_id']
     
@@ -78,9 +60,9 @@ def delete_project():
     # Return a success response
     return jsonify({'status': 'success', 'message': 'Project deleted successfully'})
 
-@bp.route('/api/get-project', methods=['GET'])
-@login_required
-def get_project():
+@bp.route('/api/project/<project_id>', methods=['GET'])
+@token_required
+def get_project(current_user, project_id):
     # Retrieve the project_id and project_name from the request body
     project_id = request.args.get('project_id')
     
@@ -98,16 +80,16 @@ def get_project():
     project_data = retrieved_project.to_dict()
     return jsonify({'project': project_data})
 
-@bp.route('/api/get-projects', methods=['GET'])
-@login_required
-def get_projects():
+@bp.route('/api/projects', methods=['GET'])
+@token_required
+def get_projects(current_user):
     user_projects = current_user.projects  # Access the projects relationship directly
     projects_data = [project.to_dict() for project in user_projects]
     return jsonify({'projects': projects_data})
 
 @bp.route('/api/projects/update', methods=['POST'])
-@login_required
-def update_project():
+@token_required
+def update_project(current_user):
     project_id = request.json.get('project_id')
     response_text = request.json.get('result')
     user_input = request.json.get("user_input")
@@ -167,8 +149,8 @@ def update_project():
     return jsonify({'status': 'success', 'project': project.to_dict()})
 
 @bp.route('/api/reset', methods=['POST'])
-@login_required
-def reset():
+@token_required
+def reset(current_user):
     project_id = request.json['project_id']
     project = None
     

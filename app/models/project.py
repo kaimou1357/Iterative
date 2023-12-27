@@ -24,7 +24,7 @@ class Project(db.Model):
         return {
             'id': str(self.id),
             'name': self.name,
-            'users': [{'email': user.email, 'id': user.id} for user in self.users],
+            'users': [{'id': user.id} for user in self.users],
             'projectStates': [{
                 'reactCode': state.react_code,
                 'cssCode': state.css_code,

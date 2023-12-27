@@ -9,7 +9,7 @@ def get_or_create_user(stytch_user_id):
     user = User.query.filter_by(stytch_user_id=stytch_user_id).first()
     
     if not user:
-      user = User(email="test", password="test", stytch_user_id=stytch_user_id)
+      user = User(stytch_user_id=stytch_user_id)
       db.session.add(user)
       db.session.commit()
     

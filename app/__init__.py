@@ -33,7 +33,6 @@ def create_app():
     migrate = Migrate(app, db)
     bcrypt = Bcrypt(app)
     db.init_app(app)
-    login_manager.init_app(app)
     CORS(app, resources={r"/*": {"origins": app.config['CORS_ORIGINS']}}, supports_credentials=True)
   
     celery_init_app(app)
