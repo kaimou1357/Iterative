@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../components/config";
 import { Deployment } from "./types";
 import Loading from "../components/loading";
+import Link from "next/link";
 
 export default function Deployments() {
     const [deployments, setDeployments] = useState<Deployment[]>();
@@ -71,7 +72,7 @@ export default function Deployments() {
                                             {deployment.password}
                                         </Table.Cell>
                                         <Table.Cell className="px-6 py-4 text-blue-600 underline underline-offset-2">
-                                            <a href="#">Open</a>
+                                            <Link href="#">Open</Link>
                                         </Table.Cell>
                                     </Table.Row>
                                 })}
