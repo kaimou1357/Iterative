@@ -6,8 +6,8 @@ from app.models.deployment import Deployment
 from app.extensions import db
 
 @bp.get("/api/deployments")
-@login_required
-def deployments_get():
+@token_required
+def deployments_get(current_user):
   deployments = current_user.deployments
   return jsonify({"deployments": [d.serialize() for d in deployments]})
 

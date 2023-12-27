@@ -2,7 +2,19 @@ from functools import wraps
 import os
 from flask import request
 import stytch
+from app.models.user import User
+from app.extensions import db
 
+def get_or_create_user(stytch_user_id):
+    user = User.query.filter_by(stytch_user_id=stytch_user_id).first()
+    
+    if not user:
+      user = User(email="test", password="test", stytch_user_id=stytch_user_id)
+      db.session.add(user)
+      db.session.commit()
+    
+    return user
+  
 def token_required(f):
   @wraps(f)
   def decorated(*args, **kwargs):
@@ -15,9 +27,12 @@ def token_required(f):
     cookies = request.cookies
     stytch_jwt = cookies.get("stytch_session_jwt")
     session = client.sessions.authenticate_jwt(stytch_jwt)
-    print(session)
+    if session is None:
+      return f(None, *args, **kwargs)
+    stytch_user_id = session.user_id
+    current_user = get_or_create_user(stytch_user_id)
     
-    return f(None, *args, **kwargs)
+    return f(current_user, *args, **kwargs)
   return decorated 
     
     

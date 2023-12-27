@@ -58,9 +58,9 @@ export default function Tool() {
     setProjectId(response.data.project.id);
     const projectStates = response.data.project.projectStates.map((p: any) => {
       const pState: ProjectState = {
-        id: p.id,
+        id: p.projectStateId,
         reactCode: p.reactCode,
-        prompt: p.messages[0].content,
+        prompt: p.messages[0] ? p.messages[0].content : null,
       };
       return pState;
     });

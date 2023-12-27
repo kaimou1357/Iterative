@@ -11,11 +11,10 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=True)
     phone_number = db.Column(db.String(15), nullable=True)
     bio = db.Column(db.Text, nullable=True)
-    stytch_user_id = db.Column(db.String(100), nullable=False)
+    stytch_user_id = db.Column(db.String(100), nullable=False, index=True)
 
     projects = db.relationship('Project', secondary=user_project_table, back_populates='users')
     chat_messages = db.relationship('ChatMessage', back_populates='user')
-    settings = db.relationship('UserSettings', back_populates='user', uselist=False, cascade="all, delete, delete-orphan")
     deployments = db.relationship('Deployment')
 
     def __repr__(self):

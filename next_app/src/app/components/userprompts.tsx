@@ -16,7 +16,7 @@ const UserPrompts = ({
 
   const {setProjectStateId, setDeploymentModalOpen} = useDeploymentStore();
 
-  const onCreateDeploymentClick = (projectStateId: string) => {
+  const onCreateDeploymentClick = (projectStateId: number) => {
     setProjectStateId(projectStateId);
     setDeploymentModalOpen(true);
   }

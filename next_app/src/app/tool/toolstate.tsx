@@ -18,7 +18,7 @@ interface ToolState {
 export interface ProjectState {
   reactCode: string | null;
   prompt: string;
-  id: string;
+  id: number;
 }
 
 interface Project {
@@ -29,12 +29,12 @@ interface Project {
 interface DeploymentState {
   deploymentName: string,
   passcode: string,
-  projectStateId: string | null,
+  projectStateId: number | null,
   modalOpen: boolean
 
   setDeploymentName: (name: string) => void;
   setPasscode: (passcode: string) => void;
-  setProjectStateId: (projectId: string) => void;
+  setProjectStateId: (projectId: number) => void;
   setDeploymentModalOpen: (isOpen: boolean) => void;
 }
 
