@@ -1,7 +1,7 @@
 "use client"
 
 import axios from "axios";
-import { Flowbite } from "flowbite-react";
+import { Flowbite, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../components/config";
 import { Deployment } from "./types";
@@ -32,7 +32,7 @@ export default function Deployments() {
     // Show error message if error is thrown by server
     if(error) return (
         <div className="h-[calc(100vh-16rem)] bg-slate-200 dark:bg-slate-900 pt-10 rounded-lg">
-                <h1 className="text-center">{error}</h1>
+            <p aria-label="Error message" className="text-center text-xl">{error}</p>
         </div>
     )
     // Show deployments table if deployments are fetched correctly
@@ -41,42 +41,42 @@ export default function Deployments() {
             <div className="h-[calc(100vh-16rem)] bg-slate-200 dark:bg-slate-900 pt-10 rounded-lg">
                 <div className="container w-[90%] max-h-[90%] mx-auto flex flex-row gap-10 bg-white dark:bg-slate-950 dark:text-white ">
                     <div className="relative w-full overflow-auto ">
-                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate rounded-lg">
-                            <thead className="w-full text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3">
+                        <Table hoverable>
+                            <Table.Head>
+                                {/* <tr> */}
+                                    <Table.HeadCell scope="col" className="px-6 py-3">
                                         Id
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    </Table.HeadCell>
+                                    <Table.HeadCell scope="col" className="px-6 py-3">
                                         Deploynent name
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    </Table.HeadCell>
+                                    <Table.HeadCell scope="col" className="px-6 py-3">
                                         Passcode
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    </Table.HeadCell>
+                                    <Table.HeadCell scope="col" className="px-6 py-3">
                                         Access
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                                    </Table.HeadCell>
+                                {/* </tr> */}
+                            </Table.Head>
+                            <Table.Body className="divide-y">
                                 {deployments && deployments.length && deployments.map((deployment: Deployment) => {
-                                    return <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    return <Table.Row key={deployment.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                        <Table.Cell scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {deployment.project_state_id}
-                                        </th>
-                                        <td className="px-6 py-4">
+                                        </Table.Cell>
+                                        <Table.Cell className="px-6 py-4">
                                             {deployment.name}
-                                        </td>
-                                        <td className="px-6 py-4">
+                                        </Table.Cell>
+                                        <Table.Cell className="px-6 py-4">
                                             {deployment.password}
-                                        </td>
-                                        <td className="px-6 py-4 text-blue-600 underline underline-offset-2">
+                                        </Table.Cell>
+                                        <Table.Cell className="px-6 py-4 text-blue-600 underline underline-offset-2">
                                             <a href="#">Open</a>
-                                        </td>
-                                    </tr>
+                                        </Table.Cell>
+                                    </Table.Row>
                                 })}
-                            </tbody>
-                        </table>
+                            </Table.Body>
+                        </Table>
                     </div>
 
                 </div>
