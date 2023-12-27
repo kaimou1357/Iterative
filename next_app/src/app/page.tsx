@@ -35,7 +35,7 @@ export default function Home() {
             >
               Try it out!
             </Link>
-            <Link href="/auth" className="rounded bg-blue-500 p-2 text-white ">
+            <Link href="/login" className="rounded bg-blue-500 p-2 text-white ">
               Sign Up
             </Link>
           </div>

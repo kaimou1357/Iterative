@@ -13,13 +13,28 @@ export default function AppNavbar() {
     stytchClient.session.revoke();
   }, [stytchClient]);
 
+  const isAuthenticated = user !== null;
+
   return (
     <Navbar fluid rounded>
       <Navbar.Brand href="/">
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Iterative</span>
+        <img
+          src="/favicon.png"
+          className="mr-3 h-6 sm:h-9"
+          alt="Iterative Logo"
+        />
+        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+          Iterative
+        </span>
       </Navbar.Brand>
       <div className="flex md:order-2">
-        <Button href="/login">Log In</Button>
+        {isAuthenticated ? (
+          <Button onClick={handleLogout} href="">
+            Sign Out
+          </Button>
+        ) : (
+          <Button href="/login">Log In</Button>
+        )}
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
