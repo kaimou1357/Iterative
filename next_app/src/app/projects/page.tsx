@@ -73,7 +73,7 @@ export default function Projects() {
                             {project.name}
                           </Table.Cell>
                           <Table.Cell className="px-6 py-4 text-blue-600 underline underline-offset-2">
-                            <Link href="#">Open in Tool</Link>
+                            <Link href={`/tool/${project.id}`}>Open in Tool</Link>
                           </Table.Cell>
                         </Table.Row>
                       );

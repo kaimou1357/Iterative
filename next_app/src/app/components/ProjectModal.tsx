@@ -21,6 +21,7 @@ export const ProjectModal = ({projectId}: ProjectModalProps) => {
         project_name: projectName,
       })
       .then((_) => {
+        onCloseModal();
         showToast("Project Saved Successfully")
       });
   };

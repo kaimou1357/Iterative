@@ -66,6 +66,8 @@ export interface ProjectState {
 interface Project {
   projectId: string | null;
   setProjectId: (id: string | null) => void;
+  projectName: string,
+  setProjectName: (name: string) => void;
 }
 
 interface DeploymentState {
@@ -84,7 +86,9 @@ export const useProjectStore = create<Project>()(
   persist(
     (set, get) => ({
       projectId: null,
+      projectName: "",
       setProjectId: (id: string | null) => set({ projectId: id }),
+      setProjectName: (name: string) => set({ projectName: name }),
     }),
     {
       name: "project-id-storage", // name of item in the storage (must be unique)

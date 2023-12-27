@@ -1,7 +1,4 @@
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useStytchUser } from "@stytch/nextjs";
 import Link from "next/link";
 import Banner from "./components/banner";
 import { DarkThemeToggle, Flowbite } from "flowbite-react";

@@ -32,7 +32,7 @@ export default function Tool() {
     setOpenProjectModal
   } = useToolStore();
 
-  const { projectId, setProjectId } = useProjectStore();
+  const { projectId, setProjectId, setProjectName, projectName } = useProjectStore();
 
   const { user } = useStytchUser();
   axios.defaults.withCredentials = true;
@@ -58,6 +58,7 @@ export default function Tool() {
       { headers: { "Content-Type": "application/json" } },
     );
     setProjectId(response.data.project.id);
+    setProjectName(response.data.project.name);
     refreshProjectStates();
   }
 
@@ -131,6 +132,7 @@ export default function Tool() {
           </div>
 
           <div className=" mb-40 flex w-1/2 grow flex-col items-stretch  pt-10 ">
+          {projectName}
             <div className=" grow rounded-md border-2 border-solid border-gray-500">
               <LiveCodeEditor
                 code={reactCode}
