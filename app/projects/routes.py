@@ -5,7 +5,6 @@ from app.models.constants import AssistantModel, CSSFramework
 from app.models.project import Project
 from app.models.project_state import ProjectState
 from flask import request, jsonify
-from flask_login import current_user, login_required
 import uuid
 from app.projects import bp
 from app.extensions import db
@@ -79,6 +78,17 @@ def get_project(current_user, project_id):
 
     project_data = retrieved_project.to_dict()
     return jsonify({'project': project_data})
+
+@bp.post('/api/projects/project_state')
+def get_project_states():
+    # Retrieve the project_id and project_name from the request body
+    project_id = request.json['project_id']
+    project = Project.query.get(project_id)
+    
+    if project is None:
+        return jsonify({'status': 'error', 'message': 'Project not found'}), 404
+    
+    return jsonify({'project_states': [s.to_dict() for s in project.project_states]})
 
 @bp.route('/api/projects', methods=['GET'])
 @token_required

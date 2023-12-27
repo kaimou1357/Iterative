@@ -4,13 +4,13 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface ToolState {
   loading: boolean;
   reactCode: string;
-  messages: string[];
+  recommendations: string[];
   projectStates: ProjectState[];
   openDeploymentModal: boolean;
 
   setReactCode: (code: string) => void;
   setLoading: (isLoading: boolean) => void;
-  addMessage: (message: string) => void;
+  addRecommendation: (message: string) => void;
   setProjectStates: (projectStates: ProjectState[]) => void;
   setOpenDeploymentModal: (openModal: boolean) => void;
   resetProject: () => void;
@@ -18,22 +18,27 @@ interface ToolState {
 
 export const useToolStore = create<ToolState>()((set) => ({
   loading: false,
-  messages: [],
-  prompts: [],
+  recommendations: [],
   projectStates: [],
   reactCode: "",
   openDeploymentModal: false,
 
-  resetProject: () => set(() => ({prompts: [], projectStates: [], reactCode: "", messages: []})),
+  resetProject: () =>
+    set(() => ({
+      prompts: [],
+      projectStates: [],
+      reactCode: "",
+      recommendations: [],
+    })),
   setOpenDeploymentModal: (openModal: boolean) =>
     set(() => ({ openDeploymentModal: openModal })),
   setReactCode: (code) => set(() => ({ reactCode: code })),
   setLoading: (isLoading) => set(() => ({ loading: isLoading })),
   setProjectStates: (projectStates: ProjectState[]) =>
     set(() => ({ projectStates: projectStates })),
-  addMessage: (message: string) => {
+  addRecommendation: (message: string) => {
     set((state) => ({
-      messages: [...state.messages, message],
+      recommendations: [...state.recommendations, message],
     }));
   },
 }));
@@ -85,5 +90,3 @@ export const useDeploymentStore = create<DeploymentState>()((set) => ({
   setProjectStateId: (projectId) => set(() => ({ projectStateId: projectId })),
   setDeploymentModalOpen: (isOpen) => set(() => ({ modalOpen: isOpen })),
 }));
-
-

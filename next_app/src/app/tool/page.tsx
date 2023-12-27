@@ -9,14 +9,9 @@ import { useEffect } from "react";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import PromptBox from "../components/userprompts";
 import PromptInput from "../components/promptinput";
-import {
-  useProjectStore,
-  useToolStore,
-  ProjectState,
-  useDeploymentStore,
-} from "./toolstate";
+import { useProjectStore, useToolStore, ProjectState } from "./toolstate";
 import { useStytchUser } from "@stytch/nextjs";
-import { DarkThemeToggle, Flowbite } from "flowbite-react";
+import { Flowbite } from "flowbite-react";
 import axios from "axios";
 import { DeploymentModal } from "../components/DeploymentModal";
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
@@ -29,9 +24,9 @@ export default function Tool() {
     projectStates,
     reactCode,
     setReactCode,
-    messages,
-    addMessage,
-    resetProject
+    recommendations,
+    addRecommendation,
+    resetProject,
   } = useToolStore();
 
   const { projectId, setProjectId } = useProjectStore();
@@ -60,24 +55,37 @@ export default function Tool() {
       { headers: { "Content-Type": "application/json" } },
     );
     setProjectId(response.data.project.id);
-    const projectStates = response.data.project.projectStates.map((p: any) => {
-      const pState: ProjectState = {
-        id: p.projectStateId,
-        reactCode: p.reactCode,
-        prompt: p.messages[0] ? p.messages[0].content : null,
-      };
-      return pState;
-    });
-    setProjectStates(projectStates);
+    refreshProjectStates();
   }
 
   const onServerResponse = (response: any) => {
-    addMessage(response);
+    addRecommendation(response);
+  };
+
+  const refreshProjectStates = () => {
+    axios
+      .post(
+        `${API_BASE_URL}/projects/project_state`,
+        { project_id: projectId },
+        { headers: { "Content-Type": "application/json" } },
+      )
+      .then((response: any) => {
+        const projectStates = response.data.project_states.map((p: any) => {
+          const pState: ProjectState = {
+            id: p.projectStateId,
+            reactCode: p.reactCode,
+            prompt: p.messages[0] ? p.messages[0].content : null,
+          };
+          return pState;
+        });
+        setProjectStates(projectStates);
+      });
   };
 
   const onServerCode = (response: any) => {
     setLoading(false);
     setReactCode(response);
+    refreshProjectStates();
   };
 
   const onProjectId = (projectId: any) => {
@@ -136,7 +144,7 @@ export default function Tool() {
           </div>
 
           <div className="w-1/4  bg-slate-200  p-5 pt-10 dark:bg-slate-900 dark:text-white  ">
-            <GenKodeChat messages={messages} />
+            <GenKodeChat recommendations={recommendations} />
           </div>
         </div>
       </div>
