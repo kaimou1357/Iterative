@@ -9,7 +9,12 @@ import { useEffect } from "react";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import PromptBox from "../components/userprompts";
 import PromptInput from "../components/promptinput";
-import { useProjectStore, useToolStore, ProjectState, useDeploymentStore } from "./toolstate";
+import {
+  useProjectStore,
+  useToolStore,
+  ProjectState,
+  useDeploymentStore,
+} from "./toolstate";
 import { useStytchUser } from "@stytch/nextjs";
 import { DarkThemeToggle, Flowbite } from "flowbite-react";
 import axios from "axios";
@@ -30,10 +35,8 @@ export default function Tool() {
 
   const { projectId, setProjectId } = useProjectStore();
 
-
-  axios.defaults.withCredentials = true;
   const { user } = useStytchUser();
-
+  axios.defaults.withCredentials = true;
   useEffect(() => {
     socket = io(SOCKET_IO_URL);
     socket.on("server_response", onServerResponse);

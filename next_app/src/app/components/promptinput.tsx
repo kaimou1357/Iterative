@@ -1,6 +1,13 @@
 "use client";
 import { ChangeEvent, useState } from "react";
-import { Button, DarkThemeToggle, Flowbite, Label, Spinner, Textarea } from "flowbite-react";
+import {
+  Button,
+  DarkThemeToggle,
+  Flowbite,
+  Label,
+  Spinner,
+  Textarea,
+} from "flowbite-react";
 
 interface PromptInputProps {
   onPromptSubmit: (prompt: string) => void;
@@ -69,7 +76,6 @@ const PromptInput = ({
                   Save Project
                 </button>
               ) : null}
-              <DarkThemeToggle className="rounded-full border px-3 py-3 dark:border-white" />
             </div>
           </div>
         )}

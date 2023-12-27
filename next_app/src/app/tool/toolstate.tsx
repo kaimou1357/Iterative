@@ -27,10 +27,10 @@ interface Project {
 }
 
 interface DeploymentState {
-  deploymentName: string,
-  passcode: string,
-  projectStateId: number | null,
-  modalOpen: boolean
+  deploymentName: string;
+  passcode: string;
+  projectStateId: number | null;
+  modalOpen: boolean;
 
   setDeploymentName: (name: string) => void;
   setPasscode: (passcode: string) => void;
@@ -56,7 +56,8 @@ export const useDeploymentStore = create<DeploymentState>()((set) => ({
   passcode: "",
   projectStateId: null,
   modalOpen: false,
-  setDeploymentName: (deploymentName) => set(() => ({ deploymentName: deploymentName })),
+  setDeploymentName: (deploymentName) =>
+    set(() => ({ deploymentName: deploymentName })),
   setPasscode: (passcode) => set(() => ({ passcode: passcode })),
   setProjectStateId: (projectId) => set(() => ({ projectStateId: projectId })),
   setDeploymentModalOpen: (isOpen) => set(() => ({ modalOpen: isOpen })),
@@ -70,7 +71,8 @@ export const useToolStore = create<ToolState>()((set) => ({
   reactCode: "",
   openDeploymentModal: false,
 
-  setOpenDeploymentModal: (openModal: boolean) => set(() => ({openDeploymentModal: openModal})),
+  setOpenDeploymentModal: (openModal: boolean) =>
+    set(() => ({ openDeploymentModal: openModal })),
   setReactCode: (code) => set(() => ({ reactCode: code })),
   setLoading: (isLoading) => set(() => ({ loading: isLoading })),
   setProjectStates: (projectStates: ProjectState[]) =>
@@ -81,5 +83,3 @@ export const useToolStore = create<ToolState>()((set) => ({
     }));
   },
 }));
-
-

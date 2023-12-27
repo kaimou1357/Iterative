@@ -26,6 +26,8 @@ def token_required(f):
     
     cookies = request.cookies
     stytch_jwt = cookies.get("stytch_session_jwt")
+    if stytch_jwt is None:
+      return f(None, *args, **kwargs)
     session = client.sessions.authenticate_jwt(stytch_jwt)
     if session is None:
       return f(None, *args, **kwargs)
