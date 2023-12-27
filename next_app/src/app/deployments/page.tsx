@@ -44,12 +44,8 @@ export default function Deployments() {
                     <div className="relative w-full overflow-auto ">
                         <Table hoverable>
                             <Table.Head>
-                                {/* <tr> */}
                                     <Table.HeadCell scope="col" className="px-6 py-3">
-                                        Id
-                                    </Table.HeadCell>
-                                    <Table.HeadCell scope="col" className="px-6 py-3">
-                                        Deploynent name
+                                        Deployment name
                                     </Table.HeadCell>
                                     <Table.HeadCell scope="col" className="px-6 py-3">
                                         Passcode
@@ -57,14 +53,10 @@ export default function Deployments() {
                                     <Table.HeadCell scope="col" className="px-6 py-3">
                                         Access
                                     </Table.HeadCell>
-                                {/* </tr> */}
                             </Table.Head>
                             <Table.Body className="divide-y">
                                 {deployments && deployments.length && deployments.map((deployment: Deployment) => {
                                     return <Table.Row key={deployment.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                        <Table.Cell scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {deployment.project_state_id}
-                                        </Table.Cell>
                                         <Table.Cell className="px-6 py-4">
                                             {deployment.name}
                                         </Table.Cell>
