@@ -4,13 +4,14 @@ import axios from "axios";
 import { Flowbite } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../components/config";
-import { Deployment } from "../types/deployments/types";
+import { Deployment } from "./types";
 import Loading from "../components/loading";
 
 export default function Deployments() {
     const [deployments, setDeployments] = useState<Deployment[]>();
     const [error, setError] = useState<string | null>(null)
 
+    // Trigger deployments fetching on component mount
     useEffect(() => {
         fetchDeployments()
     }, []);
@@ -25,13 +26,16 @@ export default function Deployments() {
                 setError('Error Fetching Deployments, please try again')
             });
     }
-
+    
+    // Show loading spinner while deployments are being fetched
     if(!deployments) return <Loading />
+    // Show error message if error is thrown by server
     if(error) return (
         <div className="h-[calc(100vh-16rem)] bg-slate-200 dark:bg-slate-900 pt-10 rounded-lg">
                 <h1 className="text-center">{error}</h1>
         </div>
     )
+    // Show deployments table if deployments are fetched correctly
     else return (
         <Flowbite>
             <div className="h-[calc(100vh-16rem)] bg-slate-200 dark:bg-slate-900 pt-10 rounded-lg">
