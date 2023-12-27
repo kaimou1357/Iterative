@@ -3,7 +3,7 @@ import { CheckIcon } from "@heroicons/react/24/outline";
 
 export default function Modal() {
   return (
-    <div className="flex text-white items-center justify-center">
+    <div className="flex items-center justify-center text-white">
       <div className=" rounded-lg bg-black px-4 pb-4 pt-5 text-left">
         <div>
           <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">

@@ -75,7 +75,9 @@ export default function Deployments() {
                             {deployment.password}
                           </Table.Cell>
                           <Table.Cell className="px-6 py-4 text-blue-600 underline underline-offset-2">
-                            <Link href={`/deployments/${deployment.id}`}>Open</Link>
+                            <Link href={`/deployments/${deployment.id}`}>
+                              Open
+                            </Link>
                           </Table.Cell>
                         </Table.Row>
                       );

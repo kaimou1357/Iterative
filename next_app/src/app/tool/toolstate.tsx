@@ -8,8 +8,8 @@ interface ToolState {
   projectStates: ProjectState[];
   openDeploymentModal: boolean;
   openProjectModal: boolean;
-  shouldShowToast: boolean,
-  toastMessage: string,
+  shouldShowToast: boolean;
+  toastMessage: string;
 
   showToast: (message: string) => void;
   removeToast: () => void;
@@ -32,7 +32,8 @@ export const useToolStore = create<ToolState>()((set) => ({
   shouldShowToast: false,
   toastMessage: "",
 
-  showToast: (message) => set(() => ({ shouldShowToast: true, toastMessage: message })),
+  showToast: (message) =>
+    set(() => ({ shouldShowToast: true, toastMessage: message })),
   resetProject: () =>
     set(() => ({
       prompts: [],
@@ -40,8 +41,7 @@ export const useToolStore = create<ToolState>()((set) => ({
       reactCode: "",
       recommendations: [],
     })),
-  removeToast: () =>
-    set(() => ({ shouldShowToast: false })),
+  removeToast: () => set(() => ({ shouldShowToast: false })),
   setOpenDeploymentModal: (openModal: boolean) =>
     set(() => ({ openDeploymentModal: openModal })),
   setOpenProjectModal: (openModal: boolean) =>
@@ -66,7 +66,7 @@ export interface ProjectState {
 interface Project {
   projectId: string | null;
   setProjectId: (id: string | null) => void;
-  projectName: string,
+  projectName: string;
   setProjectName: (name: string) => void;
 }
 

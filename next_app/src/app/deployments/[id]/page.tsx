@@ -8,34 +8,37 @@ import { Deployment } from "../types";
 import { PasscodeModal } from "@/app/components/PasscodeModal";
 import { Flowbite } from "flowbite-react";
 
-
-export default function DeploymentView({params}: {params: {id: string}}) {
+export default function DeploymentView({ params }: { params: { id: string } }) {
   const deploymentId = params.id;
 
   const [loading, setLoading] = useState(false);
-  const [deployment, setDeployment] = useState<Deployment | null>(null)
+  const [deployment, setDeployment] = useState<Deployment | null>(null);
 
   const [openPasswordCollection, setOpenPasswordCollection] = useState(false);
   const [invalidPasscode, setInvalidPasscode] = useState(false);
-  
+
   useEffect(() => {
     fetchInfo();
   }, []);
 
   const fetchInfo = () => {
-    axios.get(`${API_BASE_URL}/deployments/${deploymentId}`)
+    axios
+      .get(`${API_BASE_URL}/deployments/${deploymentId}`)
       .then((response) => {
         setLoading(false);
         setDeployment(response.data.deployment);
       })
       .catch((error) => {
         setOpenPasswordCollection(true);
-        console.error('Unauthenticated Deployment - showing Modal to collect password');
+        console.error(
+          "Unauthenticated Deployment - showing Modal to collect password",
+        );
       });
-  }
+  };
 
   const verifyPassword = (passcode: string) => {
-    axios.get(`${API_BASE_URL}/deployments/${deploymentId}?passcode=${passcode}`)
+    axios
+      .get(`${API_BASE_URL}/deployments/${deploymentId}?passcode=${passcode}`)
       .then((response) => {
         setLoading(false);
         setDeployment(response.data.deployment);
@@ -44,18 +47,26 @@ export default function DeploymentView({params}: {params: {id: string}}) {
       .catch((error) => {
         setInvalidPasscode(true);
         setOpenPasswordCollection(true);
-        console.error('Passcode validation failed. Re-opening modal');
+        console.error("Passcode validation failed. Re-opening modal");
       });
-  }
-
+  };
 
   return (
     <Flowbite>
-      {openPasswordCollection ? <PasscodeModal isOpen={openPasswordCollection} onPasswordSubmit={verifyPassword} invalidPasscode={invalidPasscode}/>: null}
-      <div className="h-full grow rounded-md items stretch min-h-screen">
-        <LiveCodeEditor code={deployment?.react_code} css="" cssFramework="DAISYUI" />
+      {openPasswordCollection ? (
+        <PasscodeModal
+          isOpen={openPasswordCollection}
+          onPasswordSubmit={verifyPassword}
+          invalidPasscode={invalidPasscode}
+        />
+      ) : null}
+      <div className="items stretch h-full min-h-screen grow rounded-md">
+        <LiveCodeEditor
+          code={deployment?.react_code}
+          css=""
+          cssFramework="DAISYUI"
+        />
       </div>
     </Flowbite>
   );
-
 }

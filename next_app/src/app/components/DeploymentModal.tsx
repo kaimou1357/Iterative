@@ -15,7 +15,7 @@ export const DeploymentModal = () => {
     setDeploymentModalOpen,
   } = useDeploymentStore();
 
-  const { showToast} = useToolStore();
+  const { showToast } = useToolStore();
 
   const onCloseModal = () => {
     setDeploymentName("");
@@ -32,7 +32,7 @@ export const DeploymentModal = () => {
       })
       .then((_) => {
         onCloseModal();
-        showToast("Deployment Created Successfully")
+        showToast("Deployment Created Successfully");
       });
   };
 

@@ -30,6 +30,9 @@ const Login = () => {
       methods: ["sms"],
       expirationMinutes: 5,
     },
+    sessionOptions: {
+      sessionDurationMinutes: 60,
+    },
     passwordOptions: {
       loginRedirectURL: API_BASE_URL + "/authenticate",
       resetPasswordRedirectURL: API_BASE_URL + "/authenticate",

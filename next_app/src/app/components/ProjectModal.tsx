@@ -6,13 +6,13 @@ import axios from "axios";
 import { useState } from "react";
 
 interface ProjectModalProps {
-  projectId: string | null
+  projectId: string | null;
 }
 
-export const ProjectModal = ({projectId}: ProjectModalProps) => {
+export const ProjectModal = ({ projectId }: ProjectModalProps) => {
   const [projectName, setProjectName] = useState<string>("");
 
-  const {showToast, setOpenProjectModal, openProjectModal} = useToolStore()
+  const { showToast, setOpenProjectModal, openProjectModal } = useToolStore();
 
   const handleSaveProject = () => {
     axios
@@ -22,7 +22,7 @@ export const ProjectModal = ({projectId}: ProjectModalProps) => {
       })
       .then((_) => {
         onCloseModal();
-        showToast("Project Saved Successfully")
+        showToast("Project Saved Successfully");
       });
   };
 
@@ -56,9 +56,7 @@ export const ProjectModal = ({projectId}: ProjectModalProps) => {
             </div>
             <div className="flex justify-between"></div>
             <div className="w-full">
-              <Button onClick={handleSaveProject}>
-                Save Project
-              </Button>
+              <Button onClick={handleSaveProject}>Save Project</Button>
             </div>
           </div>
         </Modal.Body>

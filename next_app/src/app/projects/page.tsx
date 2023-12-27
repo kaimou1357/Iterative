@@ -8,9 +8,9 @@ import Loading from "../components/loading";
 import Link from "next/link";
 
 export type Project = {
-  id: string,
-  name: string,
-}
+  id: string;
+  name: string;
+};
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>();
@@ -73,7 +73,9 @@ export default function Projects() {
                             {project.name}
                           </Table.Cell>
                           <Table.Cell className="px-6 py-4 text-blue-600 underline underline-offset-2">
-                            <Link href={`/tool/${project.id}`}>Open in Tool</Link>
+                            <Link href={`/tool/${project.id}`}>
+                              Open in Tool
+                            </Link>
                           </Table.Cell>
                         </Table.Row>
                       );

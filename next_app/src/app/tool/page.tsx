@@ -29,10 +29,11 @@ export default function Tool() {
     recommendations,
     addRecommendation,
     resetProject,
-    setOpenProjectModal
+    setOpenProjectModal,
   } = useToolStore();
 
-  const { projectId, setProjectId, setProjectName, projectName } = useProjectStore();
+  const { projectId, setProjectId, setProjectName, projectName } =
+    useProjectStore();
 
   const { user } = useStytchUser();
   axios.defaults.withCredentials = true;
@@ -119,7 +120,7 @@ export default function Tool() {
   return (
     <Flowbite>
       <div className="h-full bg-slate-200 dark:bg-slate-900 ">
-        <ToastComponent/>
+        <ToastComponent />
         <DeploymentModal />
         <ProjectModal projectId={projectId} />
         <div className=" container  mx-auto flex flex-row  gap-10  bg-white   dark:bg-slate-950 dark:text-white ">
@@ -132,7 +133,7 @@ export default function Tool() {
           </div>
 
           <div className=" mb-40 flex w-1/2 grow flex-col items-stretch  pt-10 ">
-          {projectName}
+            {projectName}
             <div className=" grow rounded-md border-2 border-solid border-gray-500">
               <LiveCodeEditor
                 code={reactCode}

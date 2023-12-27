@@ -1,13 +1,17 @@
-import { Button, Label, Modal, TextInput } from 'flowbite-react';
-import React, { useState, useEffect } from 'react';
+import { Button, Label, Modal, TextInput } from "flowbite-react";
+import React, { useState, useEffect } from "react";
 
 interface PasscodeModalProps {
-  isOpen: boolean,
+  isOpen: boolean;
   onPasswordSubmit: (passcode: string) => void;
-  invalidPasscode: boolean,
+  invalidPasscode: boolean;
 }
-export const PasscodeModal = ({ isOpen, onPasswordSubmit, invalidPasscode }: PasscodeModalProps) => {
-  const [passcode, setPasscode] = useState('');
+export const PasscodeModal = ({
+  isOpen,
+  onPasswordSubmit,
+  invalidPasscode,
+}: PasscodeModalProps) => {
+  const [passcode, setPasscode] = useState("");
 
   return (
     <>
@@ -31,7 +35,9 @@ export const PasscodeModal = ({ isOpen, onPasswordSubmit, invalidPasscode }: Pas
                 }}
                 required
               />
-            {invalidPasscode ? <div className="mt-2">Passcode is incorrect</div> : null}
+              {invalidPasscode ? (
+                <div className="mt-2">Passcode is incorrect</div>
+              ) : null}
             </div>
             <div className="flex justify-between"></div>
             <div className="w-full">

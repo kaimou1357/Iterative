@@ -59,7 +59,12 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
 
   return (
     <div>
-      <iframe className="min-h-screen" ref={iframeRef} width="100%" height="100%" />
+      <iframe
+        className="min-h-screen"
+        ref={iframeRef}
+        width="100%"
+        height="100%"
+      />
     </div>
   );
 };
