@@ -16,7 +16,7 @@ export default function AppNavbar() {
   const isAuthenticated = user !== null;
 
   return (
-    <Navbar fluid rounded>
+    <Navbar fluid>
       <Navbar.Brand href="/">
         <img
           src="/favicon.png"
@@ -33,7 +33,7 @@ export default function AppNavbar() {
             Sign Out
           </Button>
         ) : (
-          <Button href="/login">Log In</Button>
+          <Button color="blue" href="/login">Log In</Button>
         )}
         <Navbar.Toggle />
       </div>

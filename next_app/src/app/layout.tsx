@@ -6,7 +6,7 @@ import { Work_Sans } from "next/font/google";
 import "./globals.css";
 import Footers from "./components/footer";
 import AppNavbar from "./components/navbar";
-import axios from "axios";
+import LayoutWrapper from "./components/LayoutWrapper";
 const font = Work_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -15,7 +15,6 @@ export const metadata: Metadata = {
     "Build amazing applications without writing a single line of code.",
 };
 
-axios.defaults.withCredentials = true;
 export default function RootLayout({
   children,
 }: {
@@ -29,8 +28,9 @@ export default function RootLayout({
         </head>
         <body className={font.className}>
           {" "}
-          <AppNavbar /> {children}
-          <Footers />
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
         </body>
       </html>
     </StytchProvider>

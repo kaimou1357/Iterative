@@ -36,7 +36,7 @@ const PromptInput = ({
     <Flowbite>
       <div>
         <div className="mb-2 block">
-          <Label htmlFor="prompt" value="What do you want to build?" />
+          <Label htmlFor="prompt" className="font-bold text-xl" value="What do you want to build?" />
         </div>
         <Textarea
           className="mb-2"
@@ -57,26 +57,25 @@ const PromptInput = ({
         ) : (
           <div>
             <div className="flex flex-row gap-1 ">
-              <button
+              <Button color="blue"
                 onClick={() => onPromptSubmit(prompt)}
-                className="my-auto rounded-full bg-blue-500 p-3 text-sm text-white"
+                size={'sm'}
               >
                 Generate Code
-              </button>
+                </Button>
 
-              <button
+              <Button color="failure"
                 onClick={() => onProjectReset()}
-                className="my-auto flex flex-row gap-1 rounded-full bg-red-500 p-3 text-white"
               >
                 Reset
-              </button>
+                </Button>
               {isAuthenticated ? (
-                <button
+                  <Button
+                  color="success"
                   onClick={() => onProjectSaveClicked(true)}
-                  className="my-auto flex flex-row gap-1 rounded-full bg-green-700 p-3 text-white"
                 >
                   Save Project
-                </button>
+                  </Button>
               ) : null}
             </div>
           </div>
