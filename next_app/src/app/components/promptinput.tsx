@@ -49,7 +49,7 @@ const PromptInput = ({
         />
         {loading ? (
           <div>
-            <Button className="bg-blue-500">
+            <Button color="blue">
               <Spinner aria-label="Spinner button example" size="sm" />
               <span className="pl-3">Loading...</span>
             </Button>
