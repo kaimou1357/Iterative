@@ -14,6 +14,8 @@ import { useStytchUser } from "@stytch/nextjs";
 import { Flowbite } from "flowbite-react";
 import axios from "axios";
 import { DeploymentModal } from "../components/DeploymentModal";
+import { ToastComponent } from "../components/Toast";
+import { ProjectModal } from "../components/ProjectModal";
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 export default function Tool() {
@@ -27,6 +29,7 @@ export default function Tool() {
     recommendations,
     addRecommendation,
     resetProject,
+    setOpenProjectModal
   } = useToolStore();
 
   const { projectId, setProjectId } = useProjectStore();
@@ -72,7 +75,7 @@ export default function Tool() {
       .then((response: any) => {
         const projectStates = response.data.project_states.map((p: any) => {
           const pState: ProjectState = {
-            id: p.projectStateId,
+            id: p.id,
             reactCode: p.reactCode,
             prompt: p.messages[0] ? p.messages[0].content : null,
           };
@@ -115,7 +118,9 @@ export default function Tool() {
   return (
     <Flowbite>
       <div className="h-full bg-slate-200 dark:bg-slate-900 ">
+        <ToastComponent/>
         <DeploymentModal />
+        <ProjectModal projectId={projectId} />
         <div className=" container  mx-auto flex flex-row  gap-10  bg-white   dark:bg-slate-950 dark:text-white ">
           <div className="w-1/4 shrink-0 flex-col items-center bg-slate-200 p-5 pt-10 dark:bg-slate-900 ">
             <PromptBox
@@ -138,6 +143,7 @@ export default function Tool() {
                 loading={loading}
                 onProjectReset={onResetProject}
                 onPromptSubmit={handleSend}
+                onProjectSaveClicked={setOpenProjectModal}
                 isAuthenticated={user !== null}
               />
             </div>

@@ -5,7 +5,6 @@ from app.models.constants import AssistantModel, CSSFramework
 from app.models.project import Project
 from app.models.project_state import ProjectState
 from flask import request, jsonify
-import uuid
 from app.projects import bp
 from app.extensions import db
 
@@ -58,6 +57,26 @@ def delete_project(current_user):
 
     # Return a success response
     return jsonify({'status': 'success', 'message': 'Project deleted successfully'})
+
+@bp.route('/api/projects', methods=['PATCH'])
+@token_required
+def update_project(current_user):
+    # Retrieve the project_id from the request body
+    project_id = request.json['project_id']
+    project_name = request.json['project_name'] 
+    project = Project.query.get(project_id)
+    
+    if current_user is None:
+      return jsonify({'status': 'error', 'message': 'Not Authorized'}), 401
+    if project is None:
+      return jsonify({'status': 'error', 'message': 'Project not found'}), 404
+  
+    project.name = project_name
+    db.session.add(project)
+    db.session.commit()
+
+    # Return a success response
+    return jsonify({'status': 'success', 'message': 'Project Updated successfully'})
 
 @bp.route('/api/project/<project_id>', methods=['GET'])
 @token_required

@@ -7,18 +7,6 @@ import Banner from "./components/banner";
 import { DarkThemeToggle, Flowbite } from "flowbite-react";
 
 export default function Home() {
-  const { user, isInitialized } = useStytchUser();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isInitialized) {
-      return;
-    }
-    if (user) {
-      router.replace("/tool");
-    }
-  }, [user, isInitialized, router]);
-
   return (
     <Flowbite>
       <main className="flex min-h-screen flex-col">

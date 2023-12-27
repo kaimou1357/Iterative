@@ -7,12 +7,18 @@ interface ToolState {
   recommendations: string[];
   projectStates: ProjectState[];
   openDeploymentModal: boolean;
+  openProjectModal: boolean;
+  shouldShowToast: boolean,
+  toastMessage: string,
 
+  showToast: (message: string) => void;
+  removeToast: () => void;
   setReactCode: (code: string) => void;
   setLoading: (isLoading: boolean) => void;
   addRecommendation: (message: string) => void;
   setProjectStates: (projectStates: ProjectState[]) => void;
   setOpenDeploymentModal: (openModal: boolean) => void;
+  setOpenProjectModal: (openModal: boolean) => void;
   resetProject: () => void;
 }
 
@@ -22,7 +28,11 @@ export const useToolStore = create<ToolState>()((set) => ({
   projectStates: [],
   reactCode: "",
   openDeploymentModal: false,
+  openProjectModal: false,
+  shouldShowToast: false,
+  toastMessage: "",
 
+  showToast: (message) => set(() => ({ shouldShowToast: true, toastMessage: message })),
   resetProject: () =>
     set(() => ({
       prompts: [],
@@ -30,8 +40,12 @@ export const useToolStore = create<ToolState>()((set) => ({
       reactCode: "",
       recommendations: [],
     })),
+  removeToast: () =>
+    set(() => ({ shouldShowToast: false })),
   setOpenDeploymentModal: (openModal: boolean) =>
     set(() => ({ openDeploymentModal: openModal })),
+  setOpenProjectModal: (openModal: boolean) =>
+    set(() => ({ openProjectModal: openModal })),
   setReactCode: (code) => set(() => ({ reactCode: code })),
   setLoading: (isLoading) => set(() => ({ loading: isLoading })),
   setProjectStates: (projectStates: ProjectState[]) =>

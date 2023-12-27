@@ -12,6 +12,7 @@ import {
 interface PromptInputProps {
   onPromptSubmit: (prompt: string) => void;
   onProjectReset: () => void;
+  onProjectSaveClicked: (openModal: boolean) => void;
   loading: boolean;
   isAuthenticated: boolean;
 }
@@ -19,6 +20,7 @@ interface PromptInputProps {
 const PromptInput = ({
   onProjectReset,
   onPromptSubmit,
+  onProjectSaveClicked,
   loading,
   isAuthenticated,
 }: PromptInputProps) => {
@@ -70,7 +72,7 @@ const PromptInput = ({
               </button>
               {isAuthenticated ? (
                 <button
-                  onClick={() => onPromptSubmit(prompt)}
+                  onClick={() => onProjectSaveClicked(true)}
                   className="my-auto flex flex-row gap-1 rounded-full bg-green-700 p-3 text-white"
                 >
                   Save Project
