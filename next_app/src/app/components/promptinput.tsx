@@ -10,6 +10,7 @@ import {
   Textarea,
 } from "flowbite-react";
 import Link from "next/link";
+import Login from "./Login";
 
 interface PromptInputProps {
   user: any;
@@ -94,19 +95,11 @@ const PromptInput = ({
       </div>
       {showLoginModal && <Modal dismissible show={showLoginModal} onClose={() => setShowLoginModal(false)}>
         <Modal.Header>Please login</Modal.Header>
-        <Modal.Body>
-          <div className="space-y-6">
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Please login first to save your project.
-            </p>
+        <Modal.Body className="w-full">
+          <div className="w-full flex justify-center">
+            <Login />
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Link href={'/login'}><Button color="blue">Login</Button></Link>
-          <Button color="failure" onClick={() => setShowLoginModal(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>}
     </Flowbite>
   );

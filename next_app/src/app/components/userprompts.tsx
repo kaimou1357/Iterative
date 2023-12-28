@@ -4,6 +4,7 @@ import { Button, Modal } from "flowbite-react";
 import { ProjectState, useDeploymentStore } from "../tool/toolstate";
 import { useState } from "react";
 import Link from "next/link";
+import Login from "./Login";
 
 interface UserPromptsProps {
   user: any;
@@ -61,18 +62,10 @@ const UserPrompts = ({
       {showLoginModal && <Modal dismissible show={showLoginModal} onClose={() => setShowLoginModal(false)}>
         <Modal.Header>Please login</Modal.Header>
         <Modal.Body>
-          <div className="space-y-6">
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Please login first to create a deployment.
-            </p>
+          <div className="w-full flex justify-center">
+            <Login />
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Link href={'/login'}><Button color="blue">Login</Button></Link>
-          <Button color="failure" onClick={() => setShowLoginModal(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>}
     </div>
   );
