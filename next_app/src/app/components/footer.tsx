@@ -74,7 +74,7 @@ const navigation = {
 
 export default function Footers() {
   return (
-    <footer className="bg-white dark:bg-black w-full h-20 fixed bottom-0">
+    <footer className="fixed bottom-0 h-20 w-full bg-white dark:bg-black">
       <div className="mx-auto h-full max-w-full overflow-hidden px-6 py-2 sm:py-1 lg:px-8">
         {/* <nav className="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12" aria-label="Footer">
           {navigation.main.map((item) => (
@@ -97,7 +97,7 @@ export default function Footers() {
             </a>
           ))}
         </div>
-        <div className="mx-auto flex gap-1 mt-1 flex-col">
+        <div className="mx-auto mt-1 flex flex-col gap-1">
           <span className=" justify-items-center text-center text-xs leading-5 text-gray-500">
             &copy; 2023 Iterative, Inc. All rights reserved.
           </span>

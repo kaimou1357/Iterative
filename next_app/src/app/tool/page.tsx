@@ -33,7 +33,8 @@ export default function Tool() {
     setOpenProjectModal,
   } = useToolStore();
 
-  const { projectId, setProjectId, setProjectName, projectName } = useProjectStore();
+  const { projectId, setProjectId, setProjectName, projectName } =
+    useProjectStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useStytchUser();
@@ -60,7 +61,7 @@ export default function Tool() {
       { project_id: projectId },
       { headers: { "Content-Type": "application/json" } },
     );
-    setIsLoading(false)
+    setIsLoading(false);
     setProjectId(response.data.project.id);
     setProjectName(response.data.project.name);
     refreshProjectStates();
@@ -71,7 +72,7 @@ export default function Tool() {
   };
 
   const refreshProjectStates = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     axios
       .post(
         `${API_BASE_URL}/projects/project_state`,
@@ -87,7 +88,7 @@ export default function Tool() {
           };
           return pState;
         });
-        setIsLoading(false)
+        setIsLoading(false);
         setProjectStates(projectStates);
       });
   };
@@ -109,13 +110,13 @@ export default function Tool() {
   };
 
   async function onResetProject() {
-    setIsLoading(true)
+    setIsLoading(true);
     const response = await axios.post(
       `${API_BASE_URL}/projects/reset`,
       { project_id: projectId },
       { headers: { "Content-Type": "application/json" } },
     );
-    setIsLoading(false)
+    setIsLoading(false);
     resetProject();
   }
 
@@ -130,8 +131,8 @@ export default function Tool() {
         <ToastComponent />
         <DeploymentModal />
         <ProjectModal projectId={projectId} />
-        <div className=" container max-h-full h-[90%] mx-auto flex flex-row gap-10 dark:text-white ">
-          <div className=" flex justify-between w-full gap-4 pt-10 ">
+        <div className=" container mx-auto flex h-[90%] max-h-full flex-row gap-10 dark:text-white ">
+          <div className=" flex w-full justify-between gap-4 pt-10 ">
             <div className="w-[20%] flex-col items-center bg-slate-200 dark:bg-slate-900 ">
               {/* <Button color="dark" className="mx-auto">Existing User Prompts</Button> */}
               <PromptBox
@@ -141,9 +142,13 @@ export default function Tool() {
                 authenticated={user !== null}
               />
             </div>
-            <div className={`${recommendations.length ? 'w-[60%]' : 'w-[80%]'} h-full flex flex-col`}>
-              <h1 className="mx-auto font-bold text-xl mb-2">{projectName}</h1>
-              <div className="grow min-h-[72%] max-w-full rounded-md border-2 border-solid border-gray-500">
+            <div
+              className={`${
+                recommendations.length ? "w-[60%]" : "w-[80%]"
+              } flex h-full flex-col`}
+            >
+              <h1 className="mx-auto mb-2 text-xl font-bold">{projectName}</h1>
+              <div className="min-h-[72%] max-w-full grow rounded-md border-2 border-solid border-gray-500">
                 <LiveCodeEditor
                   code={reactCode}
                   css={undefined}
@@ -159,11 +164,15 @@ export default function Tool() {
                 isAuthenticated={user !== null}
               />
             </div>
-            {recommendations && recommendations.length ? <div className="w-[20%]">
-              <div className="w-full bg-slate-200 dark:bg-slate-900 dark:text-white text-black ">
-                <GenKodeChat recommendations={recommendations} />
+            {recommendations && recommendations.length ? (
+              <div className="w-[20%]">
+                <div className="w-full bg-slate-200 text-black dark:bg-slate-900 dark:text-white ">
+                  <GenKodeChat recommendations={recommendations} />
+                </div>
               </div>
-            </div> : <></>}
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

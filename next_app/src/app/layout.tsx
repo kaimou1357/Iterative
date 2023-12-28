@@ -26,9 +26,7 @@ export default function RootLayout({
         </head>
         <body className={font.className}>
           {" "}
-          <LayoutWrapper>
-            {children}
-          </LayoutWrapper>
+          <LayoutWrapper>{children}</LayoutWrapper>
         </body>
       </html>
     </StytchProvider>

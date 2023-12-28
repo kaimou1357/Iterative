@@ -23,7 +23,7 @@ const UserPrompts = ({
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
   const onCreateDeploymentClick = (projectStateId: number) => {
-    if(!user) setShowLoginModal(true)
+    if (!user) setShowLoginModal(true);
     else {
       setProjectStateId(projectStateId);
       setDeploymentModalOpen(true);
@@ -31,8 +31,8 @@ const UserPrompts = ({
   };
   return (
     <div className="w-full">
-      <div className="mb-3 font-bold text-xl">Existing User Prompts</div>
-      <ul className="max-h-[480px] w-full flex flex-col gap-4 overflow-y-auto rounded-md ">
+      <div className="mb-3 text-xl font-bold">Existing User Prompts</div>
+      <ul className="flex max-h-[480px] w-full flex-col gap-4 overflow-y-auto rounded-md ">
         {projectStates.map((p, idx) => (
           <div key={idx} className="flex flex-col">
             <h5 className="text-1xl truncate font-bold tracking-tight text-gray-900 dark:text-white">
@@ -42,15 +42,15 @@ const UserPrompts = ({
               <Button
                 onClick={() => onLoadClick(p.reactCode)}
                 color="success"
-                size={'xs'}
+                size={"xs"}
               >
                 Load
               </Button>
-              
+
               <Button
                 onClick={() => onCreateDeploymentClick(p.id)}
                 color="purple"
-                size={'xs'}
+                size={"xs"}
                 // className="my-auto rounded-full bg-purple-700 p-3 text-sm text-white dark:bg-cyan-500 "
               >
                 Create Deployment
@@ -59,14 +59,20 @@ const UserPrompts = ({
           </div>
         ))}
       </ul>
-      {showLoginModal && <Modal dismissible show={showLoginModal} onClose={() => setShowLoginModal(false)}>
-        <Modal.Header>Please login</Modal.Header>
-        <Modal.Body>
-          <div className="w-full flex justify-center">
-            <Login />
-          </div>
-        </Modal.Body>
-      </Modal>}
+      {showLoginModal && (
+        <Modal
+          dismissible
+          show={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        >
+          <Modal.Header>Please login</Modal.Header>
+          <Modal.Body>
+            <div className="flex w-full justify-center">
+              <Login />
+            </div>
+          </Modal.Body>
+        </Modal>
+      )}
     </div>
   );
 };

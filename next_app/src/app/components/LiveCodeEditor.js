@@ -59,7 +59,7 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
   }, [code, css, cssFramework]);
 
   return (
-    <div className="grow h-full max-h-full">
+    <div className="h-full max-h-full grow">
       <iframe ref={iframeRef} width="100%" height="100%" />
     </div>
   );

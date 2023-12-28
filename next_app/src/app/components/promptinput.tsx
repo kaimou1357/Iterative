@@ -39,22 +39,25 @@ const PromptInput = ({
   };
 
   const handleSaveProject = () => {
-    if(!user) {
-      setShowLoginModal(true)
-    }
-    else onProjectSaveClicked(true)
-  }
+    if (!user) {
+      setShowLoginModal(true);
+    } else onProjectSaveClicked(true);
+  };
 
   const onPromptInputSubmit = () => {
     onPromptSubmit(prompt);
     setPrompt("");
-  }
+  };
 
   return (
     <Flowbite>
       <div>
         <div className="mb-2 block">
-          <Label htmlFor="prompt" className="font-bold text-xl" value="What do you want to build?" />
+          <Label
+            htmlFor="prompt"
+            className="text-xl font-bold"
+            value="What do you want to build?"
+          />
         </div>
         <Textarea
           className="mb-2"
@@ -75,37 +78,35 @@ const PromptInput = ({
         ) : (
           <div>
             <div className="flex flex-row gap-1 ">
-              <Button
-                onClick={() => onPromptInputSubmit()}
-                size={'sm'}
-              >
+              <Button onClick={() => onPromptInputSubmit()} size={"sm"}>
                 Generate Code
-                </Button>
+              </Button>
 
-              <Button color="failure"
-                onClick={() => onProjectReset()}
-              >
+              <Button color="failure" onClick={() => onProjectReset()}>
                 Reset
               </Button>
-            
-                <Button
-                color="success"
-                onClick={handleSaveProject}
-              >
+
+              <Button color="success" onClick={handleSaveProject}>
                 Save Project
-                </Button>
+              </Button>
             </div>
           </div>
         )}
       </div>
-      {showLoginModal && <Modal dismissible show={showLoginModal} onClose={() => setShowLoginModal(false)}>
-        <Modal.Header>Please login</Modal.Header>
-        <Modal.Body className="w-full">
-          <div className="w-full flex justify-center">
-            <Login />
-          </div>
-        </Modal.Body>
-      </Modal>}
+      {showLoginModal && (
+        <Modal
+          dismissible
+          show={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        >
+          <Modal.Header>Please login</Modal.Header>
+          <Modal.Body className="w-full">
+            <div className="flex w-full justify-center">
+              <Login />
+            </div>
+          </Modal.Body>
+        </Modal>
+      )}
     </Flowbite>
   );
 };
