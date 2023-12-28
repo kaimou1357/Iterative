@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Banner from "./components/banner";
-import { DarkThemeToggle, Flowbite } from "flowbite-react";
+import { Flowbite } from "flowbite-react";
 
 export default function Home() {
   return (

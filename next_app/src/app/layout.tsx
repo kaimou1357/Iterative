@@ -4,8 +4,6 @@ import { ThemeModeScript } from "flowbite-react";
 import StytchProvider from "./components/StytchProvider";
 import { Work_Sans } from "next/font/google";
 import "./globals.css";
-import Footers from "./components/footer";
-import AppNavbar from "./components/navbar";
 import LayoutWrapper from "./components/LayoutWrapper";
 const font = Work_Sans({ subsets: ["latin"] });
 

@@ -42,7 +42,7 @@ const UserPrompts = ({
               <Button
                 onClick={() => onLoadClick(p.reactCode)}
                 color="success"
-                size={'sm'}
+                size={'xs'}
               >
                 Load
               </Button>
@@ -50,7 +50,7 @@ const UserPrompts = ({
               <Button
                 onClick={() => onCreateDeploymentClick(p.id)}
                 color="purple"
-                size={'sm'}
+                size={'xs'}
                 // className="my-auto rounded-full bg-purple-700 p-3 text-sm text-white dark:bg-cyan-500 "
               >
                 Create Deployment

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import esbuildInitializationPromise from "./esbuildInitializer";
+import initializationPromise from "../components/esbuildInitializer";
 import * as esbuild from "esbuild-wasm";
 
 const LiveCodeEditor = ({ code, css, cssFramework }) => {
@@ -7,9 +7,10 @@ const LiveCodeEditor = ({ code, css, cssFramework }) => {
 
   const updateIframeContent = async () => {
     if (!iframeRef.current || !iframeRef.current.contentDocument) return;
-    await esbuildInitializationPromise; // Wait for esbuild initialization
+    // initializationPromise(); // Wait for esbuild initialization
     let result = null;
     if (code !== "") {
+      await initializationPromise();
       result = await esbuild.transform(`export default ${code}`, {
         loader: "jsx",
         target: "es2015",

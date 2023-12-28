@@ -45,6 +45,11 @@ const PromptInput = ({
     else onProjectSaveClicked(true)
   }
 
+  const onPromptInputSubmit = () => {
+    onPromptSubmit(prompt);
+    setPrompt("");
+  }
+
   return (
     <Flowbite>
       <div>
@@ -71,7 +76,7 @@ const PromptInput = ({
           <div>
             <div className="flex flex-row gap-1 ">
               <Button
-                onClick={() => onPromptSubmit(prompt)}
+                onClick={() => onPromptInputSubmit()}
                 size={'sm'}
               >
                 Generate Code
