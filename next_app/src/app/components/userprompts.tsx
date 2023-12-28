@@ -68,7 +68,7 @@ const UserPrompts = ({
           <Modal.Header>Please login</Modal.Header>
           <Modal.Body>
             <div className="flex w-full justify-center">
-              <Login />
+              <Login onLoginSuccess={() => setShowLoginModal(false)} />
             </div>
           </Modal.Body>
         </Modal>

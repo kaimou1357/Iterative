@@ -2,7 +2,12 @@
 
 import React from "react";
 import { StytchLogin } from "@stytch/nextjs";
-import { Products } from "@stytch/vanilla-js";
+import {
+  Callbacks,
+  Products,
+  StytchEvent,
+  StytchEventType,
+} from "@stytch/vanilla-js";
 import { API_BASE_URL } from "./config";
 
 /*
@@ -12,7 +17,24 @@ import { API_BASE_URL } from "./config";
  * https://stytch.com/docs/sdks/javascript-sdk#ui-configs
  */
 
-const Login = () => {
+interface LoginProps {
+  onLoginSuccess?: () => void;
+}
+
+const Login = ({ onLoginSuccess }: LoginProps) => {
+  const loginCallback: Callbacks = {
+    onEvent(event: StytchEvent) {
+      const eventType = event.type;
+      if (
+        eventType === StytchEventType.OTPsLoginOrCreateEvent ||
+        eventType === StytchEventType.PasswordAuthenticate
+      ) {
+        if (onLoginSuccess) {
+          onLoginSuccess();
+        }
+      }
+    },
+  };
   const styles = {
     buttons: {
       primary: {
@@ -39,7 +61,9 @@ const Login = () => {
     },
   } as Parameters<typeof StytchLogin>[0]["config"];
 
-  return <StytchLogin config={config} styles={styles} />;
+  return (
+    <StytchLogin config={config} styles={styles} callbacks={loginCallback} />
+  );
 };
 
 export default Login;
