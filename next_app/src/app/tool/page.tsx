@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import GenKodeChat from "../components/chat";
 import io, { Socket } from "socket.io-client";
 import { API_BASE_URL, SOCKET_IO_URL } from "../components/config";
@@ -16,6 +16,7 @@ import axios from "axios";
 import { DeploymentModal } from "../components/DeploymentModal";
 import { ToastComponent } from "../components/Toast";
 import { ProjectModal } from "../components/ProjectModal";
+import Loading from "../components/loading";
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 export default function Tool() {
@@ -32,8 +33,8 @@ export default function Tool() {
     setOpenProjectModal,
   } = useToolStore();
 
-  const { projectId, setProjectId, setProjectName, projectName } =
-    useProjectStore();
+  const { projectId, setProjectId, setProjectName, projectName } = useProjectStore();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useStytchUser();
   axios.defaults.withCredentials = true;
@@ -53,11 +54,13 @@ export default function Tool() {
   }, []);
 
   async function createProject() {
+    setIsLoading(true);
     const response = await axios.post(
       `${API_BASE_URL}/projects`,
       { project_id: projectId },
       { headers: { "Content-Type": "application/json" } },
     );
+    setIsLoading(false)
     setProjectId(response.data.project.id);
     setProjectName(response.data.project.name);
     refreshProjectStates();
@@ -68,6 +71,7 @@ export default function Tool() {
   };
 
   const refreshProjectStates = () => {
+    setIsLoading(true)
     axios
       .post(
         `${API_BASE_URL}/projects/project_state`,
@@ -81,6 +85,7 @@ export default function Tool() {
             reactCode: p.reactCode,
             prompt: p.messages[0] ? p.messages[0].content : null,
           };
+          // setIsLoading(false)
           return pState;
         });
         setProjectStates(projectStates);
@@ -104,11 +109,13 @@ export default function Tool() {
   };
 
   async function onResetProject() {
+    setIsLoading(true)
     const response = await axios.post(
       `${API_BASE_URL}/projects/reset`,
       { project_id: projectId },
       { headers: { "Content-Type": "application/json" } },
     );
+    setIsLoading(false)
     resetProject();
   }
 
@@ -128,6 +135,7 @@ export default function Tool() {
             <div className="w-[20%] flex-col items-center bg-slate-200 dark:bg-slate-900 ">
               {/* <Button color="dark" className="mx-auto">Existing User Prompts</Button> */}
               <PromptBox
+                user={user}
                 onLoadClick={onLoadClick}
                 projectStates={projectStates}
                 authenticated={true}
@@ -144,6 +152,7 @@ export default function Tool() {
               </div>
               <PromptInput
                 loading={loading}
+                user={user}
                 onProjectReset={onResetProject}
                 onPromptSubmit={handleSend}
                 onProjectSaveClicked={setOpenProjectModal}
@@ -158,6 +167,7 @@ export default function Tool() {
           </div>
         </div>
       </div>
+      {isLoading && <Loading />}
     </Flowbite>
   );
 }
