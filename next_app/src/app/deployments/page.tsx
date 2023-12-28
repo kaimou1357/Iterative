@@ -29,8 +29,6 @@ export default function Deployments() {
       });
   };
 
-  // Show loading spinner while deployments are being fetched
-  if (!deployments) return <Loading />;
   // Show error message if error is thrown by server
   if (error)
     return (
@@ -40,6 +38,8 @@ export default function Deployments() {
         </p>
       </div>
     );
+  // Show loading spinner while deployments are being fetched
+  if (!deployments) return <Loading />;
   // Show deployments table if deployments are fetched correctly
   else
     return (
