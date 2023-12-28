@@ -85,7 +85,7 @@ export default function Tool() {
             reactCode: p.reactCode,
             prompt: p.messages[0] ? p.messages[0].content : null,
           };
-          // setIsLoading(false)
+          setIsLoading(false)
           return pState;
         });
         setProjectStates(projectStates);
