@@ -33,7 +33,7 @@ export default function AppNavbar() {
             Sign Out
           </Button>
         ) : (
-          <Button color="blue" href="/login">Log In</Button>
+          <Button href="/login">Log In</Button>
         )}
         <Navbar.Toggle />
       </div>
