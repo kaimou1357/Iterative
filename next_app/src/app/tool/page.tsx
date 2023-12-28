@@ -85,9 +85,9 @@ export default function Tool() {
             reactCode: p.reactCode,
             prompt: p.messages[0] ? p.messages[0].content : null,
           };
-          setIsLoading(false)
           return pState;
         });
+        setIsLoading(false)
         setProjectStates(projectStates);
       });
   };
@@ -138,7 +138,7 @@ export default function Tool() {
                 user={user}
                 onLoadClick={onLoadClick}
                 projectStates={projectStates}
-                authenticated={true}
+                authenticated={user !== null}
               />
             </div>
             <div className={`${recommendations.length ? 'w-[60%]' : 'w-[80%]'} h-full flex flex-col`}>
@@ -156,7 +156,7 @@ export default function Tool() {
                 onProjectReset={onResetProject}
                 onPromptSubmit={handleSend}
                 onProjectSaveClicked={setOpenProjectModal}
-                isAuthenticated={true}
+                isAuthenticated={user !== null}
               />
             </div>
             {recommendations && recommendations.length ? <div className="w-[20%]">
