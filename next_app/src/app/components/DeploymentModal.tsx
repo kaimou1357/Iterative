@@ -1,6 +1,6 @@
 "use client";
 import { Button, Label, Modal, TextInput } from "flowbite-react";
-import { useDeploymentStore } from "../tool/toolstate";
+import { useDeploymentStore, useToolStore } from "../tool/toolstate";
 import { API_BASE_URL } from "./config";
 import axios from "axios";
 
@@ -14,6 +14,8 @@ export const DeploymentModal = () => {
     modalOpen,
     setDeploymentModalOpen,
   } = useDeploymentStore();
+
+  const { showToast } = useToolStore();
 
   const onCloseModal = () => {
     setDeploymentName("");
@@ -30,6 +32,7 @@ export const DeploymentModal = () => {
       })
       .then((_) => {
         onCloseModal();
+        showToast("Deployment Created Successfully");
       });
   };
 

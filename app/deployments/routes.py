@@ -24,10 +24,11 @@ def deployments_post(current_user):
   return jsonify({"deployment": deployment.serialize()})
 
 @bp.get("/api/deployments/<deployment_id>")
-def deployment_get(deployment_id: int, passcode = None):
+@token_required
+def deployment_get(current_user, deployment_id: int, passcode = None):
   # If current user is viewing it - we don't need to validate the passcode.
   deployment = Deployment.query.get(deployment_id)
-  if current_user.is_authenticated and deployment.user_id == current_user.id:
+  if current_user and deployment.user_id == current_user.id:
     return jsonify({"deployment": deployment.show()})
   # if unauthenticated validate the passcode.
   passcode = request.args.get("passcode")

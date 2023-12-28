@@ -28,16 +28,17 @@ export default function banner() {
               </Link>
             </div>
 
-            <div className="mt-5 flex flex-col">
-              <div className="flex h-96 w-auto rounded bg-gray-900 ">
+            <div className="mt-5 flex flex-col justify-center">
+              <div className="flex h-96 w-auto justify-center rounded bg-gray-900 ">
                 <div className=" mx-10 flex  animate-masking  flex-col items-center justify-center overflow-hidden   rounded delay-[2000ms] ">
                   <Modal />
                 </div>
               </div>
-              <div className=" rounded-lg border border-white">
-                <div className="w-44 ">
-                  <p className="my-3 ml-3 animate-typing overflow-hidden whitespace-nowrap  border-r-4 border-r-white text-lg text-white ">
-                    Make me a modal
+              <div className="rounded-lg border border-white pr-3">
+                <div className="w-100 ">
+                  <p className="my-3 ml-3 animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-white text-lg text-white ">
+                    Build me something that users can accept for a rewards
+                    program.
                   </p>
                 </div>
               </div>

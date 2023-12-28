@@ -4,33 +4,37 @@ import axios from "axios";
 import { Flowbite, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../components/config";
-import { Deployment } from "./types";
 import Loading from "../components/loading";
 import Link from "next/link";
 
-export default function Deployments() {
-  const [deployments, setDeployments] = useState<Deployment[]>();
+export type Project = {
+  id: string;
+  name: string;
+};
+
+export default function Projects() {
+  const [projects, setProjects] = useState<Project[]>();
   const [error, setError] = useState<string | null>(null);
   axios.defaults.withCredentials = true;
-  // Trigger deployments fetching on component mount
+  // Trigger projects fetching on component mount
   useEffect(() => {
-    fetchDeployments();
+    fetchProjects();
   }, []);
 
-  const fetchDeployments = () => {
+  const fetchProjects = () => {
     axios
-      .get(`${API_BASE_URL}/deployments`)
+      .get(`${API_BASE_URL}/projects`)
       .then((response) => {
-        setDeployments(response.data.deployments);
+        setProjects(response.data.projects);
       })
       .catch((error) => {
-        console.error("Error Fetching Deployments");
-        setError("Error Fetching Deployments, please try again");
+        console.error("Error Fetching projects");
+        setError("Error Fetching projects, please try again");
       });
   };
 
-  // Show loading spinner while deployments are being fetched
-  if (!deployments) return <Loading />;
+  // Show loading spinner while projects are being fetched
+  if (!projects) return <Loading />;
   // Show error message if error is thrown by server
   if (error)
     return (
@@ -40,7 +44,7 @@ export default function Deployments() {
         </p>
       </div>
     );
-  // Show deployments table if deployments are fetched correctly
+  // Show projects table if projects are fetched correctly
   else
     return (
       <Flowbite>
@@ -50,33 +54,27 @@ export default function Deployments() {
               <Table hoverable>
                 <Table.Head>
                   <Table.HeadCell scope="col" className="px-6 py-3">
-                    Deployment name
+                    Project Name
                   </Table.HeadCell>
                   <Table.HeadCell scope="col" className="px-6 py-3">
-                    Passcode
-                  </Table.HeadCell>
-                  <Table.HeadCell scope="col" className="px-6 py-3">
-                    Access
+                    Open Project
                   </Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
-                  {deployments &&
-                    deployments.length &&
-                    deployments.map((deployment: Deployment) => {
+                  {projects &&
+                    projects.length &&
+                    projects.map((project: Project) => {
                       return (
                         <Table.Row
-                          key={deployment.id}
+                          key={project.id}
                           className="bg-white dark:border-gray-700 dark:bg-gray-800"
                         >
                           <Table.Cell className="px-6 py-4">
-                            {deployment.name}
-                          </Table.Cell>
-                          <Table.Cell className="px-6 py-4">
-                            {deployment.password}
+                            {project.name}
                           </Table.Cell>
                           <Table.Cell className="px-6 py-4 text-blue-600 underline underline-offset-2">
-                            <Link href={`/deployments/${deployment.id}`}>
-                              Open
+                            <Link href={`/tool/${project.id}`}>
+                              Open in Tool
                             </Link>
                           </Table.Cell>
                         </Table.Row>

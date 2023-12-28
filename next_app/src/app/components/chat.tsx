@@ -2,10 +2,10 @@
 import { Accordion } from "flowbite-react";
 
 interface ChatProps {
-  messages: string[];
+  recommendations: string[];
 }
 
-const GenKodeChat = ({ messages }: ChatProps) => {
+const GenKodeChat = ({ recommendations }: ChatProps) => {
   return (
     <>
       <div>
@@ -13,7 +13,7 @@ const GenKodeChat = ({ messages }: ChatProps) => {
 
         <Accordion>
           <Accordion.Panel>
-            {messages.map((p, idx) => (
+            {recommendations.map((p, idx) => (
               <div key={idx}>
                 <Accordion.Title>Recommendation #{idx + 1}</Accordion.Title>
                 <Accordion.Content>

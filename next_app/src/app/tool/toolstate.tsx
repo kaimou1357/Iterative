@@ -4,16 +4,58 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface ToolState {
   loading: boolean;
   reactCode: string;
-  messages: string[];
+  recommendations: string[];
   projectStates: ProjectState[];
   openDeploymentModal: boolean;
+  openProjectModal: boolean;
+  shouldShowToast: boolean;
+  toastMessage: string;
 
+  showToast: (message: string) => void;
+  removeToast: () => void;
   setReactCode: (code: string) => void;
   setLoading: (isLoading: boolean) => void;
-  addMessage: (message: string) => void;
+  addRecommendation: (message: string) => void;
   setProjectStates: (projectStates: ProjectState[]) => void;
   setOpenDeploymentModal: (openModal: boolean) => void;
+  setOpenProjectModal: (openModal: boolean) => void;
+  resetProject: () => void;
 }
+
+export const useToolStore = create<ToolState>()((set) => ({
+  loading: false,
+  recommendations: [],
+  projectStates: [],
+  reactCode: "",
+  openDeploymentModal: false,
+  openProjectModal: false,
+  shouldShowToast: false,
+  toastMessage: "",
+
+  showToast: (message) =>
+    set(() => ({ shouldShowToast: true, toastMessage: message })),
+  resetProject: () =>
+    set(() => ({
+      prompts: [],
+      projectStates: [],
+      reactCode: "",
+      recommendations: [],
+    })),
+  removeToast: () => set(() => ({ shouldShowToast: false })),
+  setOpenDeploymentModal: (openModal: boolean) =>
+    set(() => ({ openDeploymentModal: openModal })),
+  setOpenProjectModal: (openModal: boolean) =>
+    set(() => ({ openProjectModal: openModal })),
+  setReactCode: (code) => set(() => ({ reactCode: code })),
+  setLoading: (isLoading) => set(() => ({ loading: isLoading })),
+  setProjectStates: (projectStates: ProjectState[]) =>
+    set(() => ({ projectStates: projectStates })),
+  addRecommendation: (message: string) => {
+    set((state) => ({
+      recommendations: [...state.recommendations, message],
+    }));
+  },
+}));
 
 export interface ProjectState {
   reactCode: string | null;
@@ -24,6 +66,8 @@ export interface ProjectState {
 interface Project {
   projectId: string | null;
   setProjectId: (id: string | null) => void;
+  projectName: string;
+  setProjectName: (name: string) => void;
 }
 
 interface DeploymentState {
@@ -42,7 +86,9 @@ export const useProjectStore = create<Project>()(
   persist(
     (set, get) => ({
       projectId: null,
+      projectName: "",
       setProjectId: (id: string | null) => set({ projectId: id }),
+      setProjectName: (name: string) => set({ projectName: name }),
     }),
     {
       name: "project-id-storage", // name of item in the storage (must be unique)
@@ -61,25 +107,4 @@ export const useDeploymentStore = create<DeploymentState>()((set) => ({
   setPasscode: (passcode) => set(() => ({ passcode: passcode })),
   setProjectStateId: (projectId) => set(() => ({ projectStateId: projectId })),
   setDeploymentModalOpen: (isOpen) => set(() => ({ modalOpen: isOpen })),
-}));
-
-export const useToolStore = create<ToolState>()((set) => ({
-  loading: false,
-  messages: [],
-  prompts: [],
-  projectStates: [],
-  reactCode: "",
-  openDeploymentModal: false,
-
-  setOpenDeploymentModal: (openModal: boolean) =>
-    set(() => ({ openDeploymentModal: openModal })),
-  setReactCode: (code) => set(() => ({ reactCode: code })),
-  setLoading: (isLoading) => set(() => ({ loading: isLoading })),
-  setProjectStates: (projectStates: ProjectState[]) =>
-    set(() => ({ projectStates: projectStates })),
-  addMessage: (message: string) => {
-    set((state) => ({
-      messages: [...state.messages, message],
-    }));
-  },
 }));

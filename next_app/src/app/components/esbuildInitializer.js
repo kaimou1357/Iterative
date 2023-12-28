@@ -1,3 +1,5 @@
+"use client";
+
 import * as esbuild from "esbuild-wasm";
 
 const initializationPromise = esbuild.initialize({

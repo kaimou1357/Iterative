@@ -1,10 +1,9 @@
 "use client";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { useEffect, useRef } from "react";
 
 export default function Modal() {
   return (
-    <div className="flex text-white">
+    <div className="flex items-center justify-center text-white">
       <div className=" rounded-lg bg-black px-4 pb-4 pt-5 text-left">
         <div>
           <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
@@ -12,12 +11,11 @@ export default function Modal() {
           </div>
           <div className="mt-3 text-center sm:mt-5">
             <h2 className="text-lg font-medium leading-6 text-white ">
-              Modal successful
+              Iterative Coffee Shop
             </h2>
             <div className="mt-2">
               <p className="text-sm text-gray-500 ">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Consequatur amet labore.
+                You have received rewards from signing up!
               </p>
             </div>
           </div>
@@ -27,7 +25,7 @@ export default function Modal() {
             type="button"
             className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-950 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
           >
-            Go back to dashboard
+            Accept
           </button>
         </div>
       </div>

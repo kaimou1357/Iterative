@@ -8,6 +8,7 @@ class ProjectState(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False, default=db.func.now())
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     chat_messages = db.relationship('ChatMessage', backref='project_state', cascade='all, delete-orphan', order_by=db.asc(ChatMessage.id))
+    deployments = db.relationship('Deployment', backref='project_state', cascade='all, delete-orphan')
 
     def __repr__(self):
         messages_summary = ", ".join([msg.content[:20] for msg in self.chat_messages]) # Truncate messages
