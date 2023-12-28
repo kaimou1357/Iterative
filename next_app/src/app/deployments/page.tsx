@@ -29,8 +29,6 @@ export default function Deployments() {
       });
   };
 
-  // Show loading spinner while deployments are being fetched
-  if (!deployments) return <Loading />;
   // Show error message if error is thrown by server
   if (error)
     return (
@@ -40,11 +38,13 @@ export default function Deployments() {
         </p>
       </div>
     );
+  // Show loading spinner while deployments are being fetched
+  if (!deployments) return <Loading />;
   // Show deployments table if deployments are fetched correctly
   else
     return (
       <Flowbite>
-        <div className="h-[calc(100vh-16rem)] rounded-lg bg-slate-200 pt-10 dark:bg-slate-900">
+        <div className="h-[calc(100vh-5rem)] bg-slate-200 pt-10 dark:bg-slate-900">
           <div className="container mx-auto flex max-h-[90%] w-[90%] flex-row gap-10 bg-white dark:bg-slate-950 dark:text-white ">
             <div className="relative w-full overflow-auto ">
               <Table hoverable>

@@ -16,7 +16,7 @@ export default function AppNavbar() {
   const isAuthenticated = user !== null;
 
   return (
-    <Navbar fluid rounded>
+    <Navbar fluid>
       <Navbar.Brand href="/">
         <img
           src="/favicon.png"

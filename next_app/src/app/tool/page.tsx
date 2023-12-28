@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import GenKodeChat from "../components/chat";
 import io, { Socket } from "socket.io-client";
 import { API_BASE_URL, SOCKET_IO_URL } from "../components/config";
@@ -11,11 +11,12 @@ import PromptBox from "../components/userprompts";
 import PromptInput from "../components/promptinput";
 import { useProjectStore, useToolStore, ProjectState } from "./toolstate";
 import { useStytchUser } from "@stytch/nextjs";
-import { Flowbite } from "flowbite-react";
+import { Button, DarkThemeToggle, Flowbite } from "flowbite-react";
 import axios from "axios";
 import { DeploymentModal } from "../components/DeploymentModal";
 import { ToastComponent } from "../components/Toast";
 import { ProjectModal } from "../components/ProjectModal";
+import Loading from "../components/loading";
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 export default function Tool() {
@@ -32,8 +33,8 @@ export default function Tool() {
     setOpenProjectModal,
   } = useToolStore();
 
-  const { projectId, setProjectId, setProjectName, projectName } =
-    useProjectStore();
+  const { projectId, setProjectId, setProjectName, projectName } = useProjectStore();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useStytchUser();
   axios.defaults.withCredentials = true;
@@ -53,11 +54,13 @@ export default function Tool() {
   }, []);
 
   async function createProject() {
+    setIsLoading(true);
     const response = await axios.post(
       `${API_BASE_URL}/projects`,
       { project_id: projectId },
       { headers: { "Content-Type": "application/json" } },
     );
+    setIsLoading(false)
     setProjectId(response.data.project.id);
     setProjectName(response.data.project.name);
     refreshProjectStates();
@@ -68,6 +71,7 @@ export default function Tool() {
   };
 
   const refreshProjectStates = () => {
+    setIsLoading(true)
     axios
       .post(
         `${API_BASE_URL}/projects/project_state`,
@@ -83,6 +87,7 @@ export default function Tool() {
           };
           return pState;
         });
+        setIsLoading(false)
         setProjectStates(projectStates);
       });
   };
@@ -104,11 +109,13 @@ export default function Tool() {
   };
 
   async function onResetProject() {
+    setIsLoading(true)
     const response = await axios.post(
       `${API_BASE_URL}/projects/reset`,
       { project_id: projectId },
       { headers: { "Content-Type": "application/json" } },
     );
+    setIsLoading(false)
     resetProject();
   }
 
@@ -119,44 +126,48 @@ export default function Tool() {
 
   return (
     <Flowbite>
-      <div className="h-full bg-slate-200 dark:bg-slate-900 ">
+      <div className="h-[calc(100vh-62px)] bg-slate-200 dark:bg-slate-900 ">
         <ToastComponent />
         <DeploymentModal />
         <ProjectModal projectId={projectId} />
-        <div className=" container  mx-auto flex flex-row  gap-10  bg-white   dark:bg-slate-950 dark:text-white ">
-          <div className="w-1/4 shrink-0 flex-col items-center bg-slate-200 p-5 pt-10 dark:bg-slate-900 ">
-            <PromptBox
-              onLoadClick={onLoadClick}
-              projectStates={projectStates}
-              authenticated={user !== null}
-            />
-          </div>
-
-          <div className=" mb-40 flex w-1/2 grow flex-col items-stretch  pt-10 ">
-            {projectName}
-            <div className=" grow rounded-md border-2 border-solid border-gray-500">
-              <LiveCodeEditor
-                code={reactCode}
-                css={undefined}
-                cssFramework={"DAISYUI"}
+        <div className=" container max-h-full h-[90%] mx-auto flex flex-row gap-10 dark:text-white ">
+          <div className=" flex justify-between w-full gap-4 pt-10 ">
+            <div className="w-[20%] flex-col items-center bg-slate-200 dark:bg-slate-900 ">
+              {/* <Button color="dark" className="mx-auto">Existing User Prompts</Button> */}
+              <PromptBox
+                user={user}
+                onLoadClick={onLoadClick}
+                projectStates={projectStates}
+                authenticated={user !== null}
               />
             </div>
-            <div className="">
+            <div className={`${recommendations.length ? 'w-[60%]' : 'w-[80%]'} h-full flex flex-col`}>
+              <h1 className="mx-auto font-bold text-xl mb-2">{projectName}</h1>
+              <div className="grow min-h-[72%] max-w-full rounded-md border-2 border-solid border-gray-500">
+                <LiveCodeEditor
+                  code={reactCode}
+                  css={undefined}
+                  cssFramework={"DAISYUI"}
+                />
+              </div>
               <PromptInput
                 loading={loading}
+                user={user}
                 onProjectReset={onResetProject}
                 onPromptSubmit={handleSend}
                 onProjectSaveClicked={setOpenProjectModal}
                 isAuthenticated={user !== null}
               />
             </div>
-          </div>
-
-          <div className="w-1/4  bg-slate-200  p-5 pt-10 dark:bg-slate-900 dark:text-white  ">
-            <GenKodeChat recommendations={recommendations} />
+            {recommendations && recommendations.length ? <div className="w-[20%]">
+              <div className="w-full bg-slate-200 dark:bg-slate-900 dark:text-white text-black ">
+                <GenKodeChat recommendations={recommendations} />
+              </div>
+            </div> : <></>}
           </div>
         </div>
       </div>
+      {isLoading && <Loading />}
     </Flowbite>
   );
 }

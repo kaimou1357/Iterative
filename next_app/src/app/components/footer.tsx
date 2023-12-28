@@ -74,8 +74,8 @@ const navigation = {
 
 export default function Footers() {
   return (
-    <footer className="bg-white">
-      <div className="mx-auto h-48 max-w-7xl overflow-hidden px-6 py-20 sm:py-10 lg:px-8">
+    <footer className="bg-white dark:bg-black w-full h-20 fixed bottom-0">
+      <div className="mx-auto h-full max-w-full overflow-hidden px-6 py-2 sm:py-1 lg:px-8">
         {/* <nav className="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12" aria-label="Footer">
           {navigation.main.map((item) => (
             <div key={item.name} className="pb-6">
@@ -85,7 +85,7 @@ export default function Footers() {
             </div>
           ))}
         </nav> */}
-        <div className="mt-10 flex justify-center space-x-10">
+        <div className="flex justify-center space-x-10">
           {navigation.social.map((item) => (
             <a
               key={item.name}
@@ -97,8 +97,8 @@ export default function Footers() {
             </a>
           ))}
         </div>
-        <div className="mx-auto flex  flex-col">
-          <span className="mt-10 justify-items-center text-center text-xs leading-5 text-gray-500">
+        <div className="mx-auto flex gap-1 mt-1 flex-col">
+          <span className=" justify-items-center text-center text-xs leading-5 text-gray-500">
             &copy; 2023 Iterative, Inc. All rights reserved.
           </span>
           <div className="flexs mx-auto flex-row">
@@ -110,7 +110,7 @@ export default function Footers() {
             </a>
             <a
               href="#"
-              className="mt-10 text-center text-xs leading-5 text-gray-500"
+              className=" text-center text-xs leading-5 text-gray-500"
             >
               Terms of Service
             </a>

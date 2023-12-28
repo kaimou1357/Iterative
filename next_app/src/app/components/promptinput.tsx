@@ -5,11 +5,15 @@ import {
   DarkThemeToggle,
   Flowbite,
   Label,
+  Modal,
   Spinner,
   Textarea,
 } from "flowbite-react";
+import Link from "next/link";
+import Login from "./Login";
 
 interface PromptInputProps {
+  user: any;
   onPromptSubmit: (prompt: string) => void;
   onProjectReset: () => void;
   onProjectSaveClicked: (openModal: boolean) => void;
@@ -18,6 +22,7 @@ interface PromptInputProps {
 }
 
 const PromptInput = ({
+  user,
   onProjectReset,
   onPromptSubmit,
   onProjectSaveClicked,
@@ -25,6 +30,7 @@ const PromptInput = ({
   isAuthenticated,
 }: PromptInputProps) => {
   const [prompt, setPrompt] = useState("");
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
   const onChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
@@ -32,11 +38,18 @@ const PromptInput = ({
     setPrompt(event.currentTarget.value);
   };
 
+  const handleSaveProject = () => {
+    if(!user) {
+      setShowLoginModal(true)
+    }
+    else onProjectSaveClicked(true)
+  }
+
   return (
     <Flowbite>
       <div>
         <div className="mb-2 block">
-          <Label htmlFor="prompt" value="What do you want to build?" />
+          <Label htmlFor="prompt" className="font-bold text-xl" value="What do you want to build?" />
         </div>
         <Textarea
           className="mb-2"
@@ -49,7 +62,7 @@ const PromptInput = ({
         />
         {loading ? (
           <div>
-            <Button className="bg-blue-500">
+            <Button>
               <Spinner aria-label="Spinner button example" size="sm" />
               <span className="pl-3">Loading...</span>
             </Button>
@@ -57,31 +70,37 @@ const PromptInput = ({
         ) : (
           <div>
             <div className="flex flex-row gap-1 ">
-              <button
+              <Button
                 onClick={() => onPromptSubmit(prompt)}
-                className="my-auto rounded-full bg-blue-500 p-3 text-sm text-white"
+                size={'sm'}
               >
                 Generate Code
-              </button>
+                </Button>
 
-              <button
+              <Button color="failure"
                 onClick={() => onProjectReset()}
-                className="my-auto flex flex-row gap-1 rounded-full bg-red-500 p-3 text-white"
               >
                 Reset
-              </button>
-              {isAuthenticated ? (
-                <button
-                  onClick={() => onProjectSaveClicked(true)}
-                  className="my-auto flex flex-row gap-1 rounded-full bg-green-700 p-3 text-white"
-                >
-                  Save Project
-                </button>
-              ) : null}
+              </Button>
+            
+                <Button
+                color="success"
+                onClick={handleSaveProject}
+              >
+                Save Project
+                </Button>
             </div>
           </div>
         )}
       </div>
+      {showLoginModal && <Modal dismissible show={showLoginModal} onClose={() => setShowLoginModal(false)}>
+        <Modal.Header>Please login</Modal.Header>
+        <Modal.Body className="w-full">
+          <div className="w-full flex justify-center">
+            <Login />
+          </div>
+        </Modal.Body>
+      </Modal>}
     </Flowbite>
   );
 };
