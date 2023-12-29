@@ -87,7 +87,8 @@ def generate_subsequent_recommendation(user_msg, project):
   recommendation_input = recommendation_feeder_messages.copy()
   
   recommendation_input.append(system_prompt)
-  recommendation_input.append(previous_recommendations)
+  for rec in previous_recommendations:
+    recommendation_input.append(rec)
   recommendation_input.append(user_prompt)
   
   tokens_remaining = calculate_tokens_remaining(recommendation_input)
