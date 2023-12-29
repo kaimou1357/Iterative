@@ -130,7 +130,7 @@ export default function Tool() {
         <ToastComponent />
         <DeploymentModal />
         <ProjectModal projectId={projectId} />
-        <div className=" container max-h-full h-[90%] mx-auto flex flex-row gap-10 dark:text-white ">
+        <div className="w-[90%] max-w-[90%] 2xl:w-[80%] 2xl:max-w-[80%] max-h-full h-[90%] mx-auto flex flex-row gap-10 dark:text-white ">
           <div className=" flex justify-between w-full gap-4 pt-10 ">
             <div className="w-[20%] flex-col items-center bg-slate-200 dark:bg-slate-900 ">
               {/* <Button color="dark" className="mx-auto">Existing User Prompts</Button> */}
