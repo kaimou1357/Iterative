@@ -1,6 +1,6 @@
 from openai import OpenAI
 import os
-
+from app.openai.config import OpenAIConstants
 
 class OpenAIClient:
   def __init__(self):
@@ -8,7 +8,7 @@ class OpenAIClient:
   
   def chat_completion(self, messages, max_tokens, streaming):
     response = self.client.chat.completions.create(
-          model="gpt-3.5-turbo",
+          model=OpenAIConstants.MODEL_NAME,
           messages=messages,
           temperature=0.1,
           max_tokens=max_tokens,

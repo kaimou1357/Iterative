@@ -1,6 +1,7 @@
 from app.extensions import db, user_project_table
 from app.models.constants import CSSFramework
 from app.models.project_state import ProjectState
+from app.models.recommendation import Recommendation
 from app.models.user import User
 
 class Project(db.Model):
@@ -12,6 +13,7 @@ class Project(db.Model):
     css_framework = db.Column(db.Enum(CSSFramework), default=CSSFramework.DAISYUI, server_default=CSSFramework.BOOTSTRAP.name, nullable=False)
     project_states = db.relationship('ProjectState', backref='project', cascade='all, delete-orphan', order_by=db.asc(ProjectState.id))
     users = db.relationship('User', secondary=user_project_table, back_populates='projects')
+    recommendations = db.relationship('Recommendation', backref='project', cascade='all, delete-orphan', order_by=db.asc(Recommendation.id))
 
     def __repr__(self):
         return f"Project('{self.name}')"

@@ -5,31 +5,99 @@ from app.models.chat_message import ChatMessage
 from app.models.project import Project
 from app.models.project_state import ProjectState
 from app.extensions import db
+from app.models.recommendation import Recommendation
 from app.openai.client import OpenAIClient
+from app.openai.config import OpenAIConstants
 from app.openai.utils import extract_code, messages_to_string
 import tiktoken  
 
-def on_code_generated(user_msg):
-  user_prompt = f"""
-    How can I improve the UI for what I am building for below?
+recommendation_feeder_messages = [
+    {
+      "role": "system",
+      "name": "example_assistant",
+      "content": "You can improve by changing the font or changing button from the bottom left of the screen to the top right."
+    },
+    {
+      "role": "system",
+      "name": "example_user",
+      "content": "Build me a coffee shop system that a user would see."
+    },
+    {
+      "role": "system",
+      "name": "example_assistant",
+      "content": "You can change the color scheme to match with those of other coffee shops. For example, coffee shops usually have bold colors."
+    },
+    {
+      "role": "system",
+      "name": "example_assistant",
+      "content": "You can improve the layout by moving these buttons to the left of the other buttons"
+    }
+]
+
+def generate_recommendation_prompt(user_msg, project):
+  is_initial_recommendation = len(project.recommendations)
+  if is_initial_recommendation:
+    generate_initial_recommendation(user_msg, project)
+  else:
+    generate_subsequent_recommendation(user_msg, project)
+
+
+def generate_initial_recommendation(user_msg, project):
+  user_prompt_primer = f"""
     {user_msg}
   """
   
-  messages = [
-    {
-      "role": "user",
-      "content": user_prompt
-    },
-    {
-      "role": "assistant",
-      "content": "You should help the user suggest possible UI improvements they can make given their domain"
-    }
-  ]
-
-  response = OpenAIClient().chat_completion(messages, 300, False)
-  content = response.choices[0].message.content
-  emit("server_response", content)
+  user_prompt = {
+    "role": "user",
+    "content": user_prompt_primer
+  }
   
+  system_prompt = {
+    "role": "system",
+    "content": f"""
+    Based on the user input, please suggest ways to improve the design of the original system. Consider style, layout, color scheme, and user interace aspects. Only give 1-2 sentences"""
+  }
+  
+  recommendation_input = recommendation_feeder_messages.copy()
+  
+  recommendation_input.append(user_prompt)
+  recommendation_input.append(system_prompt)
+  
+  tokens_remaining = calculate_tokens_remaining(recommendation_input)
+  
+  response = OpenAIClient().chat_completion(recommendation_input, tokens_remaining, False)
+  content = response.choices[0].message.content
+  recommendation = Recommendation(name="Initial Recommendation", project_id=project.id, description=content)
+  db.session.add(recommendation)
+  db.session.commit()
+  emit("server_recommendation", content)
+  
+def generate_subsequent_recommendation(user_msg, project):
+  print("Generating Subsequent Recommendation")
+  previous_recommendations = [{"role": "user", "content": rec.description} for rec in project.recommendations]
+  user_prompt = {
+    "role": "user",
+    "content": user_msg
+  }
+  system_prompt = {
+    "role": "system",
+    "content": f"""
+      Generate recommendations for additional features or enhancements to existing ones. These should be incremental, logical next steps towards improving the system the user is trying to build. Only give 1-2 sentences"""
+  }
+  recommendation_input = recommendation_feeder_messages.copy()
+  
+  recommendation_input.append(system_prompt)
+  recommendation_input.append(previous_recommendations)
+  recommendation_input.append(user_prompt)
+  
+  tokens_remaining = calculate_tokens_remaining(recommendation_input)
+  
+  response = OpenAIClient().chat_completion(recommendation_input, tokens_remaining, False)
+  content = response.choices[0].message.content
+  recommendation = Recommendation(name=f"Subsequent Recommendation #{len(previous_recommendations) + 1}", project_id=project.id, description=content)
+  db.session.add(recommendation)
+  db.session.commit()
+  emit("server_recommendation", content)
 
 @socketio.on("user_message")
 def on_user_message(payload):
@@ -54,8 +122,6 @@ def on_user_message(payload):
         for chat_message_content in chat_messages_content if chat_message_content['role'] == 'user'
     ]
 
-    # This is a nuclear fix to force gpt-4 (especially) to listen and return the full code every time. Too many optimizations built in to it which return truncated responses.
-    # Remove this once the diffing system is in.
   for user_message_content in user_messages_content:
     user_message_content['content'] = user_message_content['content'] + "- Please return the full React code in your response."
 
@@ -100,18 +166,19 @@ def on_user_message(payload):
       *user_messages_content
   ]
 
-  max_tokens_allowed = 4096
-
-  encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-  messages_string = messages_to_string(messages)
-  current_num_tokens = len(encoding.encode(messages_string))
-
-  tokens_remaining = max_tokens_allowed - current_num_tokens
+  tokens_remaining = calculate_tokens_remaining(messages)
   
   response = OpenAIClient().chat_completion(messages, tokens_remaining, True)
   react_code = extract_code_and_update_project(user_msg, response, project_id)
   emit("server_code", react_code)
-  on_code_generated(user_msg)
+  generate_recommendation_prompt(user_msg, project)
+
+
+def calculate_tokens_remaining(messages):
+  encoding = tiktoken.encoding_for_model(OpenAIConstants.MODEL_NAME)
+  messages_string = messages_to_string(messages)
+  current_num_tokens = len(encoding.encode(messages_string))
+  return OpenAIConstants.TOKEN_LIMIT - current_num_tokens
 
 def extract_code_and_update_project(user_message, full_reply_comment, project_id):
   react_code, css_code = extract_code(full_reply_comment)
