@@ -49,7 +49,7 @@ def create_app():
     app.register_blueprint(core_bp)
     app.register_blueprint(deployments_bp)
 
-    socketio.init_app(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
+    socketio.init_app(app, cors_allowed_origins="*", logger=True, engineio_logger=True, async_mode='gevent')
     return app
   
 if __name__ == '__main__':
