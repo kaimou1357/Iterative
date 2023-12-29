@@ -24,8 +24,7 @@ def token_required(f):
       environment=os.environ.get("STYTCH_PROJECT_ENV")
     )
     
-    cookies = request.cookies
-    stytch_jwt = cookies.get("stytch_session_jwt")
+    stytch_jwt = request.headers.get('Authorization')
     if stytch_jwt is None:
       return f(None, *args, **kwargs)
     session = client.sessions.authenticate_jwt(stytch_jwt)
