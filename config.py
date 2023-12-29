@@ -36,4 +36,4 @@ class ProductionConfig(Base):
     result_backend=REDIS_URL,
   )
   SESSION_REDIS = redis.from_url(REDIS_URL)
-  CORS_ORIGINS = []
+  CORS_ORIGINS = ["https://www.goiterative.com"]
