@@ -4,7 +4,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface ToolState {
   loading: boolean;
   reactCode: string;
-  recommendations: string[];
+  recommendations: Recommendation[];
   projectStates: ProjectState[];
   openDeploymentModal: boolean;
   openProjectModal: boolean;
@@ -15,7 +15,7 @@ interface ToolState {
   removeToast: () => void;
   setReactCode: (code: string) => void;
   setLoading: (isLoading: boolean) => void;
-  addRecommendation: (message: string) => void;
+  setRecommendations: (recommendations: Recommendation[]) => void;
   setProjectStates: (projectStates: ProjectState[]) => void;
   setOpenDeploymentModal: (openModal: boolean) => void;
   setOpenProjectModal: (openModal: boolean) => void;
@@ -50,9 +50,9 @@ export const useToolStore = create<ToolState>()((set) => ({
   setLoading: (isLoading) => set(() => ({ loading: isLoading })),
   setProjectStates: (projectStates: ProjectState[]) =>
     set(() => ({ projectStates: projectStates })),
-  addRecommendation: (message: string) => {
-    set((state) => ({
-      recommendations: [...state.recommendations, message],
+  setRecommendations: (newRecommendations: Recommendation[]) => {
+    set(() => ({
+      recommendations: newRecommendations,
     }));
   },
 }));

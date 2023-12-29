@@ -14,11 +14,7 @@ const config: Config = {
       "animate-[fade-in-down_1s_ease-in-out]",
     ],
     extend: {
-     
       keyframes: {
-
-     
-
         opacity: {
           "0%": {
             opacity: "0%",
@@ -62,7 +58,6 @@ const config: Config = {
       },
 
       animation: {
-       
         enter: "enter 1s 1s",
         typing: "typing 1s  steps(20)  alternate, blink .7s infinite ",
         masking: "masking 3s 1s both  ",

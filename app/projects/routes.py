@@ -116,6 +116,15 @@ def get_projects(current_user):
     projects_data = [project.to_dict() for project in user_projects]
     return jsonify({'projects': projects_data})
 
+@bp.route('/api/recommendations', methods=['GET'])
+@token_required
+def get_recommendations(current_user):
+    project_id = request.args.get("project_id")
+    project = Project.query.get(int(project_id))
+      
+    recommendation_data = [rec.to_dict() for rec in project.recommendations]
+    return jsonify({'recommendations': recommendation_data})
+
 @bp.route('/api/projects/reset', methods=['POST'])
 def reset():
     project_id = request.json['project_id']

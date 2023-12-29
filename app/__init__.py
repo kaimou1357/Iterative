@@ -49,6 +49,6 @@ def create_app():
     app.register_blueprint(core_bp)
     app.register_blueprint(deployments_bp)
 
-    socketio.init_app(app, cors_allowed_origins="*")
+    socketio.init_app(app, cors_allowed_origins="*", logger=True)
     return app
   

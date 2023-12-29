@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import GenKodeChat from "../components/chat";
+import { RecommendationsList } from "../components/RecommendationsList";
 import io, { Socket } from "socket.io-client";
 import { API_BASE_URL, SOCKET_IO_URL } from "../components/config";
 import LiveCodeEditor from "../components/LiveCodeEditor";
@@ -28,7 +28,7 @@ export default function Tool() {
     reactCode,
     setReactCode,
     recommendations,
-    addRecommendation,
+    setRecommendations,
     resetProject,
     setOpenProjectModal,
   } = useToolStore();
@@ -41,7 +41,7 @@ export default function Tool() {
   axios.defaults.withCredentials = true;
   useEffect(() => {
     socket = io(SOCKET_IO_URL);
-    socket.on("server_response", onServerResponse);
+    socket.on("server_recommendation", onServerResponse);
     socket.on("server_code", onServerCode);
     socket.on("project_id", onProjectId);
     return () => {
@@ -65,10 +65,18 @@ export default function Tool() {
     setProjectId(response.data.project.id);
     setProjectName(response.data.project.name);
     refreshProjectStates();
+    refreshRecommendations();
   }
 
-  const onServerResponse = (response: any) => {
-    addRecommendation(response);
+  async function refreshRecommendations() {
+    const response = await axios.get(
+      `${API_BASE_URL}/recommendations?project_id=${projectId}`,
+    );
+    setRecommendations(response.data.recommendations);
+  }
+
+  const onServerResponse = () => {
+    refreshRecommendations();
   };
 
   const refreshProjectStates = () => {
@@ -167,7 +175,7 @@ export default function Tool() {
             {recommendations && recommendations.length ? (
               <div className="w-[20%]">
                 <div className="w-full bg-slate-200 text-black dark:bg-slate-900 dark:text-white ">
-                  <GenKodeChat recommendations={recommendations} />
+                  <RecommendationsList recommendations={recommendations} />
                 </div>
               </div>
             ) : (
