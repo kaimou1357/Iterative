@@ -25,7 +25,7 @@ def celery_init_app(app: Flask) -> Celery:
     return celery_app
   
 def create_app():
-    app = Flask(__name__, static_folder = "../react_app/build")
+    app = Flask(__name__)
     app.config.from_object(os.environ.get("APP_SETTINGS"))
     
     # Initialize Flask extensions here
