@@ -1,1 +1,1 @@
-web: flask run --debug --port=$PORT
+web: gunicorn -k gevent -w 1 "app:create_app()"
