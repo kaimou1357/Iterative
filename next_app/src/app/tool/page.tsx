@@ -126,11 +126,11 @@ export default function Tool() {
 
   return (
     <Flowbite>
-      <div className="h-[calc(100vh-62px)] bg-slate-200 dark:bg-slate-900 ">
+      <div className={`h-[calc(100vh-62px)] bg-slate-200 dark:bg-slate-900 ${recommendations && recommendations.length && 'flex justify-end'}`}>
         <ToastComponent />
         <DeploymentModal />
         <ProjectModal projectId={projectId} />
-        <div className="w-[90%] max-w-[90%] 2xl:w-[80%] 2xl:max-w-[80%] max-h-full h-[90%] mx-auto flex flex-row gap-10 dark:text-white ">
+        <div className={`w-[90%] max-w-[90%] 2xl:w-[80%] 2xl:max-w-[80%] max-h-full h-[90%] mx-auto ${recommendations && recommendations.length && 'mr-5 ml-20'} flex flex-row gap-10 dark:text-white `}>
           <div className=" flex justify-between w-full gap-4 pt-10 ">
             <div className="w-[20%] flex-col items-center bg-slate-200 dark:bg-slate-900 ">
               {/* <Button color="dark" className="mx-auto">Existing User Prompts</Button> */}
@@ -159,7 +159,7 @@ export default function Tool() {
                 isAuthenticated={user !== null}
               />
             </div>
-            {recommendations && recommendations.length ? <div className="w-[20%]">
+            {recommendations && recommendations.length ? <div className="w-auto min-w-[20%]">
               <div className="w-full bg-slate-200 dark:bg-slate-900 dark:text-white text-black ">
                 <GenKodeChat recommendations={recommendations} />
               </div>
