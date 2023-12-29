@@ -9,7 +9,7 @@ const GenKodeChat = ({ recommendations }: ChatProps) => {
   return (
     <>
       <div className="w-full">
-        <div className="mb-3 w-full font-bold text-lg dark:text-gray-200">Iterative Recommendations for you</div>
+        <div className="mb-3 w-full font-bold text-lg text-center dark:text-gray-200">Iterative Recommendations for you</div>
 
         <Accordion className="w-full max-h-[300px] pb-2">
           <Accordion.Panel>

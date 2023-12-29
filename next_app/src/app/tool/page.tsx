@@ -54,7 +54,7 @@ export default function Tool() {
   }, []);
 
   async function createProject() {
-    setIsLoading(true);
+    // setIsLoading(true);
     const response = await axios.post(
       `${API_BASE_URL}/projects`,
       { project_id: projectId },
@@ -71,7 +71,7 @@ export default function Tool() {
   };
 
   const refreshProjectStates = () => {
-    setIsLoading(true)
+    // setIsLoading(true)
     axios
       .post(
         `${API_BASE_URL}/projects/project_state`,
@@ -126,13 +126,13 @@ export default function Tool() {
 
   return (
     <Flowbite>
-      <div className={`h-[calc(100vh-62px)] bg-slate-200 dark:bg-slate-900 ${recommendations && recommendations.length && 'flex justify-end'}`}>
+      <div className={`h-[calc(100vh-62px)] bg-slate-200 dark:bg-slate-900`}>
         <ToastComponent />
         <DeploymentModal />
         <ProjectModal projectId={projectId} />
-        <div className={`w-[90%] max-w-[90%] 2xl:w-[80%] 2xl:max-w-[80%] max-h-full h-[90%] mx-auto ${recommendations && recommendations.length && 'mr-5 ml-20'} flex flex-row gap-10 dark:text-white `}>
+        <div className={`w-[95%] max-w-[95%] 2xl:w-[98%] 2xl:max-w-[98%] max-h-full h-[90%] mx-auto flex flex-row gap-10 dark:text-white `}>
           <div className=" flex justify-between w-full gap-4 pt-10 ">
-            <div className="w-[20%] flex-col items-center bg-slate-200 dark:bg-slate-900 ">
+            <div className="w-[25%] flex-col items-center bg-slate-200 dark:bg-slate-900 ">
               {/* <Button color="dark" className="mx-auto">Existing User Prompts</Button> */}
               <PromptBox
                 user={user}
@@ -141,7 +141,7 @@ export default function Tool() {
                 authenticated={user !== null}
               />
             </div>
-            <div className={`${recommendations.length ? 'w-[60%]' : 'w-[80%]'} h-full flex flex-col`}>
+            <div className={`${recommendations.length ? 'w-[50%]' : 'w-[80%]'} h-full flex flex-col`}>
               <h1 className="mx-auto font-bold text-xl mb-2">{projectName}</h1>
               <div className="grow min-h-[72%] max-w-full rounded-md border-2 border-solid border-gray-500">
                 <LiveCodeEditor
@@ -159,7 +159,7 @@ export default function Tool() {
                 isAuthenticated={user !== null}
               />
             </div>
-            {recommendations && recommendations.length ? <div className="w-auto min-w-[20%]">
+            {recommendations && recommendations.length ? <div className="w-[25%]">
               <div className="w-full bg-slate-200 dark:bg-slate-900 dark:text-white text-black ">
                 <GenKodeChat recommendations={recommendations} />
               </div>

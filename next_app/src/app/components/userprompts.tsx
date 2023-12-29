@@ -31,7 +31,7 @@ const UserPrompts = ({
   };
   return (
     <div className="w-full">
-      <div className="mb-3 font-bold text-xl">Existing User Prompts</div>
+      <div className="mb-3 font-bold text-xl text-center">Existing User Prompts</div>
       <ul className="max-h-[480px] w-full flex flex-col gap-4 overflow-y-auto rounded-md ">
         {projectStates.map((p, idx) => (
           <div key={idx} className="flex flex-col">
