@@ -52,3 +52,6 @@ def create_app():
     socketio.init_app(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
     return app
   
+if __name__ == '__main__':
+  app = create_app()
+  socketio.run(app)
