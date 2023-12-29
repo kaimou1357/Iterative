@@ -1,1 +1,1 @@
-web: flask run --debug 
+web: flask run --debug --port=$PORT
