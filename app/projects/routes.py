@@ -15,9 +15,9 @@ def create_project(current_user):
     project_id = request.json['project_id']
     if project_id:
       project = Project.query.get(project_id)
-      return jsonify({'status': 'success', 'project': project.to_dict()})
-    else:
-      project = Project(name="My First Project")
+      if project:
+        return jsonify({'status': 'success', 'project': project.to_dict()})
+    project = Project(name="My First Project")
     # Create a new Project instance
 
     if current_user:
@@ -105,7 +105,7 @@ def get_project_states():
     project = Project.query.get(project_id)
     
     if project is None:
-        return jsonify({'status': 'error', 'message': 'Project not found'}), 404
+        return jsonify({'project_states': []})
     
     return jsonify({'project_states': [s.to_dict() for s in project.project_states]})
 
@@ -121,6 +121,9 @@ def get_projects(current_user):
 def get_recommendations(current_user):
     project_id = request.args.get("project_id")
     project = Project.query.get(int(project_id))
+    
+    if not project:
+      return jsonify({'recommendations': []})
       
     recommendation_data = [rec.to_dict() for rec in project.recommendations]
     return jsonify({'recommendations': recommendation_data})
