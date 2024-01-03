@@ -12,12 +12,13 @@ from app.extensions import db
 @token_required
 def create_project(current_user):
     # Retrieve project information from the request
-    project_id = request.json['project_id']
+    project_id = request.json.get('project_id')
+    project_name = request.json.get('project_name')
     if project_id:
       project = Project.query.get(project_id)
       if project:
         return jsonify({'status': 'success', 'project': project.to_dict()})
-    project = Project(name="My First Project")
+    project = Project(name=project_name or "My First Project")
     # Create a new Project instance
 
     if current_user:
@@ -137,6 +138,9 @@ def reset():
         for chat_message in state.chat_messages:
             db.session.delete(chat_message)
         db.session.delete(state)
+      
+    for recommendation in project.recommendations:
+      db.session.delete(recommendation)
     
     db.session.commit()
     
