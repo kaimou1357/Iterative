@@ -35,7 +35,7 @@ services:
       - FLASK_RUN_PORT=8000
       - DATABASE_URL=postgresql://postgres:postgres@db:5432
       - APP_SETTINGS=config.DevelopmentConfig
-      - OPENAI_API_KEY="test"
+      - OPENAI_API_KEY="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"
       - STYTCH_PROJECT_ENV=test
       - STYTCH_PROJECT_ID=project-test-5981764b-bbf0-47f0-80d3-cae8de7c258c
       - NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN=public-token-test-14b26229-48ce-4a71-ba1c-3531f21ea5fa
