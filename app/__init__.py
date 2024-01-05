@@ -2,7 +2,6 @@ import os
 from flask_socketio import SocketIO
 from flask import Flask
 from flask_cors import CORS
-from flask_session import Session
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from celery import Celery, Task
@@ -29,7 +28,6 @@ def create_app():
     app.config.from_object(os.environ.get("APP_SETTINGS"))
     
     # Initialize Flask extensions here
-    session = Session(app)
     migrate = Migrate(app, db)
     bcrypt = Bcrypt(app)
     db.init_app(app)

@@ -8,6 +8,8 @@ from app.extensions import db
 @bp.get("/api/deployments")
 @token_required
 def deployments_get(current_user):
+  if current_user is None:
+    return jsonify({"error": "Not Authorized"}), 401
   deployments = current_user.deployments
   return jsonify({"deployments": [d.serialize() for d in deployments]})
 

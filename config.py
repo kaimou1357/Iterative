@@ -15,7 +15,7 @@ class Base(object):
 class DevelopmentConfig(Base):
   DEBUG=True
   DEVELOPMENT=True
-  SQLALCHEMY_DATABASE_URI = "postgresql://localhost:5432"
+  SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
   REDIS_URL = "redis://localhost:6379/0"
   FLASK_ENV="development"
   CELERY = dict(
