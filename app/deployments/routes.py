@@ -38,3 +38,19 @@ def deployment_get(current_user, deployment_id: int, passcode = None):
     response = jsonify({'error': "incorrect passcode"})
     return response, 401
 
+@bp.delete("/api/deployments")
+@token_required
+def deployment_delete(current_user):
+  data = request.json
+  deployment_id = data.get("deployment_id")
+  deployment = Deployment.query.get(deployment_id)
+  
+  if current_user is None:
+    return jsonify({"error": "Unauthorized"}), 401
+  if current_user.id == deployment.user_id:
+    db.session.delete(deployment)
+    db.session.commit()
+    return jsonify({"success": True})
+  else:
+    return jsonify({"error": "Unauthorized to delete deployment"}), 401
+  
