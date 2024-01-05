@@ -8,7 +8,7 @@ class UserSettings(db.Model):
     model_name = db.Column(db.Enum(AssistantModel), default=AssistantModel.GPT_3_5_TURBO, server_default=AssistantModel.GPT_3_5_TURBO.name, nullable=False)
     color_scheme = db.Column(db.Enum(ColorScheme), default=ColorScheme.SYSTEM, server_default=ColorScheme.SYSTEM.name, nullable=False)
     show_assistant_messages = db.Column(db.Boolean, default=False, server_default="false", nullable=False)
-    css_framework = db.Column(db.Enum(CSSFramework), default=CSSFramework.DAISYUI, server_default=CSSFramework.BOOTSTRAP.name, nullable=False)
+    css_framework = db.Column(db.Enum(CSSFramework), default=CSSFramework.DAISYUI, server_default=CSSFramework.DAISYUI.name, nullable=False)
     
     user = db.relationship('User', back_populates='settings', uselist=False)
     
