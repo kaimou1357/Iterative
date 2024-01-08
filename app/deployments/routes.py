@@ -1,5 +1,4 @@
 from flask import jsonify, request
-from flask_login import current_user, login_required
 from app.auth_middleware import token_required
 from app.main import bp
 from app.models.deployment import Deployment

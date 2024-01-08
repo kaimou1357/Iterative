@@ -110,6 +110,21 @@ def get_project_states():
     
     return jsonify({'project_states': [s.to_dict() for s in project.project_states]})
 
+@bp.delete('/api/projects/project_state')
+@token_required
+def delete_project_states(current_user):
+    # Retrieve the project_id and project_name from the request body
+    data = request.json
+    project_state_id = data.get("project_state_id")
+    project_state = ProjectState.query.get(project_state_id)
+    
+    if project_state is None:
+        return jsonify({'success': False})
+   
+    db.session.delete(project_state)
+    db.session.commit()
+    return jsonify({'success': True})
+
 @bp.route('/api/projects', methods=['GET'])
 @token_required
 def get_projects(current_user):
