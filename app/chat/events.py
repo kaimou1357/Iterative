@@ -71,7 +71,7 @@ def generate_subsequent_recommendation(user_msg, project, initial_prompts):
 def on_user_message(payload):
   user_msg = payload['description']
   project_id = payload['project_id']
-  css_framework_str = "daisyUI"
+  css_framework_str = "TailwindCSS"
   project = Project.query.get(project_id)
   
   if project.project_states:
@@ -99,6 +99,7 @@ def on_user_message(payload):
                           - [x] Also include SECONDARY features that enhance the functionality and user experience.
                           - [x] Do NOT use import, export or require statements. Only return a function App() {{}}.
                           - [x] Enclose the code within triple backticks.
+                          - [x] As part of the app, include a navbar and footer to make it seem like a webpage. 
                           - [x] Use only inline standard {css_framework_str} components for styling, including colors, margins, padding, and spacing. Ensure components are responsive and aesthetically pleasing, and ensure all components are visible.
                           - [x] Don't make up any fictional {css_framework_str} component names. Check {css_framework_str} docs if you have to, and find the closest theme, color, or component to what the user asks for.
                           - [x] In case of conflicting user requests, follow the most recent request for styling or functionality, and ignore the previous conflicting requests. Interpret the provided user messages in chronological order.

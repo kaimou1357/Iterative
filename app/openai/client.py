@@ -7,7 +7,8 @@ class OpenAIClient:
     self.client = OpenAI(api_key = os.environ.get('OPENAI_API_KEY'), organization = 'org-tUXaB2qekHhDUPyZzOB2PnDT')
   
   def chat_completion(self, messages, max_tokens, streaming):
-    response = self.client.chat.completions.create(
+    try:
+      response = self.client.chat.completions.create(
           model=OpenAIConstants.MODEL_NAME,
           messages=messages,
           temperature=0.1,
@@ -16,6 +17,10 @@ class OpenAIClient:
           frequency_penalty=0,
           presence_penalty=0,
           stream=streaming)
+      
+    except Exception as e:
+      print(f"OpenAI Error: {e}")
+    
     if not streaming:
       return response
     collected_chunks = []
