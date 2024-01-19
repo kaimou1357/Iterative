@@ -24,16 +24,23 @@ def token_required(f):
       environment=os.environ.get("STYTCH_PROJECT_ENV")
     )
     
+    stytch_session = request.headers.get('AuthorizationSession')
     stytch_jwt = request.headers.get('Authorization')
-    if stytch_jwt is None:
+    if stytch_session is None and stytch_jwt is None:
       return f(None, *args, **kwargs)
-    session = client.sessions.authenticate_jwt(stytch_jwt)
-    if session is None:
-      return f(None, *args, **kwargs)
-    stytch_user_id = session.user_id
-    current_user = get_or_create_user(stytch_user_id)
     
+    if stytch_session:
+      auth_response = client.sessions.authenticate(stytch_session)
+      stytch_user_id = auth_response.session.user_id
+    else:
+      session = client.sessions.authenticate_jwt(stytch_jwt)
+      if session is None:
+        return f(None, *args, **kwargs)
+      stytch_user_id = session.user_id
+    
+    current_user = get_or_create_user(stytch_user_id)
     return f(current_user, *args, **kwargs)
+  
   return decorated 
     
     

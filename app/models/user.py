@@ -11,7 +11,7 @@ class User(db.Model, UserMixin):
     deployments = db.relationship('Deployment')
 
     def __repr__(self):
-        return f"User('{self.email}')"
+        return f"User('{self.id}')"
       
     def get_id(self):
       return self.id

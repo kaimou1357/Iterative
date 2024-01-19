@@ -72,6 +72,7 @@ def update_project(current_user):
     if project is None:
       return jsonify({'status': 'error', 'message': 'Project not found'}), 404
   
+    project.user_id = current_user.id
     project.name = project_name
     db.session.add(project)
     db.session.commit()
@@ -136,6 +137,8 @@ def get_projects(current_user):
 @token_required
 def get_recommendations(current_user):
     project_id = request.args.get("project_id")
+    if not project_id:
+      return jsonify({'recommendations': []})
     project = Project.query.get(int(project_id))
     
     if not project:
