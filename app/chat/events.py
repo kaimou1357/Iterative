@@ -14,7 +14,7 @@ import tiktoken
 
 def generate_recommendation_prompt(user_msg, project):  
   initial_prompts = PromptFetcher().fetch_recommendations()
-  is_initial_recommendation = len(project.recommendations)
+  is_initial_recommendation = (len(project.recommendations) == 0)
   if is_initial_recommendation:
     generate_initial_recommendation(user_msg, project, initial_prompts)
   else:
