@@ -102,6 +102,7 @@ def on_user_message(payload):
                           - [x] For the div with the container - add the CSS class iterativeBody
                           - [x] As part of the app, include a navbar to make it seem like a webpage. 
                           - [x] Use only components and design themes from #{css_framework_str}
+                          - [x] Do not use any components outside of mui
                           - [x] Do not import any styles from @mui/styles. Perform styling with @emotion/styled
                           - [x] If you need a gauge component, they should be imported from package @progress/kendo-react-gauges. The only imports that are available are ArcGauge, CircularGauge, LinearGauge, RadialGauge
                           - [x] In case of conflicting user requests, follow the most recent request for styling or functionality, and ignore the previous conflicting requests. Interpret the provided user messages in chronological order.
