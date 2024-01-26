@@ -22,6 +22,7 @@ def generate_recommendation_prompt(user_msg, project):
 
 
 def generate_initial_recommendation(user_msg, project, initial_prompts):
+  print("Generating Initial Recommendation")
   user_prompt_primer = f"""
     {user_msg}
   """
@@ -71,7 +72,7 @@ def generate_subsequent_recommendation(user_msg, project, initial_prompts):
 def on_user_message(payload):
   user_msg = payload['description']
   project_id = payload['project_id']
-  css_framework_str = "TailwindCSS"
+  css_framework_str = "mui"
   project = Project.query.get(project_id)
   
   if project.project_states:
@@ -97,15 +98,13 @@ def on_user_message(payload):
                       Based on the user's request, please provide the code for a Single Page Application, using a functional React component named 'App', following these specific guidelines:
                           - [x] To start, first identify and build the PRIMARY features essential to the described application.
                           - [x] Also include SECONDARY features that enhance the functionality and user experience.
-                          - [x] Do NOT use import, export or require statements. Only return a function App() {{}}.
                           - [x] Enclose the code within triple backticks.
                           - [x] For the div with the container - add the CSS class iterativeBody
                           - [x] As part of the app, include a navbar to make it seem like a webpage. 
-                          - [x] Use only inline standard {css_framework_str} components for styling, including colors, margins, padding, and spacing. Ensure components are responsive and aesthetically pleasing, and ensure all components are visible.
-                          - [x] Don't make up any fictional {css_framework_str} component names. Check {css_framework_str} docs if you have to, and find the closest theme, color, or component to what the user asks for.
+                          - [x] Use only components and design themes from #{css_framework_str}
+                          - [x] Do not import any styles from @mui/styles. Perform styling with @emotion/styled
+                          - [x] If you need a gauge component, they should be imported from package @progress/kendo-react-gauges. The only imports that are available are ArcGauge, CircularGauge, LinearGauge, RadialGauge
                           - [x] In case of conflicting user requests, follow the most recent request for styling or functionality, and ignore the previous conflicting requests. Interpret the provided user messages in chronological order.
-                          - [x] When the user asks to simply re-position or move an element, ensure there are no unwanted side effects, such as changing the size or visual styling.
-                          - [x] Use React hooks like this: 'React.useState('')'.
                           - [x] Build out the secondary features as well. Do NOT just give me a starting point.
                           - [x] No explanations needed, only code. You're an experienced UI engineer and know what to do without being told.
                           - [x] Provide reasonable placeholder data so UI components aren't empty or filled with generic placeholder text.
