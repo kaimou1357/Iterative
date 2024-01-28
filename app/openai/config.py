@@ -1,3 +1,4 @@
 class OpenAIConstants:
   MODEL_NAME = "gpt-4-0125-preview"
-  TOKEN_LIMIT = 4096
+  TOKEN_LIMIT = 15000
+  RECOMMENDATION_TOKEN_LIMIT = 4096

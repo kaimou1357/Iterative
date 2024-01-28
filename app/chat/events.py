@@ -37,10 +37,10 @@ def generate_initial_recommendation(user_msg, project, initial_prompts):
   
   recommendation_input.append(user_prompt)
   
-  tokens_remaining = calculate_tokens_remaining(recommendation_input)
+  tokens_remaining = OpenAIConstants.RECOMMENDATION_TOKEN_LIMIT
   
-  response = OpenAIClient().chat_completion(recommendation_input, tokens_remaining, False)
-  content = response.choices[0].message.content
+  response = OpenAIClient().chat_completion(recommendation_input, tokens_remaining, True)
+  content = response
   recommendation = Recommendation(name="Initial Recommendation", project_id=project.id, description=content)
   db.session.add(recommendation)
   db.session.commit()
@@ -59,10 +59,10 @@ def generate_subsequent_recommendation(user_msg, project, initial_prompts):
     recommendation_input.append(rec)
   recommendation_input.append(user_prompt)
   
-  tokens_remaining = calculate_tokens_remaining(recommendation_input)
+  tokens_remaining = OpenAIConstants.RECOMMENDATION_TOKEN_LIMIT
   
-  response = OpenAIClient().chat_completion(recommendation_input, tokens_remaining, False)
-  content = response.choices[0].message.content
+  response = OpenAIClient().chat_completion(recommendation_input, tokens_remaining, True)
+  content = response
   recommendation = Recommendation(name=f"Subsequent Recommendation #{len(previous_recommendations) + 1}", project_id=project.id, description=content)
   db.session.add(recommendation)
   db.session.commit()
@@ -72,7 +72,7 @@ def generate_subsequent_recommendation(user_msg, project, initial_prompts):
 def on_user_message(payload):
   user_msg = payload['description']
   project_id = payload['project_id']
-  css_framework_str = "mui"
+  css_framework_str = "TailwindCSS"
   project = Project.query.get(project_id)
   
   if project.project_states:
@@ -94,16 +94,16 @@ def on_user_message(payload):
   for user_message_content in user_messages_content:
     user_message_content['content'] = user_message_content['content'] + "- Please return the full React code in your response."
 
+  design_framework = PromptFetcher().fetch_design_framework()
   system_prompt = f"""
                       Based on the user's request, please provide the code for a Single Page Application, using a functional React component named 'App', following these specific guidelines:
                           - [x] To start, first identify and build the PRIMARY features essential to the described application.
                           - [x] Also include SECONDARY features that enhance the functionality and user experience.
                           - [x] Enclose the code within triple backticks.
                           - [x] For the div with the container - add the CSS class iterativeBody
-                          - [x] As part of the app, include a navbar to make it seem like a webpage. 
                           - [x] Use only components and design themes from #{css_framework_str}
-                          - [x] Do not use any components outside of mui
-                          - [x] Do not import any styles from @mui/styles. Perform styling with @emotion/styled
+                          - [x] Use only inline standard {css_framework_str} components for styling, including colors, margins, padding, and spacing. Ensure components are responsive and aesthetically pleasing, and ensure all components are visible.
+                          - [x] Don't make up any fictional {css_framework_str} component names. Check {css_framework_str} docs if you have to, and find the closest theme, color, or component to what the user asks for.
                           - [x] In case of conflicting user requests, follow the most recent request for styling or functionality, and ignore the previous conflicting requests. Interpret the provided user messages in chronological order.
                           - [x] Build out the secondary features as well. Do NOT just give me a starting point.
                           - [x] No explanations needed, only code. You're an experienced UI engineer and know what to do without being told.
@@ -132,8 +132,10 @@ def on_user_message(payload):
           "role": "system",
           "content": system_prompt
       },
-      *user_messages_content
+      *user_messages_content,
+      *design_framework
   ]
+
 
   tokens_remaining = calculate_tokens_remaining(messages)
   
