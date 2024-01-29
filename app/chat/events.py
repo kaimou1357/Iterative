@@ -101,7 +101,8 @@ def on_user_message(payload):
                           - [x] Also include SECONDARY features that enhance the functionality and user experience.
                           - [x] Enclose the code within triple backticks.
                           - [x] For the div with the container - add the CSS class iterativeBody
-                          - [x] Use only components and design themes from #{css_framework_str}
+                          - [x] Use only design themes from #{css_framework_str}
+                          - [x] Only import components from react-google-charts or react-icons/fa
                           - [x] If you need icons - use icons from react-icons/fa
                           - [x] Use only inline standard {css_framework_str} components for styling, including colors, margins, padding, and spacing. Ensure components are responsive and aesthetically pleasing, and ensure all components are visible.
                           - [x] Don't make up any fictional {css_framework_str} component names. Check {css_framework_str} docs if you have to, and find the closest theme, color, or component to what the user asks for.
