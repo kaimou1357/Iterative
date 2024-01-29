@@ -102,6 +102,7 @@ def on_user_message(payload):
                           - [x] Enclose the code within triple backticks.
                           - [x] For the div with the container - add the CSS class iterativeBody
                           - [x] Use only components and design themes from #{css_framework_str}
+                          - [x] If you need icons - use icons from react-icons/fa
                           - [x] Use only inline standard {css_framework_str} components for styling, including colors, margins, padding, and spacing. Ensure components are responsive and aesthetically pleasing, and ensure all components are visible.
                           - [x] Don't make up any fictional {css_framework_str} component names. Check {css_framework_str} docs if you have to, and find the closest theme, color, or component to what the user asks for.
                           - [x] In case of conflicting user requests, follow the most recent request for styling or functionality, and ignore the previous conflicting requests. Interpret the provided user messages in chronological order.
