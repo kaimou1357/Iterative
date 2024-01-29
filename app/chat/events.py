@@ -140,7 +140,7 @@ def on_user_message(payload):
 
   tokens_remaining = calculate_tokens_remaining(messages)
   
-  response = OpenAIClient().chat_completion(messages, tokens_remaining, True)
+  response = OpenAIClient().chat_completion(messages, 4096, True)
   react_code = extract_code_and_update_project(user_msg, response, project_id)
   emit("server_code", react_code)
   generate_recommendation_prompt(user_msg, project)
